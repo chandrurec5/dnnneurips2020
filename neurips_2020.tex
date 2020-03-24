@@ -66,7 +66,7 @@ Recent works based on the \emph{trajectory} analysis \cite{} have shown that, su
 \begin{align}\label{eq:trajecbasic}
 e_{t+1}=e_t-\alpha_t K_t e_t,
 \end{align}
-where $\alpha_t>0$ is a small stepsize, $K_t\in \R^{n\times n}$ is a Gram matrix. This gram matrix is in turn expressed as $K_t=\Psi_t^\top \Psi_t$, wherein, $\Psi_t$ is a $d_{net}\times n$ matrix known as the \emph{neural tangent feature} (NTF) matrix, which is the collection of the gradient of the network output with respect to the network parameters, and is given by $\Psi_t(m,i)=\frac{\partial \hat{y}_{\Theta_t}(x_s)}{\partial \theta_t(m)},m\in[d_{net}], i\in[n]$\footnote{We assume that the weights can be enumerated as $\theta_t(1),\ldots,\theta_t(d_{net})$}.
+where $\alpha_t>0$ is a small stepsize, $K_t\in \R^{n\times n}$ is a Gram matrix. This gram matrix is in turn expressed as $K_t=\Psi_t^\top \Psi_t$, wherein, $\Psi_t$ is a $d_{net}\times n$ matrix known as the \emph{neural tangent feature} (NTF) matrix, which is the collection of the gradient of the network output with respect to the network parameters, and whose $s^{th}$ column is given by $\Psi_t(s)=(\frac{\partial \hat{y}_{\Theta_t}(x_s)}{\partial \theta},\theta \in \Theta)$.
 
 
 \textbf{Question I (Optimisation):} \emph{What is the role of depth in training of DNNs? Why increasing depth till a point helps in training? Why increasing the depth beyond hurts training?}\\
@@ -81,8 +81,7 @@ Central to the contributions in this paper is the conceptual novelty of regardin
 
 \textbf{Paths (CN I ):}  A \emph{path} starts from an input node, passes through exactly one weight and one activation in each layer, and finally ends at the output node. Say for a FC-DNN with $d$ layers, and $w$ hidden gates per layer, there are $w(d-1)$ gates and a total of $P=d_{in}w^{(d-1)}$ paths. At time $t$, each path is associated with three important quantities namely i) its input node denoted by $\I(p)$, ii) its value $v_t(p)$ given by the products of the weights in the path, and  iii) its activation level for an input $x\in\R$, denoted by $A_t(x,p)$, which is given by the product of the activations of the gates in the path.
 
-\textbf{Neural Path Features (CG I):}  For an input example $x\in \R^{d_{in}}$, the \emph{neural path feature} (NPF) denote by $\phi_{x,t}\in \R^P$,  whose $p^{th}$ co-ordinate corresponding to path $p$ is given by $\phi_{x,t}(p)=x(\I(p))A_t(x,p)$. The 
-the predicted output of the DNN can then be expressed as:
+\textbf{Neural Path Features (CG I):}  For an input example $x\in \R^{d_{in}}$, the \emph{neural path feature} (NPF) denote by $\phi_{x,t}\in \R^P$,  whose $p^{th}$ co-ordinate corresponding to path $p$ is given by $\phi_{x,t}(p)=x(\I(p))A_t(x,p)$. The predicted output of the DNN can then be expressed as:
 \begin{align}\label{eq:npf}
 \text{(Zeroth Order)}\quad: \quad \hat{y}_t(x)=\sum_{p}x(\I(p))A_t(x,p)v_t(p)={\phi_{x,t}}^\top v_t, 
 \end{align}
@@ -99,9 +98,10 @@ from which we gather that the gradient flow has two components i) $\partial_{v}=
 
 \textbf{ReLU artefact or NTF vs NPF (CG IV):} Note that the left-hand side of \eqref{eq:npfgrad} is the neural tangent feature. We note that, in the case when $A_t(x,p)\in\{0,1\}$ (such as in DNN with ReLU activations)  $\partial_{\phi}=0$, and hence is not accounted for in the SGD update as well as the analysis. However, due to the SGD update, the gating value changes during training, and consequently the activations, the NPF, the NPK change during training (see the experiments in \Cref{sec:generalisation}). We believe the change of activations is key for generalisation, a fact which can explain the gap in generalisation performance \cite{} between the DNNs and the pure-kernel methods based on their static NTK counterparts.
 
-\textbf{Deep Gated Networks (CN II):} In order to better understand the role of $A_t(\cdot,\cdot)$ and $\partial_{\phi}$ in the optimisation and generalisation of DNNs, we develop the framework of deep gated networks (DGNs). In the DGN framework, the gating values are handled as independent variables. In our theory as well as experiments, we study the following useful gating regimes (GR): GR-(i)(\emph{frozen}), wherein, the activations $A_t(\cdot,\cdot)$ do not change with time, GR-(ii) (\emph{decoupled}), wherein, $A_t(\cdot,\cdot)$ is derived from a separate \emph{gating} network parameterised by $\Tg\in \R^{d_{net}}$,  GR-(iii) (\emph{adaptable}), wherein, $A_t(\cdot,\cdot)$ changes during training (this is the case of the standard DNNs with ReLU gates), and GR-(iv) (\emph{soft}), wherein, the hard-max indicator function of the ReLU is replaced by a soft-max sigmoidal function.
+\textbf{Separation of Gates (CN II):} In order to better understand the role of $A_t(\cdot,\cdot)$ and $\partial_{\phi}$ in the optimisation and generalisation of DNNs, we handle the gating values as independent variables. This enables us to set up various experiments such as freezing the gates (i.e., gating values do not change over time), copy the gating values from a different network, introduce soft-max type gating functions etc.
+%In our theory as well as experiments, we study the following useful gating regimes (GR): GR-(i)(\emph{frozen}), wherein, the activations $A_t(\cdot,\cdot)$ do not change with time, GR-(ii) (\emph{decoupled}), wherein, $A_t(\cdot,\cdot)$ is derived from a separate \emph{gating} network parameterised by $\Tg\in \R^{d_{net}}$,  GR-(iii) (\emph{adaptable}), wherein, $A_t(\cdot,\cdot)$ changes during training (this is the case of the standard DNNs with ReLU gates), and GR-(iv) (\emph{soft}), wherein, the hard-max indicator function of the ReLU is replaced by a soft-max sigmoidal function.
 
-\textbf{Optimisation (Key Results I):} In GR-(ii), when the weights are sampled from symmetric Bernoulli distribution taking values in $\{-\sigma,+\sigma\}$, we the following results that throw light on Question I: 
+\textbf{Optimisation (Key Results I):} In GR-(ii), when the weights are sampled from symmetric Bernoulli distribution taking values in $\{-\sigma,+\sigma\}$, we have the following results that throw light on Question I: 
 
 $1.$ $\E{K_0(s,s')}=d\sigma^{2(d-1)}H_0(s,s')=d\sigma^{2(d-1)}(x_s^\top x_{s'})\lambda_0(s,s')$. The ratio $\frac{{\lambda_0}(s,s')}{{\lambda_0}(s,s)}$ is the fractional overlap of active sub-networks, say at each layer the overlap of active gates is $\mu\in (0,1)$, then for a depth $d$, the fractional overlap decays at exponential rate, i.e., $\frac{{\lambda_0}(s,s')}{{\lambda_0}(s,s)}\leq \mu^d$, leading to whitening. Thus increasing depth till a point helps in training.
 
@@ -128,67 +128,12 @@ $\bullet$ At time $t$, for an input $x\in \R^{d_{in}}$, a path $p$ is associated
 In a DNN with ReLU activations, each input example can be associated with a gating pattern, i.e., the set of activations that are \emph{on} for that example. Note that, only the sub-network of those weights corresponding to these \emph{on} activations/gates are responsible for predicting the output. In this paper, we obtain several new insights related to Questions I and II by a formal study of the paths and gates.
 \end{comment}
 
-\begin{comment}
-\textbf{Organisation and Contributions:}\\
-\begin{comment}
-$\bullet$ \textbf{A study in paths:}  The first idea that is central to the analysis in this paper is that, we regard \emph{paths} to be the basic building blocks of DNNs. A path $p$, starts from an input node $i\in[d_{in}]$, passes through exactly one weight and one activation in each layer, and finally ends at the output node. For an FC-DNN with $d$ layers (depth), and $w$ hidden units per-layer, the total number of paths (denoted by $P$) starting from a given input node $i\in[d_{in}]$ is $w^{(d-1)}$. At time $t$, for an input $x\in \R^{d_{in}}$, a path $p$ is associated with two quantities namely: (i) the path value denoted by $v_t(p)$, which is the product of the weights in the path, and (ii) the path activation level denoted by $A_t(x,p)$ which is the product of the gates\footnote{In the case of DNN with ReLU activations/gates, $A_t(x,p) \in \{0,1\}$.} in the path. Note that the activation level of a path is dependent on the input and the value of a path is not dependent on the input.
-\end{comment}
-$\bullet$ In \Cref{sec:expressivity}, we first develop the framework of deep gated network (DGN), wherein, the gating values are handled as independent variables. The DGN framework enables us to control the gating pattern in a manner independent of the weights, a property which we use heavily in our theory and analysis to obtain several interesting insights. 
-
-$\bullet$ \textbf{Expressivity}  At time $t$, and input $x\in \R^{d_{in}}$, each path $p$ has three important quantities namely i) the input node denoted by $\I(p)$ at which the path starts, ii) its activation level $A_t(x,p)$, which is the product of the gating values in the path, and iii) its value $v_t(p)$, which is the product of the weights in the path. Using the path-view, we propose novel a \emph{neural path feature} and a \emph{neural path kernel}.
-\begin{enumerate}
-\item \textbf{Neural Path Feature:} For an input example $x\in \R^{d_{in}}$, the predicted output is given by $\hat{y}_t(x)={\phi_{x,t}}^\top v_t$, where, $\phi_{x,t}\in \R^P$ is the \emph{neural path feature}, whose $p^{th}$ co-ordinate corresponding to path $p$ is given by $\phi_{x,t}(p)=x(\I(p))A_t(x,p)$, and $v_t=(v_t(p),p\in[P])\in \R^P$ is vector values of all the paths.
-\item \textbf{Neural Path Kernel:} Associated with the NPF is a novel \emph{neural path kernel} (NPK) given by  $H_t(s,s')=(x_s^\top x_{s'})\lambda_t(s,s')$, where $\lambda_t(s,s')$ is a measure of similarity based on the path activation levels for inputs $s,s'$. For instance, in the case of DNNs, $\lambda_t(s,s')$ is a measure of the sub-networks that are simultaneously \emph{on} for both the inputs, capturing the intuition that if $s$ and $s'$ are similar, then their corresponding active sub-networks might also be similar. 
-
-%The input `signal' given by $(x^\top x)$ gets naturally separated from the `wires', i.e., the connections in the DGN, which is captured by $\lambda_t$. Note that, in $H_t$, the $(x^\top x)$ component is a constant, and only $\lambda_t$ changes with training. 
-\begin{comment}
-\item \textbf{Neural Path Kernel:} For an input example $x_s\in \R^{d_{in}}, s\in [n]$, the output of a DNN can be written as a cumulative summation of the contributions from various paths as \begin{align}\label{eq:npf} \hat{y}_{\Theta_t}(x_s)=\sum_{p} x_s(\I(p))A_t(x_s,p) v_t(p)\end{align}. Using this we can define an $P\times n$ \emph{neural path feature} (NPF) matrix $\Phi_t=\left[\phi_{x_1,t}\ldots,\phi_{x_n,t}\right]$, where $\phi_{x_s,t}=(\phi_{x_s,t}(p),p\in [P])\in \R^P$ with $\phi_{x_s,t}(p)=x_s(\I(p))A_t(x_s,p)$. Letting $v_t=(v_t(p),\p\in[P])\in \R^P$ and $\hat{y}_t=(\hat{y}_{\Theta_t}(x_s),s\in [n])\in \R^n$, the output of the DGN is given by $\hat{y}_t=\Phi_t^\top v_t$. This NPF based representation has the following interesting properties:
-\end{comment}
-\end{enumerate}
-Note that, in $H_t$ only $\lambda_t$ changes during training. 
-% In \Cref{sec:expressivity}, we formally specify the path-view.
-
-\begin{comment}
-\begin{enumerate}
-\item Associated with the NPF matrix is a novel \emph{neural path kernel} (NPK) matrix given by $H_t=\Phi_t^\top \Phi_t$, with a special \emph{Hadamard-product} structure, in that,  $H_t=(x^\top x)\odot\lambda_t$\footnote{$\odot$ stands for Hadamard product.}, where $x^\top x$ is the input Gram matrix and $\lambda_t(s,s')$ is a measure of similarity based on the path activation levels for inputs $s,s'\in [n]$. For instance, in the case of DNNs, $\lambda_t(s,s')$ is a measure of the sub-networks that are simultaneously \emph{on} for both the inputs, capturing the intuition that if $s$ and $s'$ are similar, then their corresponding active sub-networks might also be similar. 
-\item The input `signal' given by $(x^\top x)$ gets naturally separated from the `wires', i.e., the connections in the DGN, which is captured by $\lambda_t$. Note that, in $H_t$, the $(x^\top x)$ component is a constant, and only $\lambda_t$ changes with training. 
-\end{enumerate}
-
-$\bullet$ \textbf{A study in gates:} The second idea central to the paper is the framework of deep gated networks (DGNs), which, helps us to study the role of the gating pattern in the training and generalisation of DNNs. In a DGN, the output $x_{out}\in\R$ of a single neuron can be expressed in terms of the pre-activation input $x_{in}\in \R$ as  $x_{out}=x_{in}G$, where $G\in[0,1]$, and in general is an independent variable. DNNs with ReLU gates are a special case of DGNs, where $G=\mathbbm{1}_{\{x_{in}>0\}}$. Using the DGN framework we study the following gating strategies in this paper: i) frozen gates, wherein, the gating patterns of input examples does not change with time, and only the weights of the corresponding sub-network is trained by SGD, and ii) decoupled gates, wherein, the gating pattern is derived from a separate \emph{gating} network parameterised by $\Tg\in \R^{d_{net}}$,  iii) adaptable gates, wherein, the gating pattern changes during training (this is the case of the standard DNNs with ReLU gates), and iv) soft-gates, wherein, the hard-max indicator function of the ReLU is replaced by a softmax sigmoidal function.
-\end{comment}
-\begin{comment}
-We study various networks namely i) deep linear networks (DLN) where all the gating values are always $1$,  ii) DGNs with fixed random activation, wherein the gating values corresponding to an input example is sampled at random and held fixed during training iii) gated linear networks \cite{}, wherein, the gating pattern for an input is in turn derived from a separate network of similar architecture, iv) networks with frozen gates, wherein, the gating value is constant through training, v) networks with adaptable gates, wherein, the gating values change during training.
-\end{comment}
-\begin{comment} We make use of the framework of DGNs in order to obtain insights related to Questions I and II. In particular, we study various networks namely i) deep linear networks (DLN) where all the gating values are always $1$,  ii) DGNs with fixed random activation, wherein the gating values corresponding to an input example is sampled at random and held fixed during training iii) gated linear networks \cite{}, wherein, the gating pattern for an input is in turn derived from a separate network of similar architecture, iv) networks with frozen gates, wherein, the gating value is constant through training, v) networks with adaptable gates, wherein, the gating values change during training.
-\end{comment}
-
-%In what follows, we shall see that the NPK matrix plays a crucial role in optimisation as well as generalisation.
-$\bullet$ \textbf{Optimisation:} Under the assumptions that i) the weights are sampled from symmetric Bernoulli distribution taking values in $\{-\sigma,+\sigma\}$, and ii) the gates are frozen (non-trainable) and the weights are statistically independent of the gating pattern, we show that $\E{K_0}=d\sigma^{2(d-1)}H_0$, and $Var\left[K_0(s,s')\right]\leq O(\max\{\frac{d^2}{w}, \frac{d^3}{w^2}\})$ (for $\sigma^2=O(\frac{1}w)$). The key insights are:
-\begin{enumerate}
-\item The ratio $\frac{{\lambda_0}(s,s')}{{\lambda_0}(s,s)}$ is the fractional overlap of active sub-networks, say at each layer the overlap of active gates is $\mu\in (0,1)$, then for a depth $d$, the fractional overlap decays at exponential rate, i.e., $\frac{{\lambda_0}(s,s')}{{\lambda_0}(s,s)}\leq \mu^d$, leading to whitening. Thus increasing depth till a point helps in training.
-\item For large width $K_0$ converges to its expected value. However, for a fixed width, increasing depth makes the entries of $K_0$ deviate from $\E{K_0}$, thus degrading the spectrum of $K_0$. Thus increasing depth beyond a point hurts training performance.
-\end{enumerate}
-The results on $\E{K_0}$ and $Var\left[K_0\right]$ cannot be applied to DNNs with ReLU gates, since the weights and the gates are not independent. However, the results apply to GaLU networks, where the gating pattern is generated by a different network, and hence the statistical independence of weights and the gating pattern can be ensured. We also present experimental results to support the theory.
-
-%Once we have the right gating pattern, resetting the weights to be statistically independent of the gating pattern does has only a mild effect on the training and generalisation performance. 
-
-$\bullet$ \textbf{Generalisation:} We show via experiments on standard datasets such as MNIST and CIFAR that adaptable gates generalise better than frozen gates. In particular, for MNIST restricted to two labels, we experimentally verify that the quantity $y^\top (\widehat{H_t})^{-1}y$\footnote{For a matrix $H$, $\hat{H}=\frac{1}{trace(H)}H$ .} reduces as the training progresses. This shows that the eigenspaces of the NPK matrix align themselves in accordance to the labelling function. These experiments supports the fact that NPF and the NPK are indeed learnt during training. We develop preliminary theory to throw light on feature learning, and report the following interesting results:
-\begin{enumerate}
-\item \textbf{ReLU artefact}: We first observe from \eqref{eq:nfp} that ${\partial}\hat{y}_t(x_s) =  \underbrace{\phi^\top_{x_s,t} {\partial} v_t}_{\text{\emph{value-learning}}}+\underbrace{{\partial} \phi^\top_{x_s,t} v_t}_{\text{feature-learning}}$, i.e., the gradient of the output comprises of two components. In a standard DNN with ReLU gates, since the activations are either $0$ or $1$,  the term corresponding to \emph{feature-learning} is $0$, and does not appear in the SGD update, as well as in the analysis. However, as observed in the experiments, the gating pattern changes during training. 
-\item \textbf{Feature Learning:} 
-\end{enumerate}
-
-
-
-
-
-Lesson Learnt: Note that all this is a significant deviation
-
-
+\input{pathgate}
+\input{expressivity}
 %\input{abstract.tex}
 %\input{intro.tex}
 \input{optimisation.tex}
-%\input{generalisation.tex}
+\input{generalisation.tex}
 %\input{convnet.tex}
 %\input{related.tex}
 %\input{future.tex}

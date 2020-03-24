@@ -1,0 +1,60 @@
+\section{Notation: Deep Gated Network and Paths}
+\begin{table}[!htb]
+\begin{minipage}{0.5\columnwidth}
+%\begin{align*}
+%&p&\stackrel{def}=&(p(0),p(1),\ldots,p(d))\\%$, where $p(0)\in [d_{in}]$, $p(l)\in[w],\,\forall l\in[d-1]$ and $p(d)=1$. %We assume that the paths can be enumerated as $p=1,\ldots, P = d_{in}w^{d-1}$. Thus, throughout the paper, we use the symbol $p$ to denote a path as well as its index in the enumeration.
+%&v_t(p)&\stackrel{def}=&\Pi_{l=1}^d \Theta_t(l,p(l-1),p(l))\\
+%&A_{\G_t}(x_s,p)&\stackrel{def}{=}&\Pi_{l=1}^{d-1} G_{x_s,t}(l,p(l))
+%\end{align*}
+\resizebox{1.0\columnwidth}{!}{
+%\centering
+\begin{tabular}{|c|c|}\hline
+Quantity& Expression \\\hline
+Path& $p\stackrel{def}=(p(0),p(1),\ldots,p(d))$\\\hline
+\emph{Value} &$v_t(p)\stackrel{def}=\Pi_{l=1}^d \Theta_t(l,p(l-1),p(l))$ \\\hline
+\emph{Activation}& $A_{t}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,t}(l,p(l))$\\\hline
+%$\begin{aligned}\text{\emph{Gradient}}\\ \text{\emph{w.r.t}~} \theta(m)\end{aligned}$ & $\varphi_{t,p}(m)=\underset{l\neq l'(m)}{\underset{l=1}{\overset{d}{\Pi}}} \Tv_t(l,p(l-1),p(l))$\\\hline
+\end{tabular}
+}
+\end{minipage}
+\begin{minipage}{0.5\columnwidth}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{|c|c|}\hline
+Quantity& Expression \\\hline
+Input layer & $z_{x_s,\Theta_t}(0)=x_s$ \\\hline
+Pre-activation & $q_{x_s,\Theta_t}(l)={\Theta_t(l)}^\top z_{x_s,\Theta_t}(l-1)$\\\hline
+Layer output & $z_{x_s,\Theta_t}(l)=q_{x_s,\Theta_t}(l)\odot G_{x_s,t}(l)$ \\\hline
+Final output & $\hat{y}_t(x_s)={\Theta_t(d)}^\top z_{x_s,\Theta_t}(d-1)$\\\hline
+\end{tabular}
+}
+%\resizebox{\columnwidth}{!}{
+%\centering
+%\begin{tabular}{|c|c|c|}\hline
+%Gating Network & Value Network\\\hline
+%$z_{x,\Tg_t}(0)=x$ & $z_{x,\Tv_t}(0)=x$ \\\hline
+% $q_{x,\Tg_t}(l)={\Tg_t(l)}^\top z_{x,\Tg_t}(l-1)$ & $q_{x,\Tv_t}(l)={\Tv_t(l)}^\top z_{x,\Tv_t}(l-1)$\\\hline
+% $z_{x,\Tg_t}(l)=q_{x,\Tg_t}(l)\odot G_{x,\Tg_t}(l)$ & $z_{x,\Tv_t}(l)=q_{x,\Tv_t}(l)\odot G_{x,\Tg_t}(l)$ \\\hline
+% \multicolumn{2}{|c|}{$\hat{y}_{t}(x)={\Tv_t(d)}^\top z_{x,\Tv_t}(d-1)$}\\\hline 
+% \multicolumn{2}{|c|}{$\begin{aligned}\beta >0: G_{x,\Tg_t}(l,i)&=\chi_{\epsilon}(-\beta q_{x,\Tg_t}(l,i)), \\ \beta=\infty: G_{x,\Tg_t}(l,i)&=\mathbbm{1}_{\{q_{x,\Tg_t}(l,i)>0\}}\end{aligned}$}\\\hline 
+%\end{tabular}
+%}
+%\caption{A DGN with parameterised gates. Here, for $\epsilon\geq 0$ is a hyper-parameter, and $\chi_{\epsilon}(v)=\frac{1+\epsilon}{1+\exp(v)}, \forall v\in \R$.}
+%\label{tb:dgn-parameterised}
+\end{minipage}
+\caption{The table in the left specifies the quantities related to the paths. The table in the right specifies a parameterised deep gated network (DGN).  Please refer to the text below for further description.}
+\label{tb:dgn-path}
+\end{table}
+\textbf{Zeroth order quantities of path (\Cref{tb:dgn-path}):} In an FC-DNN, with $d$ layers and $w$ hidden units per layer, the total number of paths is given by $P=d_{in}w^{(d-1)}$. For a path $p$, $p(0)\in [d_{in}]$, $p(l)\in[w],\,\forall l\in[d-1]$ and $p(d)=1$. We assume that the paths can be enumerated as $p=1,\ldots, P = d_{in}w^{d-1}$. Thus, throughout the paper, we use the symbol $p$ to denote a path as well as its index in the enumeration. Here, $\Theta(l,i,j)$ denotes the weight connecting node $i$ of layer $l-1$ to node $j$ of layer $l$. We also use an alternate notation for the weights, in that, we assume that the weights can be enumerated as $\theta(1),\ldots,\theta(d_{net})$. 
+
+\textbf{First order quantities of path (\Cref{tb:dgn-path}):} We use $p\rsa (\cdot)$ to denote the fact that path $p$ passes through $(\cdot)$, which is either a node or a weight.  For $m\in[d_{net}]$, let $l'(m)$ denote the layer a weight $\tv(m)$ belongs to, and let $p\rsa\tv(m)$, then the sensitivity of path with respect to $\tv(m)$ at time $t$ is given by $\varphi_{t,p}(m)$. Note that, for $\tv(m)$ such that $p\bcancel{\rsa}\tv(m)$, it follows that $\varphi_{t,p}(m)=0$. The gradient of the path with respect to all the weights can be collected in a vector as $\varphi_{t,p}=(\varphi_{t,p}(m),m\in[d_{net}])\in\R^{d_{net}}$, which has only exactly $d$ non-zero co-ordinates.
+\begin{comment}
+\textbf{Deep Gated Network (\Cref{tb:dgn-path}):}  A parameterised DGN consists of two networks namely the \emph{gating} network (parameterised by $\Tg\in \R^{d_{net}}$),  which is responsible for producing the gating values, and a \emph{value} network (parameterised by $\Tv\in\R^{d_{net}}$ ), which is responsible for predicting the output. For layer $l\in[d-1]$, the pre-activation input, the output, the gating values are denoted by $q(l)\in\R^w, z(l)\in\R^w$ and $G(l)\in(0,1+\epsilon)^w$ respectively (dependence on the input $x\in \R^{d_{in}}$, and the underlying parameter is shown in the subscript). In \Cref{tb:dgn-path}, $\odot$ stands for the \emph{Hadamard} product. Note that a separate gating network is always not necessary: at time $t$, by specifying the gating values for all the $n$ input example in $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],l\in[d-1],i\in[w]\}$ (where $G(l,i)$ is the gating of $i^{th}$ node in $l^{th}$ layer), we can recover the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset as $\hat{y}_t(x_s)=\sum_{p\in P}x_s(p(0))A_t(x_s,p)v_t(p)$. A DGN is denoted by $\N(G_t;\Tv_t)$ and a parameterised DGN is denoted by $\N(\Tg_t,\beta;\Tv_t)$ ($\epsilon>0$ is treated as a hyper-parameter and is hence left out of the notation). The following points are to be noted:
+
+$1.$ The soft-max sigmoidal gating (or soft-ReLU) function $\chi_\epsilon$ takes values in $(0,1+\epsilon)$. The soft-ReLU is differentiable, and hence $A_t(x,p)$ is differentiable.
+
+$2.$ The DNN with ReLU activations is a special case and can be denoted by $\N(\Tg_t,\beta;\Tv_t)$.
+
+$3.$ The DNG framework enables us to study various gating regimes, an aspect which will be used extensively in in \Cref{sec:generaisation}.
+\end{comment}
+%In particular, to understand the optimisation problem, we first look at $\N(\G_{\dagger};\Tv_t)$ and $\N(\Tg_{\dagger}, \infty;\Tv_t)$, where the gates are \emph{frozen}\footnote{$\dagger$ stands for parameters or quantities that do not change over time.} and \emph{decoupled}. Then we look at \emph{frozen} and learned gates, i.e., we train 
+
