@@ -92,7 +92,7 @@ $5.$ $\N(\Tg_t,\beta;\Tv_{\dagger})$ is a network where only the gating paramete
 \end{comment}
 
 \subsection{Feature Learning: Preliminary analysis }
-
+\begin{comment}
  \textbf{Hard gate/ReLU artefact:} 
 %We refer to the function $\chi_\epsilon(v)$ in \Cref{tb:dgn-parameterised} as the \emph{soft} gating function.
 The NTF matrix has two components given by $\Psi_t(m,s)={\phi_{x_s,\G_t }^\top\frac{\partial w_{t}} {\partial \theta(m)}+ \frac{\partial \phi_{x_s,\G_t }^\top}{\partial \theta(m)} w_{t}}$. In the case of ReLU activation, the gating values are either $0/1$, the activation levels are also $0/1$ and hence their derivative is $0$. Thus, in the case of standard DNN with ReLU activations the change in the gating pattern with respect to time (captured by $\frac{\partial \phi_{x_s,\G_t }^\top}{\partial \theta(m)} w_{t}$) is unaccounted for both in analysis as well as in the gradient descent update rule, i.e., when a gradient step is taken, it is not known beforehand the effect of the gradient step on the gating pattern. 
@@ -110,7 +110,7 @@ For a soft-GaLU DGN, using any $i\in[d_{in}]$, define $\delta(s,s')\stackrel{def
 \begin{lemma} Under Assumptions~\ref{assmp:mainone},~\ref{assmp:maintwo}, in soft-GaLU networks we have: (i) $\E{K_0}=\E{K^w_0}+\E{K^a_0}$, 
  (ii) $\E{K^w_0}=\sigma^{2(d-1)} (x^\top x)\odot \lambda$,  (iii) $\E{K^a_0}=\sigma^{2d}  (x^\top x)\odot \delta$
 \end{lemma}
-
+\end{comment}
 Recall that $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i) \in [0,1], \forall s\in[n],l\in[d-1],i\in[w]\}$. We now define the following:
 
 $\bullet$ \textbf{Active Gates:} For an input $x_{s}\in \R^{d_{in}}$, and a threshold value $\tau_{\A}\in (0,1+\epsilon)$, define $\G_t^{\A}(x_s,\tau_{\A})\stackrel{def}=\left\{G_{x_s,t}(l,i)\colon G_{x_s,t}(l,i)> \tau_{\A}, l\in[d-1],i\in[w]\right\}$. These are the gates that are \emph{on} (i.e., more than threshold $\tau_{\A}$) for input $x_s\in\R^{d_{in}}$.
