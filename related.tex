@@ -1,0 +1,10 @@
+\section{Related Work}
+\cite{dudnn} show that in fully connected DNNs with $w=\Omega(poly(n)2^{O(d)})$, and in residual neural networks (ResNets) with $w=\Omega(poly(n,d))$ gradient descent converges to zero training loss. \cite{dudnn} claim to demystify the second part of what we called the depth phenomena (``why deeper networks are harder to train"), since, the dependence on the number of layers improves exponentially for ResNets. Our optimisation results are weaker than \cite{dudnn} in the sense that we consider only DGNs with decoupling assumptions. However, we show both parts of the depth phenomena, in particular why increasing depth till a point helps training. 
+
+\begin{comment}Further, the \emph{algebraic} nicety due to \emph{Hadamard} product decomposition of the Gram matrix is a useful take away. In addition, the connection to how the sub-network overlap is a conceptual gain. 
+In comparison to \cite{dudln} the gain in our work is that, thanks to the path-view, we obtain a single expression for $\E{K_0}$ which can be applied to deep linear networks, GaLU networks and any networks whose gating values are known and fixed. Both \cite{dnn,dln} are analytically more involved, in that they provide guaranteed rates of converges with high probability, and in comparison, our work has stopped with the variance calculation.
+\end{comment}
+In comparison to \cite{sss} who were the first to initiate the study on GaLU networks, we believe, our work has made significant progress. We introduced adaptable gates, and showed via experiments, that, gate adaptation is key in learning, thereby showing a clear separation between GaLU and ReLU networks. To support the claim, we have used idea from \cite{arora}, in that, we measure $\nu_t=y^\top {K_t}^{-1}y$ to show that the eigen spaces indeed align with respect to the labelling function.
+
+In comparison to \cite{lottery}, we also show in our experiments that the winning lottery is in the gating pattern, which, in the case of ReLU networks is inseparable from the weights. However, our experiments show that the weights can be reinitialised if we have the learned gating pattern.
+

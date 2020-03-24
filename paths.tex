@@ -1,0 +1,233 @@
+\section{Paths}\label{sec:path}
+%\subsection{Zeroth Order Terms}
+\textbf{Vectorised Notation:} Given a dataset $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$, let data be represented as matrices $x\in\R^{d_{in}\times n}$ and $y\in \R^n$ with the convention that $x_s=x(\cdot,s)\in\R^{d_{in}}$ and $y_s=y(s)\in \R$. For the purpose of this section we follow the vectorised notation in \Cref{tb:dgnvector}.
+
+\FloatBarrier
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}\hline
+Input layer & $x(s,i,0) =x(i,s)$ \\\hline
+Pre-activation& $q_t(s,i,l)= {\Theta_t(l,\cdot,i)}^\top x_t(s,\cdot,l-1) $ \\\hline
+Layer output & $x_t(s,i,l)= q_t(s,i,l) G_t(s,i,l)$ \\\hline
+Final output & $\hat{y}_t(x)={\Theta_t(d,\cdot,1)}^\top x_t(s,\cdot,d-1)$\\\hline
+\end{tabular}
+\caption{A deep gated network in the vectorised form. $l=1,\ldots,d-1$ denote the intermediate layers.}
+\label{tb:dgnvector}
+\end{table}
+
+
+
+
+The idea behind the ``path view'' is to regard the given neural network as multitude of connections from input to output.  We now describe the zeroth and first order terms in the language of paths.
+\begin{definition}[Neural Path]
+Let $\P=[d_{in}]\times [w]^{d-1}$ be a cross product of index sets. Define a path $p$ by $p\stackrel{def}=(p(0),p(1),\ldots,p(d-1))\in \P$, where $p(0)\in [d_{in}]$, and $p(l)\in[w],\forall l\in[d-1]$. 
+\end{definition}
+
+A path $p$ starts at an input node $p(0)$ goes through nodes $p(l)$ in layer $l\in[d-1]$ and finishes at the output node .%(see \Cref{fig:path}%\todoch{Need to add a diagram like the recent lottery ticket weight Vivek Ramanujam paper.}). 
+%In what follows, we use $p\rsa (\cdot)$ to denote the fact that path $p$ passes through node $(\cdot)$, where $(\cdot)$ is an input node, or a weight in some layer, or a hidden node.
+
+\begin{definition}\label{def:strength}[Strength]
+Each path is also associated with a strength given by: $w_t(p)=\Pi_{l=1}^d \Theta_t(l,p(l-1),p(l))$
+%\begin{align}
+%$w_t(p)=\Pi_{l=1}^d \Theta_t(l,p(l-1),p(l))$
+%\end{align}
+\end{definition}
+
+\begin{definition}\label{def:activity}[Activation Level]
+The activity of a path $p$ for input $s$ is given by: $A(s,p)=\Pi_{l=1}^d G(s,p(l),l)$
+%\begin{align}
+%$A(s,p)=\Pi_{l=1}^d G(s,p(l),l)$
+%\end{align}
+\end{definition}
+In the case when $G\in \{0,1\}$ it also implies that $A\in \{0,1\}$.  %Thus $A(s,p)$ tells us whether the path $p$ is \emph{active} when $s^{th}$ input example is presented to the network.
+
+\begin{definition}\label{def:feature}[Neural Feature]
+Given a gating pattern $\G_t$, define 
+\begin{align}
+\phi_{x_s,\G_t}(p)\stackrel{def}=x(p(0),s) A_{\G_t}(x_s,p),
+\end{align}
+and let $\phi_{x_s,\G_t}=(\phi_{x_s\G_t}(p),p\in [P])\in \R^P$ be the hidden feature corresponding to input $x_s$. Let $\Phi_{x,\G_t}=\left[\phi_{x_1,\G_t}| \ldots |\phi_{x_n,\G_t}\right]\in \R^{P\times n}$ be the feature matrix obtained by stacking the features $\phi_{x_s,\G_t}$ of inputs $x_s\in \R^{d_{in}}$ column-wise.
+\end{definition}
+
+\comment{
+\textbf{Predicted} output of the network is given in terms of the paths by $\hat{y}_{t}(s)=\sum_{p\in P} x(p(0),s) A_{\G_t}(x_s,p) w_t(p)$, i.e., 
+\begin{align}\label{eq:zeroth}
+\hat{y}_{t}(s)=\Phi_{x,\G_t}^\top w_{t}
+\end{align}
+
+%\begin{figure}
+%\centering
+%\includegraphics[scale=0.2]{mickey.png}
+%\caption{Some picture to break the monotony}
+%\end{figure}
+
+%\textbf{Sub-networks:} %An important fact that can be seen as an immediately from the path based representation is that DGNs 
+\textbf{Sub-networks:}  In DGNs similarity of two different inputs $x_s,x_{s'}\in \R^{d_{in}}, s,s' \in [n]$ depends on the overlap of path that are \emph{active} for both inputs. This can be seen by noting that $\phi_{x_s,\G_t}^\top \phi_{x_s,\G_t}=\sum_{i=1}^{d_{in}} x(i,s)x(i,s') \underset{p\rsa i}{\sum} A_{\G_t}(x_s,p) A_{\G_t}(x_{s'},p)$. Consider for instance a DGN whose gating values are in $\{0,1\}$, and say $n=2$, i.e., the dataset contains only two inputs $x_1,x_2\in \R^{d_{in}}$. From \eqref{eq:pathsim} it is clear that if inputs $x_1,x_2$ do not share any common \emph{active} paths throughout training, then they are \emph{orthogonal} to each other, because $A_{\G_t}(s,p) A_{\G_t}(s',p)=0, \forall p\in [P]$. This makes intuitive sense because in this case, it is as though there are two parallel networks (while the weights can be shared, the paths are not). Thus it is clear from the path based representation in \eqref{eq:zeroth} and \eqref{eq:pathsim}, the gating pattern $\G_t$ plays are crucial role in DGNs via the activation levels $A_{\G_t}(\cdot,\cdot)$.
+%\subsection{First Order Terms}
+The feature $\phi_{x_s,\G_t}$ in \Cref{def:feature} as well as the strength $w_t$ in \Cref{def:strength} are $P$-dimensional quantities. However, loosely speaking, the DGN has only as much \emph{degrees of freedom} as the number of trainable parameters (which we denote by $d_{net}$). 
+\begin{definition}[Neural Tangent Features] The  $d_{net}\times n$ NTF matrix is defined as $\Psi_t(m,s)\stackrel{def}=\frac{\partial \hat{y}_{t}(x_s)}{\partial \theta(m)},m\in [d_{net}], s\in [n]$. 
+\comment{
+\begin{align}\label{eq:split}
+\begin{split}
+&\Psi_t(m,s) = \frac{\partial \hat{y}_t(x_s)}{\partial \theta(m)}\\
+&=\frac{\partial }{\partial \theta(m)}\left(\sum_{p\in P} x(p(0),s) w_{t}(p) A_{\G_t}(s,p)\right),\\
+&=\underbrace{\left(\sum_{p\in P} x(p(0),s) \frac{\partial w_{t}(p)}{\partial \theta(m)} A_{\G_t}(s,p)\right)}_{\text{sensitivity of strength}}\\
+&\quad\quad\quad\quad\quad\quad\quad\quad+\\
+&=\underbrace{\left(\sum_{p\in P} x(p(0),s) w_{t}(p) \frac{\partial A_{\G_t}(s,p)}{\partial \theta(m)}\right)}_{\text{sensitivity of activations}}
+\end{split}
+\end{align}
+
+\begin{align}\label{eq:split}
+\begin{split}
+&\Psi_t(m,s) = \frac{\partial \hat{y}_t(x_s)}{\partial \theta(m)}\\
+&=\frac{\partial }{\partial \theta(m)}\left(\sum_{p\in P} x(p(0),s) w_{t}(p) A_{\G_t}(s,p)\right),\\
+&=\underbrace{\left(\sum_{p\in P} x(p(0),s) \frac{\partial w_{t}(p)}{\partial \theta(m)} A_{\G_t}(s,p)\right)}_{{\Psi^w_{t}(m,s)}}\\
+&\quad\quad\quad\quad\quad\quad\quad\quad+\\
+&=\underbrace{\left(\sum_{p\in P} x(p(0),s) w_{t}(p) \frac{\partial A_{\G_t}(s,p)}{\partial \theta(m)}\right)}_{{\Psi^a_t(m,s)}}
+\end{split}
+\end{align}
+}
+\comment{
+\begin{align}\label{eq:split}
+\begin{split}
+\Psi_t(m,s) &= \underbrace{\left(\sum_{p\in P} x(p(0),s) \frac{\partial w_{t}(p)}{\partial \theta(m)} A_{\G_t}(s,p)\right)}_{{\Psi^w_{t}(m,s)}}\\
+&\quad\quad\quad\quad\quad\quad\quad\quad+\\
+&=\underbrace{\left(\sum_{p\in P} x(p(0),s) w_{t}(p) \frac{\partial A_{\G_t}(s,p)}{\partial \theta(m)}\right)}_{{\Psi^a_t(m,s)}}
+\end{split}
+}
+\begin{align}\label{eq:split}
+\begin{split}
+\Psi_t(m,s) &= \Psi^w_{t}(m,s)+\Psi^a_{t}(m,s), \,\text{where}\\
+\Psi^w_{t}(m,s)&={\left(\sum_{p\in P} x(p(0),s) \frac{\partial w_{t}(p)}{\partial \theta(m)} A_{\G_t}(s,p)\right)}\\
+\Psi^a_{t}(m,s)&={\left(\sum_{p\in P} x(p(0),s) w_{t}(p) \frac{\partial A_{\G_t}(s,p)}{\partial \theta(m)}\right)}
+\end{split}
+\end{align}
+
+
+\end{definition}
+
+\textbf{Strength and Gate adaptation:} From \eqref{eq:split} it is clear that there are two \emph{atomic} components to the gradient of the output $\hat{y}_t(x_s)$ with respect to any trainable weight $\theta(m), m=1,\ldots, d_{net}$, namely \emph{neural tangent feature of strength} denoted by $\Psi^w_{t}\in \R^{d_{net}\times n}$ and \emph{neural tangent feature of activations} denoted by $\Psi^a_{t}\in \R^{d_{net}\times n}$. %Before we separately define these two \emph{atomic} components, we would like to mention that as a result of the $\frac{\partial A_{\G_t}(s,p)}{\partial \theta(m)}$ term, gates adapt all throughout training, which in turn affect the output (see \eqref{eq:zeroth}) via $A_{\G_t}$.
+
+}
+
+
+\comment{
+\begin{definition}[Neural Tangent Features of Path Activations (NTFPA)]
+\begin{align}
+\varphi^a_{t,p}\stackrel{def}{=}\left(\frac{\partial w_{t}(p)}{\partial \theta(m)},m\in[d_{net}]\right)\in \R^{d_{net}},
+\end{align}
+\end{definition}
+
+\begin{remark}
+Let $\theta(m)$ belong to layer $l'\in [d-1]$, then 
+\begin{align*}
+\varphi^a_{t,p}(m)&=0, \forall p\bcancel{\rsa}\theta(m)
+\end{align*}
+\end{remark}
+
+Using the sensitivity of strengths and activations at the level of resolution of paths, we now define the neural tangent feature (NTF) for the strengths and activations.
+
+\begin{definition}\label{def:ntf}[Neural Tangent Features]
+\begin{align}
+\begin{split}
+\Psi^w_t(m,s) &=\left(\sum_{p\in P} x(p(0),s) \frac{\partial w_{t}(p)}{\partial \theta(m)} A_{\G_t}(s,p)\right)\\
+\Psi^a_t(m,s) &=\left(\sum_{p\in P} x(p(0),s) w_{t}(p) \frac{\partial A_{\G_t}(s,p)}{\partial \theta(m)}\right)\\
+\Psi_t(m,s)&=\Psi^w_t(m,s)+ \Psi^a_t(m,s)
+\end{split}
+\end{align}
+\end{definition}
+
+
+\begin{definition}[Interaction Coefficient]
+\begin{align*}
+&\lambda^{s,s'}_t(i)\stackrel{def}=\underset{p_1,p_2\rsa\theta(m),i}{\sum_{p_1,p_2\in P:}}  \varphi_{t,p_1}(m)A(s,p_1)  \varphi_{t,p_2}(m) A(s',p_2)
+\end{align*}
+\end{definition}
+
+\begin{lemma}
+\begin{align*}
+{K^w_t(s,s')}=\sum_{i=1}^{d_{in}} x(i,s)x(i,s') \lambda^{s,s'}_t(i)
+\end{align*}
+\end{lemma}
+
+\begin{assumption}\label{assmp:main}\hfill
+\begin{enumerate}
+\item $\G_0$ is statistically independent of $\Theta_0$.
+\item $\Theta_0\stackrel{iid}\sim Ber(\frac{1}{2})$ over the set $\{-\sigma,+\sigma\}$. 
+\end{enumerate}
+\end{assumption}
+
+\textbf{Remarks on Assumption~\ref{assmp:main}}
+In a standard DNN with ReLU activations, the activations and weights are not statistically independent because conditioned on the fact that a ReLU is \emph{on}, the incoming edges cannot be simultaneously all $-\sigma$. We side step this issue by the first condition in Assumption~\ref{assmp:main}, wherein, we assume that  gating is statistically independent of the weights $\Theta_0$. This clears the way to carry out the algebra of paths, which can be boiled down in simple words as the effect on weights in the direction of one path does not affect the contribution of any other path in expectation. This is captured in Lemma~\ref{lm:pathdot} below.
+\begin{figure}
+\centering
+\includegraphics[scale=0.2]{mickey.png}
+\caption{Shows that the incoming weights of a ReLU gate which are \emph{on} are not symmetrically distributed.}
+\end{figure}
+
+\begin{lemma}\label{lm:pathdot}
+Let $\theta(m)$ be an arbitrary weight in layer $l'\in [d-1]$, under Assumption~\ref{assmp:init} we have for paths $p,p_1,p_2\rsa\theta(m), p_1\neq p_2$
+\begin{align*}
+\E{\varphi_{\Tb,p_1}(m)\varphi_{\Tb,p_2}(m)}= &0\\
+\E{\varphi_{\Tb,p}(m)\varphi_{\Tb,p}(m)}= &\left(\frac{2\sigma^2}{w}\right)^{d-1}
+\end{align*}
+\end{lemma}
+\begin{proof}
+If $\theta$
+Note that $\varphi_{\Tb,p}=\underset{l\neq l'}{\underset{l=1}{\overset{d}{\Pi}}} \Tb(l,p(l-1),p(l))$. Hence
+\begin{align*}
+&\E{\varphi_{\Tb,p_1}(m)\varphi_{\Tb,p_2}(m)}\\
+&=\E{\underset{l\neq l'}{\underset{l=1}{\overset{d}{\Pi}}} \Bigg(\Tb(l,p_1(l-1),p_1(l))\Tb(l,p_2(l-1),p_2(l)) \Bigg)}\\
+&=\underset{l\neq l'}{\underset{l=1}{\overset{d}{\Pi}}}\E{\Tb(l,p_1(l-1),p_1(l))\Tb(l,p_2(l-1),p_2(l))}
+\end{align*}
+
+Since $p_1\neq p_2$, in one of the layers $\tilde{l}\in[d-1],\tilde{l}\neq l'$ they do not pass through the same weight. Using this fact
+\begin{align*}
+&\E{\varphi_{\Tb,p_1}(m)\varphi_{\Tb,p_2}(m)}\\
+&=\left(\underset{l\neq l',\tilde{l}}{\underset{l=1}{\overset{d}{\Pi}}}\E{\Tb(l,p_1(l-1),p_1(l))\Tb(l,p_2(l-1),p_2(l))}\right)\\
+&\Bigg(\E{\Tb(\tilde{l},p_1(\tilde{l}-1),p_1(\tilde{l}))}\E{\Tb(\tilde{l},p_2(\tilde{l}-1),p_2(\tilde{l}))}\Bigg)\\
+&=0
+\end{align*}
+\end{proof}
+
+
+\begin{definition}[Path Similarity]
+\begin{align*}
+\mu^{s,s'}(i)=\sum_{m=1}^{d_{net}} \underset{p\rsa\theta(m)}{\sum_{p\in P: p(0)=i}}A(s,p) A(s',p)
+\end{align*}
+
+\end{definition}
+
+\begin{lemma}
+\begin{align*}
+\mathbf{E}_{\Theta_0}\left[\lambda^{s,s'}_0(i)\right]=\sigma^{2(d-1)}\mu^{s,s'}(i)
+\end{align*}
+\end{lemma}
+
+\begin{theorem}\label{th:dgnexp}
+ Under Assumption~\ref{assmp:main}
+ \begin{align*}
+\mathbf{E}_{\Theta_0}\left[K_0(s,s')\right]=\sigma^{2(d-1)}\sum_{i=1}^{d_{in}}x(i,s) x(i,s')\mu^{s,s'}(i)
+\end{align*}
+
+\end{theorem}
+\begin{proof}
+See Appendix.
+\end{proof}
+
+\begin{theorem}\label{th:dgnvar}
+ Under Assumption~\ref{assmp:main} $Var\left[K_0\right]\leq $
+\end{theorem}
+
+}
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was created
+% by Iain Murray in 2018, and modified by Alexandre Bouchard in
+% 2019. Previous contributors include Dan Roy, Lise Getoor and Tobias
+% Scheffer, which was slightly modified from the 2010 version by
+% Thorsten Joachims & Johannes Fuernkranz, slightly modified from the
+% 2009 version by Kiri Wagstaff and Sam Roweis's 2008 version, which is
+% slightly modified from Prasad Tadepalli's 2007 version which is a
+% lightly changed version of the previous year's version by Andrew
+% Moore, which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.

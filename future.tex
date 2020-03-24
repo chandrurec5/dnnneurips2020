@@ -1,0 +1,55 @@
+\section{Conclusion }
+\begin{comment}
+In this paper, we looked at the gradient descent (GD) procedure to minimise the squared loss in deep neural networks. Prior literature \cite{dudnn} makes trajectory analysis (wherein the dynamics of the error terms are studied) to show that GD achieves zero training error. In this paper, we introduced to important conceptual novelties namely deep gated networks (DGNs) and path-view, to obtain additional insights about GD in the context of trajectory analysis. In particular, our theory threw light on i) the depth phenomena and ii) gate adaptation, i.e., the role played by the dynamics of the gates in generalisation performance.
+
+The path-view lead following gains: (i) an explicit expression of information propagation in DGNs where in the input signal and the wires, i.e., the deep network itself are separated. This is unlike the conventional layer by layer approach, wherein, the input is lost in the hidden layers, (ii) explicitly identifying the role of sub-networks in training and generalisation of deep networks, so much so that, we can go so far as to say that the actual \emph{hidden features are in the paths and the sub-networks and not just the final layer output}, (iii) explicit identification of twin gradient flow, wherein, one component of the gradient flow to train the paths keeping the sub-network constant and the other component of the gradient takes care of learning the gating values.
+
+We looked at various DGNs with adaptable gates and we observed  in experiments that the adaptable/learned gates generalise better than non-adapting/non-learned gates.  Based on our theory and experiments, we conclude that \emph{understanding generalisation would involve a study of gate adaptation}.
+\end{comment}
+\begin{comment}
+In this paper, we introduced to important conceptual novelties namely deep gated networks (DGNs) and path-view, to obtain additional insights about gradient descent in deep learning. The path-view lead to the following gains: (i) an explicit expression of information propagation in DGNs (ii) explicitly identifying the role of sub-networks in training and generalisation of deep networks, (iii) explicit identification of twin gradient flow, wherein, one component of the gradient flow to train the path strengths keeping the sub-network constant and the other component of the gradient takes care of learning the gating values. Using the path-view and the DGNs, we showed  i) the depth helps is equivalent to whitening of data and increasing depth beyond degrades the spectrum of the Gram matrix at initialisation, and ii) gate adaptation, i.e., the role played by the dynamics of the gates is important for generalisation performance.
+
+We looked at various DGNs with adaptable gates and we observed  in experiments that the adaptable/learned gates generalise better than non-adapting/non-learned gates.  Based on our theory and experiments, we conclude that \emph{understanding generalisation would involve a study of gate adaptation}.
+\end{comment}
+
+In this paper, we introduced two important conceptual novelties namely deep gated networks (DGNs) and ``path-view", to obtain additional insights about gradient descent in deep learning. Using these two novel concepts, we achieved the following:
+
+ (i) resolution to the depth phenomena for DGNs under decoupling assumption. In particular, our results showed that increasing depth is equivalent to whitening of data and increasing depth beyond a point degrades the spectrum of the Gram matrix at initialisation.
+ 
+ (ii) each input example has a corresponding active sub-network, which are learned when the gates adapt.
+ 
+ (iii) a preliminary theory to analyse gate adaptation. Our analysis points out to the presence of two complementary networks for each input example, one being the active sub-network which holds the memory for that input example and the other being the sensitivity sub-network of gates that are adapting.
+ 
+(iv) we looked at various DGNs with adaptable gates and we observed  in experiments that the adaptable/learned gates generalise better than non-adapting/non-learned gates.  
+
+Based on our theory and experiments, we conclude that :
+
+(a) \emph{Hidden features are in the active sub-networks,} which are in turn decided by the gates.
+
+(b) \emph{Understanding generalisation would involve a study of gate adaptation.}
+
+
+
+\begin{comment}
+Let $\gamma>0$ be a threshold value, and let $G_{x_s,\Tg_t}(l,i)$ denote the gating value node $i$ in layer $l$. We say that the gate to be \emph{transitioning} for input $s\in[n]$, and weight $\tg(m),m\in[d_{net}]$ if
+ \begin{align}
+ \left|\frac{\partial G_{x_s,\Tg_t}(l,i)}{\partial \tg(m)}\right|>\gamma,
+ \end{align}
+ and define a gate to be \emph{flipped} otherwise. Note that,
+\begin{align}\label{eq:sensitivepath}
+\begin{split}
+&\partial_{m}A_{\Tg_t}(x_s,p)=\partial_{m}\Pi_{l=1}^{d-1} G_{x_s,\Tg_t}(l,p(l))\\
+&=\sum_{l=1}^{d-1} \partial_{m} G_{x_s,\Tg_t}(l,p(l)) \left(\Pi_{l'\neq l} G_{x_s,\Tg_t}(l',p(l'))\right)
+\end{split}
+\end{align}
+
+\textbf{Remark:}
+
+i) As $\beta\uparrow\infty$, the soft-ReLU gate resembles the ReLU gate. Thus for a given input example $s$, the gates whose pre-activation inputs have a large absolute value will be close to either $0$ or $1$, and one can always find a high enough $\beta$ such that their sensitivity to $\tg(m)$ is less than $\gamma$.
+
+ii) For an input examples $s,s'\in[n]$, if a path $p$ is active (even for one of the inputs), i.e., $A(x_s,p)\approx 1$, then none of the gates in the path will be sensitive, and hence the magnitude contribution of such as path to the summation in $\delta$ is close to $0$.
+
+iii) For an input examples $s,s'\in[n]$, consider a non-active path, such that all gates close to $1$ except for one of the gates (i.e., the right hand side of \eqref{eq:sensitivepath} is non-zero), which is transitioning. Such paths will make a significant contribution to $\delta$ term. We call the set of such paths the sensitive sub-network.
+
+Based on the above discussion one can say  that a DGN with adaptable gates (which includes standard DNN with ReLU gates), at initialisation, has two kinds of sub-networks for every input example i) the active sub-network comprised of path for which $A(x_s,p)=1$\footnote{or $A(x_s,p)$  is above a given threshold value in the case of soft gates} and ii) the sensitive sub-network which is formed by the set of paths that are sensitive for a given input.
+\end{comment}

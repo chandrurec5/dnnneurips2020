@@ -1,0 +1,78 @@
+%%%%%%%% ICML 2019 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+\input{pack}
+\usepackage{comment}
+\usepackage{cancel}
+\usepackage{changepage}
+\usepackage{bbm}
+
+
+\usepackage{pgfplots}
+\usepackage{filecontents}
+
+\setcounter{MaxMatrixCols}{32}
+
+\usepackage{placeins}
+
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2019} with \usepackage[nohyperref]{icml2019} above.
+\usepackage{hyperref}
+\usepackage[capitalize]{cleveref}
+\usepackage{caption}
+\captionsetup{belowskip=0pt}
+\usepackage{wrapfig,lipsum}
+\usepackage[linewidth=1.2pt,linecolor=red]{mdframed}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% Use the following line for the initial blind version submitted for review:
+\usepackage[accepted]{icml2019}
+
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{icml2019}s
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{Deep Gated Networks (A study In Paths)}
+%\title{Deep Neural Networks: A Study In Paths}
+\title{Deep Gated Networks: A framework to understand training and generalisation in deep learning}
+\author{Chandrashekar Lakshminarayanan${}^*$ and Amit Vikram Singh\thanks{Both authors contributed equally.},\\ Indian Institute of Technology Palakkad\\\{chandru@iitpkd.ac.in,amitkvikram@gmail.com\}}
+\begin{document}
+
+\maketitle
+\input{abstract.tex}
+\input{intro.tex}
+\input{optimisation.tex}
+\input{generalisation.tex}
+\input{convnet.tex}
+\input{related.tex}
+\input{future.tex}
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\input{appendix}
+\end{document}
+
+
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was created
+% by Iain Murray in 2018, and modified by Alexandre Bouchard in
+% 2019. Previous contributors include Dan Roy, Lise Getoor and Tobias
+% Scheffer, which was slightly modified from the 2010 version by
+% Thorsten Joachims & Johannes Fuernkranz, slightly modified from the
+% 2009 version by Kiri Wagstaff and Sam Roweis's 2008 version, which is
+% slightly modified from Prasad Tadepalli's 2007 version which is a
+% lightly changed version of the previous year's version by Andrew
+% Moore, which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.

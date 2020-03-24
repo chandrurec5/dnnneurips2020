@@ -1,0 +1,92 @@
+\section{Introduction}\label{sec:intro}
+Given a dataset $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$, and a deep neural network (DNN), parameterised by $\Theta\in \R^{d_{net}}$, whose prediction on input example $x\in \R^{d_{in}}$ is $\hat{y}_{\Theta}(x_s)\in \R$, in this paper, we are interested in the stochastic gradient descent (SGD) procedure to minimise the squared loss given by $L_{\Theta}=\sum_{s=1}^n \left(\hat{y}_{\Tb}(x_s) - y_s\right)^2$.  
+As with some of the recent works by \cite{dudnn,dudln} to understand SGD in deep networks, we adopt the trajectory based analysis, wherein, one looks at the (error) \emph{trajectory}, i.e., the dynamics of the error defined as $e_t(s)\stackrel{def}=\hat{y}_{\Tb_t}(x_s)-y_s$. Let $e_t\stackrel{def}=(e_t(s),s\in[n])\in\R^n$\footnote{We use $[n]$ to denote the set $\{1,\ldots,n\}$.}, then the error dynamics is given by:
+\begin{align}\label{eq:basictraj}
+e_{t+1}=e_t-\alpha_t K_t e_t,
+\end{align}
+where $\alpha_t>0$ is a small enough step-size, $K_t=\Psi_t^\top\Psi_t$ is an $n\times n$ \emph{Gram} matrix, and $\Psi_t$ is a $d_{net}\times n$ neural tangent feature (NTF) matrix whose entries are given by $\Psi_t(m,s)=\frac{\partial \hat{y}_{\Theta_t}(x_s)}{\partial \theta(m)}$\footnote{We assume that the weights can be enumerated as $\theta(m),m=1,\ldots, d_{net}$.}. In particular, we obtain several new insights related to the following:
+
+$1.$ \emph{The Depth Phenomena}: It is well known in practice that increasing depth (of DNNs) till a point improves their training performance. However, increasing the depth beyond a point degrades training. We look at the spectral properties of the Gram matrix $K_0$ for randomised (symmetric Bernoulli) initialisation, and reason about the depth phenomena.
+
+$2.$ \emph{Gate adaptation}, i.e., the dynamics of the gates in a deep network and its role in generalisation performance.
+
+
+\textbf{Conceptual Novelties:} In this paper, we bring in two important conceptual novelties. First novelty is the framework of \emph{deep gated networks} (DGN), previously studied by \cite{sss}, wherein, the gating is decoupled from the pre-activation input. 
+ Second novelty is what we call as the \emph{path-view}. We describe these two concepts first, and then explain the gains/insights we obtain from them.
+
+
+\textbf{Deep Gated Networks (DGNs):} We consider networks with depth $d$, and width $w$ (which is the same across layers). At time $t$, the output $\hat{y}_{t}(x)\in \R$ of a DGN for an input $x\in \R^{d_{in}}$ can be specified by its gating values and network weights $\Theta_t\in \R^{d_{net}}$ as shown in \Cref{tb:dgn}.
+
+\FloatBarrier
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}\hline
+Input layer & $z_{x_s,\Theta_t}(0)=x_s$ \\\hline
+Pre-activation & $q_{x_s,\Theta_t}(l)={\Theta_t(l)}^\top z_{x_s,\Theta_t}(l-1)$\\\hline
+Layer output & $z_{x_s,\Theta_t}(l)=q_{x_s,\Theta_t}(l)\odot G_{x_s,t}(l)$ \\\hline
+Final output & $\hat{y}_t(x_s)={\Theta_t(d)}^\top z_{x_s,\Theta_t}(d-1)$\\\hline
+\end{tabular}
+\caption{A deep gated network. Here $x_s\in \R^{d_{in}},s\in [n]$ is the input, and $l\in[d-1]$ are the intermediate layers. $G_{x_s,t}(l)\in [0,1]^w$ and $q_{x,\Theta_t}(l)\in \R^w$ are the gating and pre-activation input values respectively at time $t$.}
+\label{tb:dgn}
+\end{table}
+\newpage
+$\Theta_t$ together with the collection of the gating values at time $t$ given by $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i) \in [0,1], \forall s\in[n],l\in[d-1],i\in[w]\}$ (where $G(l,i)$ is the gating of $i^{th}$ node in $l^{th}$ layer), recovers the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset using the definition in \Cref{tb:dgn}. 
+
+Note that the standard DNN with ReLU activation is a special DGN, wherein, $G_{x_s,t}(l,i)$, the $i^{th}$ node in the $l^{th}$ layer is given by $G_{x_s,t}(l,i)=\mathbbm{1}_{\{q_{x_s,\Theta_t}(l,i) >0\}}$.	
+
+\textbf{Path-View:} A \emph{path} starts from an input node $i\in[d_{in}]$ of the given network, passes through any one of the weights in each layer of the $d$ layers and ends at the output node. Using the paths, we can express the output as the summation of individual  path contributions. The path-view has two important gains: i)  since it avoids the usual layer after layer approach we are able to obtain explicit expression for information propagation that separates the `signal' (the input $x_s\in \R^{d_{in}},s\in[n]$) from the `wire' (the connection of the weights in the network)  (ii) the role of the sub-networks becomes evident. Let $x\in \R^{d_{in}\times n}$ denote the data matrix, and let $\Theta_t(l,i,j)$ denote the ${(i,j)}^{th}$ weight in the $l^{th}$ layer and let $\P=[d_{in}]\times [w]^{d-1}\times[1]$ be a cross product of index sets. Formally,
+
+$\bullet$ A path $p$ can be defined as $p\stackrel{def}=(p(0),p(1),\ldots,p(d))\in \P$, where $p(0)\in [d_{in}]$, $p(l)\in[w],\,\forall l\in[d-1]$ and $p(d)=1$. We assume that the paths can be enumerated as $p=1,\ldots, P = d_{in}w^{d-1}$. Thus, throughout the paper, we use the symbol $p$ to denote a path as well as its index in the enumeration.
+
+$\bullet$ The \emph{strength} of a path $p$ is defined as $w_t(p)\stackrel{def}=\Pi_{l=1}^d \Theta_t(l,p(l-1),p(l))$. 
+
+$\bullet$ The \emph{activation} level of a path $p$ for an input $x_s\in \R^{d_{in}}$ is defined as $A_{\G_t}(x_s,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x_s,t}(l,p(l))$.
+
+\textbf{Conceptual Gain I (Feature Decomposition):} Define $\phi_{x_s,\G_t}\in \R^P$, where $\phi_{x_s,\G_t}(p)\stackrel{def}=x(p(0),s)A_{\G_t}(x_s,p)$. The output is then given by:
+\begin{align}\label{eq:featstrength}
+\hat{y}_{t}(x_s)=\phi_{x_s,\G_t }^\top w_{t},
+\end{align}	
+where $w_{t}=(w_{t}(p),p=1,\ldots,P)\in \R^P$. In this paper, we interpret $\phi_{x_s,\G_t}\in \R^P$ as the \emph{hidden feature} and $w_{t}\in \R^P$, the strength of the paths as the \emph{weight vector}.
+
+\textbf{A hard dataset for DNNs:} The ability of DNNs to fit data has been demonstrated in the past \cite{ben}, i.e., they can fit even random labels, and random pixels of standard datasets such as MNIST. %This seems to suggest that DNNs are good at solving memorisation tasks, no matter how hard they are. 
+However, for standard DNNs with ReLU gates, with no bias parameters, a dataset with $n=2$ points namely $(x,1)$ and $(2x,-1)$ for some $x\in \R^{d_{in}}$ cannot be memorised. The reason is that the gating values are the same for both $x$ and $2x$ (for that matter any positive scaling of $x$), and hence $\phi_{2x,\G_t }= 2\phi_{x,\G_t }$, and thus it not possible to fit arbitrary values for $\hat{y}_t(x)$ and $\hat{y}_t(2x)$. 
+
+
+\textbf{Conceptual Gain II (Similarity Metric):}  In DGNs similarity of two different inputs $x_s,x_{s'}\in \R^{d_{in}}, s,s' \in [n]$ depends on the overlap of sub-networks that are simultaneously \emph{active} for both the inputs. Let $\Phi_t=\left[\phi_{x_1,\G_t},\ldots,\phi_{x_n,\G_t}\right]\in\R^{P\times n}$ be the hidden feature matrix obtained by stacking $\phi_{x_s,t},\forall s\in[n]$. Now the Gram matrix $M_t$ of hidden features is given by $M_t=\Phi^\top_t\Phi_t=(x^\top x)\odot \lambda_t$ where $\lambda_t(s,s')\stackrel{def}=\underset{p\rsa i}{\sum} A_{\G_t}(x_s,p) A_{\G_t}(x_{s'},p)$\footnote{Here $p\rsa (\cdot)$ denote the fact that a path $p$ passes through $(\cdot)$ (which is either a node or a weight). },  stands for the total number of paths that start at any input node $i$ (due to symmetry this number does not vary with $i\in [d_{in}]$) and are \emph{active} for both input examples $s,s'\in[n]$. Each input example has a sub-network that is \emph{active}, and similarity (inner product) of two different inputs depends on the similarity of between the corresponding sub-networks (in particular the total number of paths that are simultaneously active) that are active for the two inputs. 
+
+
+\textbf{Conceptual Gain III (Deep Information Propagation):} An explicit expression for the Gram matrix as $K_t(s,s')=\sum_{i=1}^{d_{in}} x_s(i) x_{s'}(i)\kappa_t(s,s',i), \forall s,s'\in[n]$. Here, $\kappa_t(s,s',i)\in \R$ is a summation of the inner-products of the \emph{path features} (see \Cref{sec:optimisation}). Thus the input signals $x_s,x_{s'}\in \R^{d_{in}}$ stay as it is in the calculations in an algebraic sense, and are separated out from the wires, i.e., the network whose effect is captured in $\kappa_t(s,s,',i)$.
+
+
+\textbf{A Decoupling assumption:} We assume that the gating $\G_0$ and weights $\Theta_0$ are statistically independent, and that weights ($d_{net}$ of them ) are sampled from $\{-\sigma,+\sigma\}$ with probability $\frac{1}2$. Under these assumptions we obtain the following key results and insights:
+
+$1.$ \textbf{Depth Phenomena I:} Why does increasing depth till a point helps training?
+
+Because, \emph{increasing depth causes whitening of inputs}. In particular, we show that $\E{K_0}=d\sigma^{2(d-1)}\left(x^\top x \odot \lambda_0\right)$, where $\odot$ is the \emph{Hadamard} product. The ratio $\frac{{\lambda_0}(s,s')}{{\lambda_0}(s,s)}$ is the fractional overlap of active sub-networks, say at each layer the overlap of active gates is $\mu\in (0,1)$, then for a depth $d$, the fractional overlap decays at exponential rate, i.e., $\frac{{\lambda_0}(s,s')}{{\lambda_0}(s,s)}\leq \mu^d$, leading to whitening.
+
+$2.$ \textbf{Depth Phenomena II:} Why does increasing depth beyond a point hurts training?
+
+Because, $Var\left[K_0(x,x')\right]\leq O(\max\{\frac{d^2}{w}, \frac{d^3}{w^2}\})$ (for $\sigma^2=O(\frac{1}w)$). Thus for large width $K_0$ converges to its expected value. However, for a fixed width, increasing depth makes the entries of $K_0$ deviate from $\E{K_0}$, thus degrading the spectrum of $K_0$.
+
+$3.$ \textbf{Key Take away:}  To the best of our knowledge, we are the first to present a theory to explain the depth phenomena. While the ReLU gates do not satisfy the decoupling assumption, we hope to relax the decoupling assumption in the future and extend the results for decoupled gating to ReLU activation as well.
+
+
+\textbf{Conceptual Gain IV  (Twin Gradient Flow):} The NTF matrix can be decomposed as
+$
+\Psi_t(m,s)=\underbrace{\phi_{x_s,\G_t }^\top\frac{\partial w_{t}} {\partial \theta(m)}}_{\text{strength adaptation}}+ \underbrace{\frac{\partial \phi_{x_s,\G_t }^\top}{\partial \theta(m)} w_{t} }_{\text{gate adaptation}}
+$, from which it is evident that the gradient has two components namely i) \emph{strength adaptation:} keeping the sub-networks (at time $t$) corresponding to each input example fixed, the component learns the strengths of the paths in those sub-networks, and  ii) \emph{gate adaptation:} this component learns the sub-networks themselves.  Ours is the first work to analytically capture the two gradients.
+
+\textbf{Conceptual Gain V  (Fixing the ReLU artefact):} In standard ReLU networks the gates are $0/1$ and hence $\frac{\partial \phi_{x_s,\G_t }^\top}{\partial \theta(m)}=0$. Thus the role of gates has been unaccounted for in the current literature.
+By parameterising the gates by $\Tg\in\R^{d_{net}}$, and introducing a soft-ReLU gating (with values in $(0,1)$ ), we can show that Gram matrix can be decomposed into $K_t=K^w_t+K^a_t$, where $K^w_t$ is the Gram matrix of strength adaptation and $K^a_t$ is the Gram matrix corresponding to activation adaptation. Ours is the first work to point out that the Gram matrix has a gate adaptation component.
+
+
+$\bullet$ \textbf{Conceptual Gain VI (Sensitivity sub-network) :} Our expression for $\E{K_0^a}$ involves what we call \emph{sensitivity} sub-network formed by gates which take intermediate values, i..e, are not close to either $0$ or $1$. We contend that by controlling such sensitive gates, the DGN is able to learn the features $\phi_{x_s,\G_t}$ over the course of training.
+
+$\bullet$ \textbf{Evidence I (Generalisation needs gate adaptation):}  We experiment with two datasets namely standard CIFAR-10 (classification) and Binary-MNIST which has classes $4$ and $7$ with labels $\{-1,+1\}$ (squared loss). We observe that whenever gates adapt, test performance gets better.
+
+$\bullet$ \textbf{Evidence II (Lottery is in the gates:)} We obtain $56\%$ test accuracy just by tuning the gates of a parameterised DGN with soft-gates. We also observe that by copying the gates from a learnt network and training the weights from scratch also gives good generalisation performance. This gives a new interpretation for the lottery ticket hypothesis \cite{lottery}, i.e., the real lottery is in the gates.
+
+\textbf{Lessons Learnt:} Rethinking generalisation needs to involve a study on how gates adapt. Taking a cue from \cite{arora}, we look at $\nu_t=y^\top K_t^{-1}y$, and observe that $\nu_t$ in the case of adaptive gates/learned gates is always upper bounded by $\nu_t$ when gates are non-adaptive/non-learned gates.
+
+\textbf{Organisation:} The rest of the paper has \Cref{sec:optimisation}, where, we consider DGNs with fixed or frozen gates, and \Cref{sec:generalisation}, where, we look at DGNs with adaptable gates. The idea is to obtain insights by progressing stage by stage from easy to difficult variants of DGNs, ordered naturally according to the way in which paths/sub-networks are formed. The proofs of the results are in the supplementary material.
+
