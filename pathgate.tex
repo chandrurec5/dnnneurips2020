@@ -41,7 +41,7 @@ Final output & $\hat{y}_t(x_s)={\Theta_t(d)}^\top z_{x_s,\Theta_t}(d-1)$\\\hline
 %\caption{A DGN with parameterised gates. Here, for $\epsilon\geq 0$ is a hyper-parameter, and $\chi_{\epsilon}(v)=\frac{1+\epsilon}{1+\exp(v)}, \forall v\in \R$.}
 %\label{tb:dgn-parameterised}
 \end{minipage}
-\caption{The table in the left specifies the quantities related to the paths. The table in the right specifies a parameterised deep gated network (DGN).  Please refer to the text below for further description.}
+\caption{The table in the left specifies the quantities related to the paths. The table in the right specifies a deep gated network (DGN).  Please refer to the text below for further description.}
 \label{tb:dgn-path}
 \end{table}
 \textbf{Zeroth order quantities of path (\Cref{tb:dgn-path}):} In an FC-DNN, with $d$ layers and $w$ hidden units per layer, the total number of paths is given by $P=d_{in}w^{(d-1)}$. For a path $p$, $p(0)\in [d_{in}]$, $p(l)\in[w],\,\forall l\in[d-1]$ and $p(d)=1$. We assume that the paths can be enumerated as $p=1,\ldots, P = d_{in}w^{d-1}$. Thus, throughout the paper, we use the symbol $p$ to denote a path as well as its index in the enumeration. Here, $\Theta(l,i,j)$ denotes the weight connecting node $i$ of layer $l-1$ to node $j$ of layer $l$. We also use an alternate notation for the weights, in that, we assume that the weights can be enumerated as $\theta(1),\ldots,\theta(d_{net})$. 
