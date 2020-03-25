@@ -1,4 +1,5 @@
 \section{Notation: Deep Gated Network and Paths}
+
 \begin{table}[!htb]
 \begin{minipage}{0.5\columnwidth}
 %\begin{align*}
@@ -23,10 +24,10 @@ $A_{t}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,t}(l,\I_l(p))$\\\hline
 \begin{tabular}{|l|l|}\hline
 %Quantity& Expression \\\hline
 \multicolumn{2}{|c|}{Deep Gated Network}\\\hline 
-Input layer & $z_{x_s,\Theta_t}(0)=x_s$ \\\hline
-Pre-activation & $q_{x_s,\Theta_t}(l)={\Theta_t(l)}^\top z_{x_s,\Theta_t}(l-1)$\\\hline
-Layer output & $z_{x_s,\Theta_t}(l)=q_{x_s,\Theta_t}(l)\odot G_{x_s,t}(l)$ \\\hline
-Final output & $\hat{y}_t(x_s)={\Theta_t(d)}^\top z_{x_s,\Theta_t}(d-1)$\\\hline
+Input layer & $z_{x,\Theta_t}(0)=x$ \\\hline
+Pre-activation & $q_{x,\Theta_t}(l)={\Theta_t(l)}^\top z_{x,\Theta_t}(l-1)$\\\hline
+Layer output & $z_{x,\Theta_t}(l)=q_{x_s,\Theta_t}(l)\odot G_{x,t}(l)$ \\\hline
+Final output & $\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
 \end{tabular}
 }
 %\resizebox{\columnwidth}{!}{
@@ -43,12 +44,19 @@ Final output & $\hat{y}_t(x_s)={\Theta_t(d)}^\top z_{x_s,\Theta_t}(d-1)$\\\hline
 %\caption{A DGN with parameterised gates. Here, for $\epsilon\geq 0$ is a hyper-parameter, and $\chi_{\epsilon}(v)=\frac{1+\epsilon}{1+\exp(v)}, \forall v\in \R$.}
 %\label{tb:dgn-parameterised}
 \end{minipage}
-\caption{The table in the left specifies the quantities related to the paths. The table in the right specifies a deep gated network (DGN).  Please refer to the text below for further description.}
+\caption{Here $\Theta(l,i,j)$ denotes the weight connecting node $i$ of layer $l-1$ to node $j$ of layer $l$, and $\odot$ stands for the \emph{Hadamard} product.}
 \label{tb:dgn-path}
 \end{table}
-\textbf{Zeroth order quantities of path (\Cref{tb:dgn-path}):} In an FC-DNN, with $d$ layers and $w$ hidden units per layer, the total number of paths is given by $P=d_{in}w^{(d-1)}$. For a path $p$, $p(0)\in [d_{in}]$, $p(l)\in[w],\,\forall l\in[d-1]$ and $p(d)=1$. We assume that the paths can be enumerated as $p=1,\ldots, P = d_{in}w^{d-1}$. Thus, throughout the paper, we use the symbol $p$ to denote a path as well as its index in the enumeration. Here, $\Theta(l,i,j)$ denotes the weight connecting node $i$ of layer $l-1$ to node $j$ of layer $l$. We also use an alternate notation for the weights, in that, we assume that the weights can be enumerated as $\theta(1),\ldots,\theta(d_{net})$. 
+We consider a dataset given by $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$, and fully connected deep neural network with $d$ layers (i.e., depth $=d$), and $w$ hidden units per layer (i.e., width $=w$). The total number of paths is given by $P=d_{in}w^{(d-1)}$, and an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$.  $\I_{l},l=0,\ldots,d-1$, provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). The value of a path $p$ is denoted by $v_t$ and its activation for input $x\in \R^{d_{in}}$ is given by $A_t(x,p)$. 
 
+In the deep gated network (DGN) in \Cref{tb:dgn-path}, $q(l),z(l)$ and $G(l)$ are $w$-dimensional quantities. In a DGN, the gating values $G_{x,t}(l)$ are handled as independent variables. Thus at time $t$, by specifying the gating values for all the $n$ input examples as $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],l\in[d-1],i\in[w]\}$, we can recover the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset. In the case of DNNs with ReLU units, the gating values are implicit, i.e., $G_{x,t}(l)=\mathbbm{1}_{\{q_{x,\Theta_t}(l)>0\}}$.
+
+
+
+
+\begin{comment}
 \textbf{First order quantities of path (\Cref{tb:dgn-path}):} We use $p\rsa (\cdot)$ to denote the fact that path $p$ passes through $(\cdot)$, which is either a node or a weight.  For $m\in[d_{net}]$, let $l'(m)$ denote the layer a weight $\tv(m)$ belongs to, and let $p\rsa\tv(m)$, then the sensitivity of path with respect to $\tv(m)$ at time $t$ is given by $\varphi_{t,p}(m)$. Note that, for $\tv(m)$ such that $p\bcancel{\rsa}\tv(m)$, it follows that $\varphi_{t,p}(m)=0$. The gradient of the path with respect to all the weights can be collected in a vector as $\varphi_{t,p}=(\varphi_{t,p}(m),m\in[d_{net}])\in\R^{d_{net}}$, which has only exactly $d$ non-zero co-ordinates.
+\end{comment}
 \begin{comment}
 \textbf{Deep Gated Network (\Cref{tb:dgn-path}):}  A parameterised DGN consists of two networks namely the \emph{gating} network (parameterised by $\Tg\in \R^{d_{net}}$),  which is responsible for producing the gating values, and a \emph{value} network (parameterised by $\Tv\in\R^{d_{net}}$ ), which is responsible for predicting the output. For layer $l\in[d-1]$, the pre-activation input, the output, the gating values are denoted by $q(l)\in\R^w, z(l)\in\R^w$ and $G(l)\in(0,1+\epsilon)^w$ respectively (dependence on the input $x\in \R^{d_{in}}$, and the underlying parameter is shown in the subscript). In \Cref{tb:dgn-path}, $\odot$ stands for the \emph{Hadamard} product. Note that a separate gating network is always not necessary: at time $t$, by specifying the gating values for all the $n$ input example in $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],l\in[d-1],i\in[w]\}$ (where $G(l,i)$ is the gating of $i^{th}$ node in $l^{th}$ layer), we can recover the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset as $\hat{y}_t(x_s)=\sum_{p\in P}x_s(p(0))A_t(x_s,p)v_t(p)$. A DGN is denoted by $\N(G_t;\Tv_t)$ and a parameterised DGN is denoted by $\N(\Tg_t,\beta;\Tv_t)$ ($\epsilon>0$ is treated as a hyper-parameter and is hence left out of the notation). The following points are to be noted:
 
