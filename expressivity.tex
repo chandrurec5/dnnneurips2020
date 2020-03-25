@@ -5,20 +5,18 @@ where, the value of the path $v_t$ is the equivalent of the so called \emph{weig
 $1.$ \textbf{Signal-Wire Separation}: Note that $\Phi$ encodes the signal: say for a DNN with ReLU activations, the co-ordinate corresponding to path $p$ is either $x(p(0))$ if the path is active for that input (i.e., $A_t(x,p)=1$) or $0$ if the path is inactive for that input  (i.e., $A_t(x,p)=0$). The value of the path thus encodes the \emph{wire}, i.e., the information contained in the weights of the network. \hfill\\
 $2.$ \textbf{Deep Information Propagation:} The path view provides a novel way of looking at information propagation in DNNs, eschewing the conventional `layer-by-layer' expression for information flow.\hfill\\
 \textbf{Sub-network Overlap:} For any $i\in [d_{in}]$ define $\lambda_t(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_t(x_s,p) A_t(x_{s'},p)$ to be the measure of activation similarity of the paths for inputs $s,s'\in[n]$. Here, $\lambda_t$ counts the total number of paths that are simultaneously \emph{on/active} for both inputs $s,s'\in[n]$. Note that the definition of $\lambda_t$ is independent of $i\in [d_{in}]$: owing to symmetry the same number of paths start from any given input node, and see exactly the same gates in the subsequent layers.
-
-\begin{lemma}[Neural Path Kernel] Let $x=(x_s,s\in [n])\in\R^{d_{in}\times n}$ be the data matrix and let the neural path kernel matrix be defined as $H_t\stackrel{def}=\Phi^\top_t\Phi_t$. It follows that $H_t= (x^\top x)\odot(\lambda_t)$. \end{lemma}
-\textbf{First-Order:} The \emph{neural tangent feature} (NTF) $\psi_{x,t}\in \R^{d_{net}}$ is given by the gradient of the output with respect to the network parameters. From \eqref{eq:npfbasic} it follows that $\psi_{x,t}=(\partial \phi_{x,t})^\top v_t +\phi^\top_{x,t}\partial v_t$. In what follows (in the current section and next section), we assume that the gates are frozen, i.e., $\G_t=\G_0, A_t(\cdot,\cdot)=A_0(\cdot,\cdot),\forall t\geq 0$, and hence $\partial \phi_{x,t}=0$.\hfill\\
+\begin{lemma}\label{lm:npk}[Neural Path Kernel] Let $x=(x_s,s\in [n])\in\R^{d_{in}\times n}$ be the data matrix and let the neural path kernel matrix be defined as $H_t\stackrel{def}=\Phi^\top_t\Phi_t$. It follows that $H_t= (x^\top x)\odot(\lambda_t)$. \end{lemma}
+\textbf{First-Order:} The \emph{neural tangent feature} (NTF) $\psi_{x,t}\in \R^{d_{net}}$ is given by the gradient of the output with respect to the network parameters. From \eqref{eq:npfbasic} it follows that $\psi_{x,t}=(\partial \phi_{x,t})^\top v_t +(\partial v_t)^\top\phi_{x,t}$. In what follows (in the current section and next section), we assume that the gates are frozen, i.e., $\G_t=\G_0, A_t(\cdot,\cdot)=A_0(\cdot,\cdot),\forall t\geq 0$, and hence $\partial \phi_{x,t}=0$.\hfill\\
 \textbf{Value Tangent Feature:} For a path $p$, the gradient  $\partial v_t(p)$ is given by: \begin{align}\label{eq:vft}{\partial v_t(p)}/{\partial \Theta\left(l,\I_{l'-1}(p),\I_{l'}(p)\right)}|_{\Theta=\Theta_t}= \underset{l=1}{\underset{l\neq l'}{\overset{d}{\Pi}}} \Theta_t\left(l,\I_{l-1}(p),\I_{l}(p)\right)\end{align} The gradient of the value of a path $p$ with respect to the $d_{net}$ parameters can be collected in a \emph{value tangent feature} (VTF) denoted by $\varphi_{p,t}\in \R^{d_{net}}$. Note that, from \eqref{eq:vft} it follows that the VTF entry corresponding to a weight is $0$ if the path $p$ does not pass through that weight, and hence $\varphi_{p,t}$ has a maximum of $d$ non-zero entries.\hfill\\
-\textbf{Path interaction} term is given by $\kappa_t(x,x',i,j)\stackrel{def}=\underset{p\rsa i,p'\rsa j}{\underset{{p,p'\in [P]:}}\sum} A_{\G_t}(x,p) A_{\G_t}(x',p') \ip{\varphi_{p,t}, \varphi_{p',t}}$, where $i,j\in[d_{in}]$, and $p\rsa i$ means path $p$ passes through $i$.
-\begin{lemma} The {neural tangent kernel} $K_t(x,x')\stackrel{def}=\psi^\top_{x,t}\psi_{x',t}$ is given by $K_t(x,x')=\sum_{i,j=1}^{d_{in}} x(i)x'(j) \kappa_t(x,x',i,j)$.
-\end{lemma}
-\begin{assumption}\label{assmp:main}
-i) $\Theta_0\stackrel{iid}\sim Ber\left(\frac{1}{2}\right)$ over the set $\{-\sigma,+\sigma\}$. ii) $\G_0$ is statistically independent of $\Theta_0$.
-\end{assumption}
-\begin{lemma}[Disentanglement]
-Under \cref{assmp:main}, for paths $p,p'\in \P, p\neq p'$, we have  i) $\E{\ip{\varphi_{p,0}, \varphi_{p',0}}}= 0$ and ii)${\ip{\varphi_{p,0}, \varphi_{p,0}}}= d\sigma^{2(d-1)}$.
-\end{lemma}
-\begin{corollary}[NTK and NPK]
-$\E{K_0}=d\sigma^{2(d-1)}(x^\top x) \odot (\lambda_0)$.
-\end{corollary}
 
+\begin{assumption}\label{assmp:main}
+(i) $\G_0$ is statistically independent of $\Theta_0$, and (ii) $\Theta_0\stackrel{iid}\sim Ber\left(\frac{1}{2}\right)$ over the set $\{-\sigma,+\sigma\}$. 
+\end{assumption}
+\begin{lemma}\label{lm:disentangle}[Disentanglement]
+Under \Cref{assmp:main}, for paths $p,p'\in \P, p\neq p'$, we have  i) $\E{\ip{\varphi_{p,0}, \varphi_{p',0}}}= 0$ and ii)${\ip{\varphi_{p,0}, \varphi_{p,0}}}= d\sigma^{2(d-1)}$.
+\end{lemma}
+\begin{theorem}\label{th:exp}[NTK and NPK]
+$\E{K_0}=d\sigma^{2(d-1)}(x^\top x) \odot (\lambda_0)$.
+\end{theorem}
+\begin{proof} Let $\varphi_t=\left[\varphi_{p,t},p\in[P]\right]\in\R^{d_{net}\times P}$ be the VTF matrix at time $t$, then if follows that the NTK (Gram) matrix is  $K_t=\Psi^\top_t\Psi_t=\Phi^\top_t\varphi_t\varphi^\top_t\Phi_t$. Now, taking expectation we have $\E{K_0}=\E{Phi^\top_t\varphi_t\varphi^\top_t\Phi_t}$, and using \Cref{assmp:main}-(i), one can pull out the $\Phi_t$ terms outside of the expectation, i,e., $\E{K_0}=Phi^\top_t\E{\varphi_t\varphi^\top_t}\Phi_t$, and using \Cref{assmp:main}-(ii), we can show that $\E{\varphi_t\varphi^\top_t}=d\sigma^{2(d-1)}I_{P\times P}$. The statement of \Cref{th:exp} follows by using \Cref{lm:npk}.
+\end{proof}
