@@ -1,22 +1,36 @@
 \section{Generalisation}\label{sec:generalisation}
-\textbf{Frozen Non-Learned gates generalise poorly:} We trained both ReLU and GaLU networks on standard MNIST dataset to close to $100\%$ accuracy. We observed that the GaLU network trains a bit faster than the ReLU network (see \Cref{fig:galu-relu} ). However, the test performances were around $96\%$ and  $98\%$ for GaLU and ReLU networks respectively\footnote{In the case of GaLU, in order to eliminate the effect of initialisation, we trained with identical as well as independent initialisation for the gating as well as the main network in the GaLU. }. We trained ReLU and GaLU networks on standard CIFAR-10 dataset close to $100\%$ training accuracy. In this case, the test performances were around $64\%$ and $72\%$ for GaLU and ReLU networks respectively. 
+We demonstrate that activations play a crucial role in generalisation performance of DNNs. We observe that DNNs with adaptable gates (i.e., $A_t(\cdot,\cdot)$ changes with time) are better than DNNs with frozen gates (i.e., $A_t(\cdot,\cdot)=A_0(\cdot,\cdot),\forall t\geq 0$). Another interesting observation is that, both zeroth-order and first-order activation terms are important. In particular, NPF indeed stores enough information, i.e., even if the gates are frozen and not adaptable, if they are copied a previously trained network, then we are able to recover good generalisation performance, however, not as good as adaptable gates.
+
+
+\textbf{Frozen Non-Learned gates generalise poorly:} We trained both ReLU and frozen-GaLU networks on standard MNIST dataset to close to $100\%$ accuracy. We observed that the frozen-GaLU network trains a bit faster than the ReLU network. However, the test performances were around $96\%$ and  $98\%$ for frozen-GaLU and ReLU networks respectively\footnote{In the case of GaLU, in order to eliminate the effect of initialisation, we trained with identical as well as independent initialisation for the gating as well as the main network in the GaLU. }. We trained ReLU and GaLU networks on standard CIFAR-10 dataset close to $100\%$ training accuracy. In this case, the test performances were around $64\%$ and $72\%$ for GaLU and ReLU networks respectively. 
 \begin{comment}
 Note that, in the case of $\N(\Tg_{\dagger},\infty;\Tv_t)$, we were initialising $\Tg_0\in \R^{d_{net}}$ and $\Tv_0\in \R^{d_{net}}$ in a statistically independent manner. Thus, in order to eliminate the effect of the initialisation, we also compared DGNs of the form  $\N(\Theta_t,\infty;\Theta_t)$ and $\N(\Tv_{\dagger},\infty;\Tv_t)$ (which we call as frozen ReLU networks). We trained both ReLU and frozen ReLU networks on standard MNIST dataset to close to $100\%$ accuracy. The test performances were around $96\%$ and  $98\%$ for frozen ReLU and ReLU networks respectively. We trained ReLU and GaLU networks on standard CIFAR-10 dataset close to $100\%$ training accuracy. In this case, the test performances were around $72\%$ and $64\%$ for ReLU and frozen ReLU networks respectively.
 \end{comment}
 
+\textbf{Frozen Learned gates generalise better:} Note that, in these experiments, the frozen-GaLU network gates are copied from a gating network which is pre-trained, however, the weights $\Theta_0$ are initialised and trained again.  In the case of MNIST, 
+In the case of CIFAR-10, frozen-GaLU with learned gates achieved a test performance of $70\%$, which is better than frozen-GaLU with non-learned gates with a performance of  $64\%$, and is however less than ReLU with performance of $72\%$. 
 
-\textbf{Frozen Learned gates generalise better:} In the case of MNIST, 
-In the case of CIFAR-10, GaLU with learned gates achieved a test performance of $70\%$ (which is better than GaLU with non-learned gates with a performance of  $64\%$).
+\begin{figure*}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{ccc}
+\includegraphics[scale=0.18]{figs/path-gram.png}
+&
+\includegraphics[scale=0.1]{figs/allnet-train.png}
+&
+\includegraphics[scale=0.1]{figs/allnet-gen.png}
+\end{tabular}
+}
+\caption{First two plots from the left show optimisation and generalisation in ReLU and GaLU networks for standard MNIST. The right most plot shows $\nu_t=y^\top (\widehat{H}_t)^{-1}y$, where $H_t=\Phi_t^\top \Phi_t$.}
+\label{fig:gen}
+\end{figure*}
 
-
-\input{mnistfig}
-
-\textbf{NPK dynamics in ReLU:} We consider ``Binary''-MNIST data set with two classes namely digits $4$ and $7$, with the labels taking values in $\{-1,+1\}$ and squared loss. We trained a standard DNN with ReLU activation ($w=100$, $d=5$). Recall from \Cref{sec:intro}, that $M_t=\Phi^\top_t\Phi_t$  (the Gram matrix of the features) and let $\widehat{M}_t=\frac{1}{trace(M_t)}M_t$ be its normalised counterpart. For a subset size, $n'=200$ ($100$ examples per class) we plot $\nu_t=y^\top (\widehat{M}_t)^{-1} y$, (where $y\in\{-1,1\}^{200}$ is the labeling function), and observe that $\nu_t$ reduces as training proceeds (see middle plot in \Cref{fig:path-norm}). Note that $\nu_t=\sum_{i=1}^{n'}(u_{i,t}^\top y)^2 (\hat{\rho}_{i,t})^{-1}$, where $u_{i,t}\in \R^{n'}$ are the orthonormal eigenvectors of $\widehat{M}_t$ and $\hat{\rho}_{i,t},i\in[n']$ are the corresponding eigenvalues. Since $\sum_{i=1}^{n'}\hat{\rho}_{i,t}=1$, the only way $\nu_t$ reduces is when more and more energy gets concentrated on $\hat{\rho}_{i,t}$s for which $(u_{i,t}^\top y)^2$s are also high. However, in $M_t=(x^\top x)\odot \lambda_t$, only $\lambda_t$ changes with time. Thus, $\lambda_t(s,s')$ which is a measure of overlap of sub-networks active for input examples $s,s'\in[n]$, changes in a manner to reduce $\nu_t$. We can thus infer that the \emph{right} active sub-networks are learned over the course of training.
+\textbf{NPK dynamics in ReLU:} We consider ``Binary''-MNIST data set with two classes namely digits $4$ and $7$, with the labels taking values in $\{-1,+1\}$ and squared loss. We trained a standard DNN with ReLU activation ($w=100$, $d=5$). Recall that $H_t=\Phi^\top_t\Phi_t$  (the Gram matrix of the features) and let $\widehat{H}_t=\frac{1}{trace(H_t)}H_t$ be its normalised counterpart. For a subset size, $n'=200$ ($100$ examples per class) we plot $\nu_t=y^\top (\widehat{H}_t)^{-1} y$, (where $y\in\{-1,1\}^{200}$ is the labeling function), and observe that $\nu_t$ reduces as training proceeds (see first plot in \Cref{fig:gen}). Note that $\nu_t=\sum_{i=1}^{n'}(u_{i,t}^\top y)^2 (\hat{\rho}_{i,t})^{-1}$, where $u_{i,t}\in \R^{n'}$ are the orthonormal eigenvectors of $\widehat{H}_t$ and $\hat{\rho}_{i,t},i\in[n']$ are the corresponding eigenvalues. Since $\sum_{i=1}^{n'}\hat{\rho}_{i,t}=1$, the only way $\nu_t$ reduces is when more and more energy gets concentrated on $\hat{\rho}_{i,t}$s for which $(u_{i,t}^\top y)^2$s are also high. However, in $H_t=(x^\top x)\odot \lambda_t$, only $\lambda_t$ changes with time. Thus, $\lambda_t(s,s')$ which is a measure of overlap of sub-networks active for input examples $s,s'\in[n]$, changes in a manner to reduce $\nu_t$. We can thus infer that the \emph{right} active sub-networks are learned over the course of training.\hfill\\
+\textbf{Adaptable gates generalise better:}  On `Binary'-MNIST, we train two more networks namely soft-GaLU and soft-ReLU, where the hard-max in the standard ReLU gating is replaced by a soft-max sigmoid function given by $\chi_{\epsilon}(q)=\frac{1}{1+\exp(-\beta q)}$. In our experiments, we chose $\beta=1$ and $\epsilon=0.1$. The results are shown in \Cref{fig:gen}, where the left most plot shows the optimisation of the $4$ networks (ReLU, frozen-GaLU, soft-ReLU, soft-GaLU), and the middle plot shows the generalisation performance. We can conclude from these plots that adaptable gates generalise better than frozen gates.
 \begin{comment}
 \begin{figure}
 \centering
 \includegraphics[scale=0.5]{figs/path-gram.png}
-\caption{Shows $\nu_t=y^\top (\widehat{M}_t)^{-1}y$, where $M_t=\Phi_t^\top \Phi_t$.}
+\caption{Shows $\nu_t=y^\top (\widehat{M}_t)^{-1}y$, where $H_t=\Phi_t^\top \Phi_t$.}
 \label{fig:path-norm}
 \end{figure}
 \end{comment}
