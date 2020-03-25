@@ -3,111 +3,6 @@
 \begin{center}
 Appendix/Supplementary Material
 \end{center}
-\comment{
-\textbf{Errata:} 
-
-\textbf{Errors:} The following are the errors in the submission file ``icml2020.pdf'':
-\begin{enumerate}
-\item The references to Theorem $6.3$  (page $3$, $2^{nd}$-column from left, line number $144$, and page $4$, $2^{nd}$ column from left, line number $207$) should be read as Theorem $2.2$. 
-\item In Lemma $2.3$, the displayed equations in the main text (page $4$, $2^{nd}$ column from left, lines $173-174$) contain an extra $``d"$ term in the right hand side:
-
-(i) $\mathbb{E}_p\left[\lambda_0(s,s)\right]=\bar{\lambda}_{self}=d(pw)^{d-1}$ 
-
-(ii) $\mathbb{E}_p\left[\lambda_0(s,s')\right]=\bar{\lambda}_{cross}= d(p^2w)^{d-1}$,
-
-\item The reference to Assumption $1$ (page $4$, left column, line $194$) is incorrect, it should instead be read as Assumption $2$.
-
-\item The text, \textbf{Active Sub-Network}, in page $7$, $2^{nd}$ column from the left, line $373$, should be read as \textbf{Sensitive Sub-Network}.
-\end{enumerate} 
-
-\textbf{Corrections (without editing main latex-source):} We are submitting the full paper including the supplementary material. The following are the corrections in the supplementary file ``icml2020$\_$supplementary.pdf'':
-\begin{enumerate}
-\item At the time of submission, incorrect references to Theorem $6.3$ occurred due to the use of the same label for Theorem $2.2$ in the main body and Theorem $6.3$ in the supplementary material. We have fixed this by removing the label in the supplementary material. 
-\item In Lemma $2.3$, the displayed equations should be read as:
-
-(i) $\mathbb{E}_p\left[\lambda_0(s,s)\right]=\bar{\lambda}_{self}=(pw)^{d-1}$ 
-
-(ii) $\mathbb{E}_p\left[\lambda_0(s,s')\right]=\bar{\lambda}_{cross}= (p^2w)^{d-1}$,
-
-this error has been fixed in the supplementary material in Lemma~\ref{lm:dgn-fra-restate}.
-\end{enumerate} 
-
-\textbf{Missing Information} 
-
-The architecture used in \textbf{Experiment $6$} and \textbf{Experiment $7$} is: input layer $(32,32,3)$, followed by $(3,3)$ convolutional layers of channels $64,64,128,128$, followed by fully-connected layers of width $256,256,10$. 
-
-\FloatBarrier
-\begin{table}[h]
-\centering
-\begin{tabular}{|c|c|c|}\hline
-Network
-&Training Accuracy(mean of best)
-&Test Accuracy(mean of best)\\\hline
-Deep Linear Network
-&0.5042
-&0.3939\\\hline
-Relu
-&0.9987
-&0.7132\\\hline
-
-$\beta=$1, $\epsilon=$0.1
-&0.9948
-&0.5969\\\hline
-$\beta=$2, $\epsilon=$0.1
-&0.9961
-&0.6401\\\hline
-$\beta=$4, $\epsilon=$0.1
-&0.9978
-&0.6841\\\hline
-$\beta=$8, $\epsilon=$0.1
-&0.9985
-&0.7100\\\hline
-$\beta=$12, $\epsilon=$0.1
-&0.9987
-&0.7190\\\hline
-$\beta=$16, $\epsilon=$0.1
-&0.9988
-&0.7203\\\hline
-$\beta=$20, $\epsilon=$0.1
-&0.9990
-&0.7221\\\hline
-$\beta=$24, $\epsilon=$0.1
-&0.9991
-&0.7230\\\hline
-$\beta=$1, $\epsilon=$0.4
-&0.9926
-&0.5638\\\hline
-$\beta=$2, $\epsilon=$0.4
-&0.9944
-&0.6374\\\hline
-$\beta=$4, $\epsilon=$0.4
-&0.9968
-&0.6831\\\hline
-$\beta=$8, $\epsilon=$0.4
-&0.9980
-&0.7115\\\hline
-$\beta=$12, $\epsilon=$0.4
-&0.9982
-&0.7153\\\hline
-$\beta=$16, $\epsilon=$0.4
-&0.9986
-&0.7143\\\hline
-$\beta=$20, $\epsilon=$0.4
-&0.9986
-&0.7139\\\hline
-$\beta=$24, $\epsilon=$0.4
-&0.9989
-&0.7099\\\hline
-\end{tabular}
-\caption{Shows performance of various networks for CIFAR 10 dataset. The results are averaged over $5$ runs. Here `mean of best' means the best performance obtained in the run.}
-\label{tb:cifar}
-\end{table}
-
-\newpage
-\input{mnistfig}
-
-\newpage
-}
 \input{paths}
 \subsection{Results in \Cref{sec:optimisation}}
 \textbf{Stament and Proof of Lemma~\ref{lm:sigwire}}
@@ -351,18 +246,6 @@ The proof of (i) follows by noting that the average number of gates that are \em
 \begin{lemma} 
 Under Assumptions~\ref{assmp:mainone},~\ref{assmp:maintwo}, in soft-GaLU networks we have: (i) $\E{K_0}=\E{K^w_0}+\E{K^a_0}$, 
  (ii) $\E{K^w_0}=\sigma^{2(d-1)} (x^\top x)\odot \lambda$,  (iii) $\E{K^a_0}=\sigma^{2d}  (x^\top x)\odot \delta$
-\comment{where (with $\partial_{m}=\partial_{\tg(m)}$ in the below), we have
-\begin{align*}
-\mu_w^{s,s'}(i)\stackrel{def}=&\sum_{m=1}^{d_{net}} \underset{p\rsa\theta(m)}{\sum_{p\in P: p(0)=i}}A_{\Tg_0}(x_s,p) A_{\Tg_0}(x_{s'},p)\\
-\mu_a^{s,s'}(i)\stackrel{def}=&\sum_{m=1}^{d_{net}} \underset{}{\sum_{p\in P: p(0)=i}} \partial_{m}A_{\Tg}(x_s,p) \partial_{m}A_{\Tg}(x_{s'},p)
-\end{align*}
-}
-\comment{
-\begin{align*}
-&\E{K^a_0(s,s')}=\left( \frac{2\sigma^2}{w}\right)^{d} \Big(\sum_{i=1}^{d_{in}}x(i,s) x(i,s') \\
-&\sum_{m=1}^{d_{gnet}}\underset{p\rsa i}{{\sum_{p\in \P:} }} \partial_{\tg(m)}A_{\Tg}(s,p) \partial_{\tg(m)}A_{\Tg}(s',p)\Big)\\
-\end{align*}
-}
 \end{lemma}
 
 \begin{proof}
