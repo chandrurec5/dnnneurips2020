@@ -115,7 +115,8 @@ $2.$ We show that $Var\left[K_0(x,x')\right]\leq O(\max\{\frac{d^2}{w}, \frac{d^
 $\bullet$ \textbf{Feature Learning:} To the best of our knowledge, for the first time in the literature, we concretely identify that the gradient flow in a DNN has two components. The $\phi^\top_{x_s,t} {\partial} v_t $ term, which we call the \emph{value gradient}, learns the path values (which are akin to weight vector in a standard linear approximation) keeping the NPFs fixed. The $ {\partial} \phi^\top_{x_s,t} v_t$ term, which we call the \emph{feature gradient} learns the NPFs keeping the path values fixed. We further note that, in $\phi_{x,t}/H_t$, only $A_t/\lambda_t$ changes during training. %In order to understand the role $\partial A_t(\cdot,\cdot)$ in optimisation and generalisation, we compare the performances of DNN with ReLU units (in which $A_t(\cdot,\cdot)$ changes with time) and DNNs with gated linear units (GaLU) whose gates, activations, NPFs and NPK do not change with time, i.e., $A_t(\cdot,\cdot)=A_0(\cdot,\cdot), \phi_{\cdot,t}=\phi_{\cdot,0}, H_t=H_0,\forall t\geq 0$. 
 \end{comment}
 $\bullet$ \textbf{Feature Learning:} To the best of our knowledge, for the first time in the literature, we concretely identify that the gradient flow in a DNN has two components. The $\phi^\top_{x_s,t} {\partial} v_t $ term, which we call the \emph{value gradient}, learns the path values (which are akin to weight vector in a standard linear approximation) keeping the NPFs fixed. The $ {\partial} \phi^\top_{x_s,t} v_t$ term, which we call the \emph{feature gradient} learns the NPFs keeping the path values fixed. We further note that, in $\phi_{x,t}/H_t$, only $A_t/\lambda_t$ changes during training.  \hfill\\
-$\bullet$ \textbf{Generalisation:} We show via experiments on standard datasets such as MNIST and CIFAR that better generalisation happens when the activations $A_t$ change with time. In particular, for MNIST restricted to two labels, we experimentally verify that the quantity $y^\top (\widehat{H_t})^{-1}y$\footnote{For a matrix $H$, $\hat{H}=\frac{1}{trace(H)}H$ .} reduces as the training progresses. This shows that the eigenspaces of the NPK matrix align themselves in accordance to the labelling function. These experiments supports the fact that NPF and the NPK are indeed learnt during training in a manner to improve the generalisation performance. 
+$\bullet$ \textbf{Generalisation:} Prior works \cite{arorafine,aroraker,caogu} suggest that, for randomised initialisation, DNNs can be thought of as learning with the linear features given by the random NTFs, and propose  generalisation bounds as well as pure-kernel based with the corresponding NTK \cite{}. However, couple of issues remain unresolved: firstly, if the DNNs are only linear learners with random NTFs, then it suggests that no feature learning happens in DNNs, and secondly, the DNNs perform slightly better than their corresponding NTK counterparts \cite{aroraker,lee}. \hfill\\
+We show via experiments on standard datasets such as MNIST and CIFAR that better generalisation happens when the activations $A_t$ change with time. In particular, for MNIST restricted to two labels, we experimentally verify that the quantity $y^\top (\widehat{H_t})^{-1}y$\footnote{For a matrix $H$, $\hat{H}=\frac{1}{trace(H)}H$ .} reduces as the training progresses. This shows that the eigenspaces of the NPK matrix align themselves in accordance to the labelling function. These experiments supports the fact that NPF and the NPK are indeed learnt during training in a manner to improve the generalisation performance. 
 
 
 \begin{comment}
@@ -158,8 +159,9 @@ In a DNN with ReLU activations, each input example can be associated with a gati
 \input{expressivity}
 %\input{abstract.tex}
 %\input{intro.tex}
-\input{optimisation.tex}
-\input{generalisation.tex}
+\input{optimisation}
+\input{generalisation}
+\input{featlearn}
 %\input{convnet.tex}
 %\input{related.tex}
 %\input{future.tex}

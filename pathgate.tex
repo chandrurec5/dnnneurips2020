@@ -1,4 +1,4 @@
-\section{Notation: Deep Gated Network and Paths}
+\section{Notation: Deep Gated Network and Paths}\label{sec:pathgate}
 
 \begin{table}[!htb]
 \begin{minipage}{0.5\columnwidth}
@@ -26,7 +26,7 @@ $A_{t}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,t}(l,\I_l(p))$\\\hline
 \multicolumn{2}{|c|}{Deep Gated Network}\\\hline 
 Input layer & $z_{x,\Theta_t}(0)=x$ \\\hline
 Pre-activation & $q_{x,\Theta_t}(l)={\Theta_t(l)}^\top z_{x,\Theta_t}(l-1)$\\\hline
-Layer output & $z_{x,\Theta_t}(l)=q_{x_s,\Theta_t}(l)\odot G_{x,t}(l)$ \\\hline
+Layer output & $z_{x,\Theta_t}(l)=q_{x,\Theta_t}(l)\odot G_{x,t}(l)$ \\\hline
 Final output & $\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
 \end{tabular}
 }
@@ -47,9 +47,8 @@ Final output & $\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
 \caption{Here $\Theta(l,i,j)$ denotes the weight connecting node $i$ of layer $l-1$ to node $j$ of layer $l$, and $\odot$ stands for the \emph{Hadamard} product.}
 \label{tb:dgn-path}
 \end{table}
-We consider a dataset given by $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$, and fully connected deep neural network with $d$ layers (i.e., depth $=d$), and $w$ hidden units per layer (i.e., width $=w$). The total number of paths is given by $P=d_{in}w^{(d-1)}$, and an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$.  $\I_{l},l=0,\ldots,d-1$, provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). The value of a path $p$ is denoted by $v_t$ and its activation for input $x\in \R^{d_{in}}$ is given by $A_t(x,p)$. 
-
-In the deep gated network (DGN) in \Cref{tb:dgn-path}, $q(l),z(l)$ and $G(l)$ are $w$-dimensional quantities. In a DGN, the gating values $G_{x,t}(l)$ are handled as independent variables. Thus at time $t$, by specifying the gating values for all the $n$ input examples as $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],l\in[d-1],i\in[w]\}$, we can recover the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset. In the case of DNNs with ReLU units, the gating values are implicit, i.e., $G_{x,t}(l)=\mathbbm{1}_{\{q_{x,\Theta_t}(l)>0\}}$.
+We consider a dataset given by $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$, and fully connected deep neural network with $d$ layers (i.e., depth $=d$), and $w$ hidden units per layer (i.e., width $=w$). The total number of paths is given by $P=d_{in}w^{(d-1)}$, and an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$.  $\I_{l},l=0,\ldots,d-1$, provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). The value of a path $p$ is denoted by $v_t$ and its activation for input $x\in \R^{d_{in}}$ is given by $A_t(x,p)$. \hfill\\
+In the deep gated network (DGN) in \Cref{tb:dgn-path}, $q(l),z(l)$ and $G(l)$ are $w$-dimensional quantities. In a DGN, the gating values $G_{x,t}(l)$ are handled as independent variables. Thus at time $t$, by specifying the gating values for all the $n$ input examples as $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],l\in[d-1],i\in[w]\}$, we can recover the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset. In the case of DNNs with ReLU units, the gating values are implicit, i.e., $G_{x,t}(l)=\mathbbm{1}_{\{q_{x,\Theta_t}(l)>0\}}$. At time $t$, we denote a DGN parameterised by $\Theta_t\in \R^{d_{net}}$ and gating values $\G_t$ by $\N_G(\Theta_t;\G_t)$, and a DNN with ReLU activations parameterised by $\Theta_t\in\R^{d_{net}}$ by $\N_R(\Theta_t)$. By $\G(\N)$ we denote the fact that gating variables  $\G_t$ are derived from network $\N$.
 
 
 
