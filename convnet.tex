@@ -1,11 +1,11 @@
 \section{Understanding the role of convolutions and pooling operations}\label{sec:conv}
-In this section, we will use the frameworks of DGNs and ``path-view'' to obtain insights about (i) convolutional layers and (ii) pooling: global average pooling\footnote{The arguments can be extended to $\max$-pooling with technical modifications.}. In this section, we continue to be in the DGN setup, i.e., we will have separate parameterisations $\Tg$ and $\Tw$, and assume that Assumptions~\ref{assmp:mainone}, \ref{assmp:maintwo} hold. However, we impose additional restrictions to account for the presence of convolutional and pooling layers, which, we describe below.
+In this section, we will use the frameworks of DGNs and ``path-view'' to obtain insights about (i) convolutional layers and (ii) pooling: global average pooling\footnote{The arguments can be extended to $\max$-pooling with technical modifications.}. In this section, we continue to be in the DGN setup, i.e., we will have separate parameterisations $\Tg$ and $\Tv$, and assume that Assumptions~\ref{assmp:mainone}, \ref{assmp:maintwo} hold. However, we impose additional restrictions to account for the presence of convolutional and pooling layers, which, we describe below.
 
 \textbf{Circular Convolutional layers:}
 
 $1.$ We assume that, the initial $0<L<d$ layers are convolutional layers. In particular, each layer uses a $1$-dimensional kernel of width $0<\hat{w}<d_{in}$, and the output of each layer is a $d_{in}$-dimensional vector.
 
-$2.$ We consider circular convolutional operations instead of zero padding, i.e., during the convolution operation, say index $i$ exceeds $d_{in}$ then it will be considered as $i-d_{in}$, and in the case when a negative index is required, i.e., if index $i<0$ is needed, then $d_{in}+i$ will be used instead. We illustrate this circular convolution with the help of \Cref{fig:circconv}, wherein, $\hat{w}=2$, $d_{in}=3$. Here, $\theta^{(l)}(i),l=1,\ldots,L-1, i=1,2$ are the weights, and the final layer weight $\theta^{(L)}=\left[\frac{1}{d_{in}},\ldots, \frac{1}{d_{in}}\right]^\top\in \R^{d_{in}}$ in the case of global average pooling. Note that, in \Cref{fig:circconv}, we have used only one network, and we have also used a simpler and different notation for the weights: this is because, in DGN (with circular convolutions), both the gating network parameterised by $\Tg$ and the weights network parameterised by $\Tw$ will have identical architecture, and in order to explain just the circular convolution alone more clearly, we have used a simpler notation for the weights and have left the gating information unspecified in \Cref{fig:circconv}.
+$2.$ We consider circular convolutional operations instead of zero padding, i.e., during the convolution operation, say index $i$ exceeds $d_{in}$ then it will be considered as $i-d_{in}$, and in the case when a negative index is required, i.e., if index $i<0$ is needed, then $d_{in}+i$ will be used instead. We illustrate this circular convolution with the help of \Cref{fig:circconv}, wherein, $\hat{w}=2$, $d_{in}=3$. Here, $\theta^{(l)}(i),l=1,\ldots,L-1, i=1,2$ are the weights, and the final layer weight $\theta^{(L)}=\left[\frac{1}{d_{in}},\ldots, \frac{1}{d_{in}}\right]^\top\in \R^{d_{in}}$ in the case of global average pooling. Note that, in \Cref{fig:circconv}, we have used only one network, and we have also used a simpler and different notation for the weights: this is because, in DGN (with circular convolutions), both the gating network parameterised by $\Tg$ and the weights network parameterised by $\Tv$ will have identical architecture, and in order to explain just the circular convolution alone more clearly, we have used a simpler notation for the weights and have left the gating information unspecified in \Cref{fig:circconv}.
 
 \begin{figure}
 \centering
@@ -33,7 +33,7 @@ $4.$ The path strength $w_t=(w_t(b_1),\ldots, w_t(b_{\hat{B}}))\in \R^{\hat{P}}$
 $5.$ The output $x_s(L,1)=\phi^\top_{x_s,\G_t} w_t$.
 
 \begin{lemma}\label{lm:invariance}
-At $t=0$, under Assumptions~\ref{assmp:mainone},\ref{assmp:maintwo}, convolutional layers with global average pooling at the end causes translational invariance.
+At $t=0$, under \Cref{assmp:main}, convolutional layers with global average pooling at the end causes translational invariance.
 \begin{align*}
 &\E{x_s(L,1)x_{s'}(L,1)}\\&=\frac{\sigma^{2(d-1)}}{d^2_{in}}\sum_{k=1}^{\hat{B}} \sum_{p_1,p_2\in b_k}  \Big( x(p_1(0),s) A(x_s,p_1)\\
 &\quad\quad \quad\quad \quad\quad x(p_2(0),s') A(x_{s'},p_2) \Big)
