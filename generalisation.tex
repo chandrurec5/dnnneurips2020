@@ -1,6 +1,14 @@
 \section{Generalisation}\label{sec:generalisation}
 In this section, we report experiments on CIFAR-10 and MNIST  datasets . Our aim here is to study the role of activations in generalisation performance of DNNs. In particular, we compare the generalisation performance of DNNs with adaptable gates (i.e., $A_t(\cdot,\cdot)$ changes with time) and DNNs with frozen gates (i.e., $A_t(\cdot,\cdot)=A_0(\cdot,\cdot),\forall t\geq 0$).
 Network Architecture and Hyper-parameters:\hfill\\
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|c|c|}\hline
+&&&&\multicolumn{3}{c|}{GaLU (learnt)}\\\cline{5-7}
+$(w,d)$	&Dataset		&ReLU		&GaLU(not-learned) 		&Good 		&Random Labels 	&Random Pixel\\\hline
+$(128,5)$	& MNIST 		& $98\%$ 		&$96\%$ 		&$96\%$		&$96\%$			&$96\%$\\\hline
+
+\end{tabular}
+\end{table}
 \textbf{Frozen Non-Learned gates generalise poorly:} We trained both ReLU and frozen-GaLU (in $\N_G(\Theta_t,\G(\N_R(\Tg_t)))$ we have $\Tg_t=\Tg_0,\forall t\geq 0$) networks on standard MNIST dataset to close to $100\%$ accuracy. We observed that the frozen-GaLU network trains a bit faster than the ReLU network. However, the test performances were around $96\%$ and  $98\%$ for frozen-GaLU and ReLU networks respectively\footnote{In the case of GaLU, in order to eliminate the effect of initialisation, we trained with identical as well as independent initialisation for the gating as well as the main network in the GaLU. }. We trained ReLU and GaLU networks on standard CIFAR-10 dataset close to $100\%$ training accuracy. In this case, the test performances were around $64\%$ and $72\%$ for GaLU and ReLU networks respectively.\hfill\\
 \textbf{Frozen Learned gates generalise better:} Note that, in these experiments, the frozen-GaLU network gates are copied from a gating network which is pre-trained, however, the weights $\Theta_0$ are initialised and trained again.  In the case of MNIST, 
 In the case of CIFAR-10, frozen-GaLU with learned gates achieved a test performance of $70\%$, which is better than frozen-GaLU with non-learned gates with a performance of  $64\%$, and is however less than ReLU with performance of $72\%$. \hfill\\
