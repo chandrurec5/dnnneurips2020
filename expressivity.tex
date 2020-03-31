@@ -36,12 +36,18 @@ Given that the output of a DGN is expressed as $\hat{y}_t(x)=\phi_{x,t}^\top v_t
 $1.$ \textbf{Value gradient:} $\psi_{x,t}^v=(\nabla_{\Theta}v_t)^\top  \phi_{x,t}$, which learns the value of the paths keeping the NPF fixed. \\
 $2.$ \textbf{Feature gradient:}  $\psi_{x,t}^{\phi}=(\nabla_{\Tg}\phi_{x,t})^\top v_t $, which learns the NPFs keeping the value of the paths fixed. Note that the feature gradient is $0$ in the case of hard-gates.
 To the best of our knowledge, for the first time in the literature, we note that the gradient flow has two components. Note that, in the value and feature gradients, quantities $\nabla_{\Theta}v_t$ and $\nabla_{\Tg}\phi_{x,t}$ are $P\times d_{net}$ matrices, which are obtained by computing the derivative of $v_t(p)$ and $\phi_{x,t}(p)$ for all paths $p\in[P]$ with respect to the respective $d_{net}$ parameters.\\
-\textbf{Neural Tangent Feature (NTF):} In the case of explicit parameterisation, i.e., when two distinct set of parameters $\Theta\inrdnet, \Tg\inrdnet$ are used, we have the NTF to be $\psi_{x,t}=[\psi^v_{x,t},\psi^{\phi}_{x,t}]\in \R^{2d_{net}}$. In the case of implicit parameterisation, i.e., when $\Tg=\Theta$, we have the NTF to be $\psi_{x,t}=\psi^v_{x,t}+\psi^{\phi}_{x,t}$, and hence $\psi_{x,t}\inrdnet$.\\
-\textbf{Neural Tangent Kernel (NTK):} In the case of explicit parameterisation, NTK is given by $K_t(x,x')=K^v_t(x,x')+K^{\phi}_t(x,x')$, where $K^v_t(x,x')={\psi^v}^\top_{x,t}\psi^v_{x',t}$ and $K^{\phi}_t(x,x')={\psi^{\phi}}^\top_{x,t}\psi^{\phi}_{x',t}$. In the case of implicit parameterisation, the NTK is given by $K_t(x,x')=K^v_t(x,x')+K^{\phi}_t(x,x')+{\psi^v}^\top_{x,t} \psi^{\phi}_{x',t} + {\psi^{\phi}}^\top_{x,t} \psi^{v}_{x',t}$.
+\textbf{Neural Tangent Feature (NTF):} In the case of soft-GaLU networks, i.e., when two distinct set of parameters $\Theta\inrdnet, \Tg\inrdnet$ are used, we have the NTF to be $\psi_{x,t}=[\psi^v_{x,t},\psi^{\phi}_{x,t}]\in \R^{2d_{net}}$. In the case of implicit parameterisation, i.e., when $\Tg=\Theta$, we have the NTF to be $\psi_{x,t}=\psi^v_{x,t}+\psi^{\phi}_{x,t}$, and hence $\psi_{x,t}\inrdnet$.\\
+\textbf{Neural Tangent Kernel (NTK):} In the case of soft-ReLU networks, NTK is given by $K_t(x,x')=K^v_t(x,x')+K^{\phi}_t(x,x')$, where $K^v_t(x,x')={\psi^v}^\top_{x,t}\psi^v_{x',t}$ and $K^{\phi}_t(x,x')={\psi^{\phi}}^\top_{x,t}\psi^{\phi}_{x',t}$. In the case of implicit parameterisation, the NTK is given by $K_t(x,x')=K^v_t(x,x')+K^{\phi}_t(x,x')+{\psi^v}^\top_{x,t} \psi^{\phi}_{x',t} + {\psi^{\phi}}^\top_{x,t} \psi^{v}_{x',t}$.
 \begin{assumption}\label{assmp:decouple}
 $\G_0$ is statistically independent of $\Theta_0\inrdnet$ or in the case of parameterised gating, $\Tg_0\inrdnet$ is statistically independent of $\Theta_t\inrdnet$.
 \end{assumption}
-\begin{theorem} Under \Cref{assmp:init,assmp:decouple}, we have:\\
+\begin{definition}\label{def:delta}
+$\delta_t(x,x')\stackrel{def}= \underset{{p\rsa i}}{\sum} \sum_{\tg\in\Tg}\frac{\partial A_{t}(x,p)}{\partial \tg} \frac{\partial A_{t}(x',p)}{\partial \tg}$, for $x,x'\in\R^{d_{in}}$, using any $i\in[d_{in}]$.
+\end{definition}
+Note that in \Cref{def:delta}, $\delta_t$ contains $\partial A_t(x,p)$ terms as opposed to $A_t(x,p)$ term in $\lambda_t$ defined in \Cref{def:lambda}.
+\begin{theorem}\label{th:main} Let $x=(x_s,s\in[n])\in \R^{d_{in}\times n}$ be the data matrix. Then, under \Cref{assmp:init,assmp:decouple}, we have:\\
 (i) $\E{K_0}=\E{K^v_0}+\E{K^{\phi}_0}$, where $\E{K^{v}_0}=\sigma^{2(d-1)} (x^\top x)\odot \lambda_0$, and $\E{K^{\phi}_0}=\sigma^{2d}  (x^\top x)\odot \delta_0$.\\
-(ii) In addition, if ${4d}/{w^2}<1$, then $Var\left[K^v_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$.
+(ii) In addition, if ${4d}/{w^2}<1$, then $Var\left[K^v_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$,\\
+where $K_0, K^v_0, K^{\phi}_0, \lambda_0, \delta_0$ are matrices defined on the dataset.
 \end{theorem}
+
