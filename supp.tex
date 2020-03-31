@@ -42,6 +42,12 @@ The proof of (ii) is complete by noting that $\sum_{m=1}^{d_{net}} \varphi_{p,t}
 \end{align*}
 \end{proof}
 
+\textbf{Statement of \Cref{th:exp}}
+Under \Cref{assmp:main}, we have $\E{K_0}=d\sigma^{2(d-1)}(x^\top x) \odot (\lambda_0)$.
+
+\begin{proof} Let $\varphi_t=\left[\varphi_{p,t},p\in[P]\right]\in\R^{d_{net}\times P}$ be the VTF matrix at time $t$, then if follows that the NTK (Gram) matrix is  $K_t=\Psi^\top_t\Psi_t=\Phi^\top_t\varphi_t\varphi^\top_t\Phi_t$. Now, taking expectation we have $\E{K_0}=\E{\Phi^\top_t\varphi_t\varphi^\top_t\Phi_t}$, and using \Cref{assmp:main}-(i), one can pull out the $\Phi_t$ terms outside of the expectation, i,e., $\E{K_0}=\Phi^\top_t\E{\varphi_t\varphi^\top_t}\Phi_t$, and using \Cref{assmp:main}-(ii), we can show that $\E{\varphi_t\varphi^\top_t}=d\sigma^{2(d-1)}I$. The statement of \Cref{th:exp} follows by using \Cref{lm:npk}.
+\end{proof}
+
 
 \textbf{Statement of \Cref{th:var}}
 Under \Cref{assmp:main} and the condition that ${4d}/{w^2}<1$, it follows that\hfill\\

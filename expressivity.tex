@@ -1,30 +1,47 @@
-\section{Features and Kernels: Zeroth- vs First-Order}\label{sec:expressivity}
-\textbf{Zeroth-Order:} We first discuss zeroth-order neural path feature (NPF) and kernel (NPK), and then connect it to the first-order neural tangent feature  (NTF)and kernel (NTK).\hfill\\
-The \emph{neural path feature} of an input $x\in \R^{d_{in}}$ is given by $\phi_{x,t}=(x(\I_0(p))A_t(x,p) ,p\in[P])\in\R^P$. By arranging the NPF of the $n$ input examples in a matrix $\Phi_t=\left[\phi_{x_1,t},\ldots, \Phi_{x_n,t}\right]$, we can express the predicted output of a DGN as: \begin{align}\label{eq:npfbasic}\hat{y}_t=\Phi_t^\top v_t,\end{align}
-where, the value of the path $v_t$ is the equivalent of the so called \emph{weight-vector} in a standard linear approximation. The significance of the NPF are:\hfill\\
-$1.$ \textbf{Signal-Wire Separation}: Note that $\Phi$ encodes the signal: say for a DNN with ReLU activations, the co-ordinate corresponding to path $p$ is either $x(p(0))$ if the path is active for that input (i.e., $A_t(x,p)=1$) or $0$ if the path is inactive for that input  (i.e., $A_t(x,p)=0$). The value of the path thus encodes the \emph{wire}, i.e., the information contained in the weights of the network. \hfill\\
-$2.$ \textbf{Deep Information Propagation:} The path view provides a novel way of looking at information propagation in DNNs, eschewing the conventional `layer-by-layer' expression for information flow.\hfill\\
-\begin{definition}\label{def:lambda}
- For any $i\in [d_{in}]$ define $\lambda_t(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_t(x_s,p) A_t(x_{s'},p)$.
- \end{definition} 
-$\lambda_t(s,s')$, is to be understood as the measure of activation similarity of the paths for inputs $s,s'\in[n]$. Here, $\lambda_t$ counts the total number of paths that are simultaneously \emph{on/active} for both inputs $s,s'\in[n]$. Note that the definition of $\lambda_t$ is independent of $i\in [d_{in}]$: owing to symmetry the same number of paths start from any given input node, and see exactly the same gates in the subsequent layers.
-\begin{lemma}\label{lm:npk}[Neural Path Kernel] Let $x=(x_s,s\in [n])\in\R^{d_{in}\times n}$ be the data matrix and let the neural path kernel matrix be defined as $H_t\stackrel{def}=\Phi^\top_t\Phi_t$. It follows that $H_t= (x^\top x)\odot(\lambda_t)$. \end{lemma}
-\textbf{First-Order:} The \emph{neural tangent feature} (NTF) $\psi_{x,t}\in \R^{d_{net}}$ is given by the gradient of the output with respect to the network parameters. From \eqref{eq:npfbasic} it follows that $\psi_{x,t}=(\partial \phi_{x,t})^\top v_t +(\partial v_t)^\top\phi_{x,t}$. In what follows (in the current section and next section), we assume that the gates are frozen, i.e., $\G_t=\G_0, A_t(\cdot,\cdot)=A_0(\cdot,\cdot),\forall t\geq 0$, and hence $\partial \phi_{x,t}=0$.\hfill\\
-\textbf{Value Tangent Feature:} For a path $p$, the gradient  $\partial v_t(p)$ is given by: \begin{align}\label{eq:vft}{\partial v_t(p)}/{\partial \Theta\left(l,\I_{l'-1}(p),\I_{l'}(p)\right)}|_{\Theta=\Theta_t}= \underset{l=1}{\underset{l\neq l'}{\overset{d}{\Pi}}} \Theta_t\left(l,\I_{l-1}(p),\I_{l}(p)\right)\end{align} The gradient of the value of a path $p$ with respect to the $d_{net}$ parameters can be collected in a \emph{value tangent feature} (VTF) denoted by $\varphi_{p,t}\in \R^{d_{net}}$. Note that, from \eqref{eq:vft} it follows that the VTF entry corresponding to a weight is $0$ if the path $p$ does not pass through that weight, and hence $\varphi_{p,t}$ has a maximum of $d$ non-zero entries.\hfill\\
-
-\begin{assumption}\label{assmp:main}
-(i) $\G_0$ is statistically independent of $\Theta_0$, and (ii) $\Theta_0\stackrel{iid}\sim Ber\left(\frac{1}{2}\right)$ over the set $\{-\sigma,+\sigma\}$. 
+\section{Paths, Features and Kernels}\label{sec:expressivity}
+\textbf{Paths:} In a fully connected DGN, $d$ layers and $w$ hidden units per layer, we have a total of $P=d_{in}w^{(d-1)}$ paths. Let us say that an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$. Let $\I_{l},l=0,\ldots,d-1$ provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). We then define:\\
+$1.$ The value of a path $p$ by $v_t(p)\stackrel{def}=\Pi_{l=1}^d \Theta_t(l,\I_{l-1}(p),\I_l(p))$.\\
+$2.$ The activity of a path $p$ for an input $x\in \R^{d_{in}}$ by $A_{t}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,t}(l,\I_l(p))$.\\
+\textbf{Value Derivative:} For a path $p$, the derivative of its value with respect to any weight in the path is: 
+\begin{align}\label{eq:vft}{\partial v_t(p)}/{\partial \Theta\left(l,\I_{l'-1}(p),\I_{l'}(p)\right)}|_{\Theta=\Theta_t}= \underset{l=1}{\underset{l\neq l'}{\overset{d}{\Pi}}} \Theta_t\left(l,\I_{l-1}(p),\I_{l}(p)\right)
+\end{align}
+If a path $p$ does not pass through a $\theta\in\Theta$, then ${\partial v_t(p)}/{\partial \theta}=0$.\\
+\textbf{Activity Derivative:} For a path $p$, and an input $x\inrdin$ the derivative of its activity with respect to any weight is given by 
+\begin{align}
+\frac{\partial A_{t}(x,p)}{\partial \tg}= \sum_{l=1}^{d-1} \Big(\frac{\partial G_{x,\Tg_t}(l,\I_l(p))}{\partial \tg} \Big)\Big(\Pi_{l'\neq l} G_{x,\Tg_t}(l',I_{l'}(p))\Big)
+\end{align}
+\begin{assumption}\label{assmp:init}
+The weights $\Theta_0$ and $\Tg_0$ are sampled i.i.d from a distribution such that for any $\theta_0\in\{\Theta_0\cup \Tg_0\}$,  we have $\E{\theta_0}=0$, and  $\E{\theta^2_0}=\sigma^2$, and $\E{\theta^4_0}={\sigma'}^2$.
 \end{assumption}
 \begin{lemma}\label{lm:disentangle}[Disentanglement]
-Under \Cref{assmp:main}, for paths $p,p'\in \P, p\neq p'$, we have  i) $\E{\ip{\varphi_{p,0}, \varphi_{p',0}}}= 0$ and ii)${\ip{\varphi_{p,0}, \varphi_{p,0}}}= d\sigma^{2(d-1)}$.
+Under \Cref{assmp:init}, $\forall\,\theta\in\Theta$, for paths $p,p'\in [P], p\neq p'$:  i) $E{\partial_{\theta}v_0(p)\partial_{\theta}v_0(p')}= 0$ and ii)$\E{\partial_{\theta}v^2_0(p)}= \sigma^{2(d-1)}$, iii) $\E{v_0(p)v_0(p')}=0$, iv) $\E{v^2_0(p)}=\sigma^{2d}$.
 \end{lemma}
-\begin{theorem}\label{th:exp}[NTK and NPK]
-$\E{K_0}=d\sigma^{2(d-1)}(x^\top x) \odot (\lambda_0)$.
-\end{theorem}
-\begin{proof} Let $\varphi_t=\left[\varphi_{p,t},p\in[P]\right]\in\R^{d_{net}\times P}$ be the VTF matrix at time $t$, then if follows that the NTK (Gram) matrix is  $K_t=\Psi^\top_t\Psi_t=\Phi^\top_t\varphi_t\varphi^\top_t\Phi_t$. Now, taking expectation we have $\E{K_0}=\E{\Phi^\top_t\varphi_t\varphi^\top_t\Phi_t}$, and using \Cref{assmp:main}-(i), one can pull out the $\Phi_t$ terms outside of the expectation, i,e., $\E{K_0}=\Phi^\top_t\E{\varphi_t\varphi^\top_t}\Phi_t$, and using \Cref{assmp:main}-(ii), we can show that $\E{\varphi_t\varphi^\top_t}=d\sigma^{2(d-1)}I$. The statement of \Cref{th:exp} follows by using \Cref{lm:npk}.
-\end{proof}
-\begin{theorem}\label{th:var}
-Under \Cref{assmp:main} and the condition that ${4d}/{w^2}<1$, it follows that\hfill\\
-$Var\left[K_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$.
 
+\subsection{Zeroth-order feature and kernel}
+We now introduce the \emph{neural path feature} (NPF) and the \emph{neural path kernel} (NPK), which are zeroth-order quantities defined using the gating information $\G_t$.\\
+The NPF of an input $x\in \R^{d_{in}}$ is given by $\phi_{x,t}=(x(\I_0(p))A_t(x,p) ,p\in[P])\in\R^P$. By arranging the NPF of the $n$ input examples in a matrix $\Phi_t=\left[\phi_{x_1,t},\ldots, \Phi_{x_n,t}\right]$, we can express the predicted output of a DGN as: \begin{align}\label{eq:npfbasic}\hat{y}_t=\Phi_t^\top v_t,\end{align}
+where, the value of the path $v_t$ is the equivalent of the so called \emph{weight-vector} in a standard linear approximation. The significance of the NPF are:\hfill\\
+$1.$ \textbf{Signal-Wire Separation}: Note that $\Phi$ encodes the signal: say for a DNN with ReLU activations, the co-ordinate corresponding to path $p$ is either $x(\I_0(p))$ if the path is active for that input (i.e., $A_t(x,p)=1$) or $0$ if the path is inactive for that input  (i.e., $A_t(x,p)=0$). The value of the path thus encodes the \emph{wire}, i.e., the information contained in the weights of the network. \hfill\\
+$2.$ \textbf{Deep Information Propagation:} The path view provides a novel way of looking at information propagation in DNNs, eschewing the conventional `layer-by-layer' expression for information flow.\hfill\\
+$3.$ \textbf{Representation:} As a parallel to the standard linear approximation, the NPF can be regarded as the \emph{hidden feature} and $v_t$ as the weight vector.
+\begin{definition}\label{def:lambda}
+For inputs $x,x'\in\R^{d_{in}}$, using any $i\in [d_{in}]$,  define $\lambda_t(x,x')\stackrel{def}{=}\sum_{p\rsa i} A_t(x,p) A_t(x',p)$.
+ \end{definition} 
+\begin{lemma}\label{lm:npk}[Neural Path Kernel] 
+Let $x=(x_s,s\in [n])\in\R^{d_{in}\times n}$ be the data matrix and let the neural path kernel matrix be defined as $H_t\stackrel{def}=\Phi^\top_t\Phi_t$. It follows that $H_t= (x^\top x)\odot(\lambda_t)$. 
+\end{lemma}
+$\lambda_t(s,s')$ is to be understood as the measure of overlap of the sub-networks that are active for both the inputs $x,x'\in\R^{d_{in}}$. Note that the definition of $\lambda_t$ is independent of $i\in [d_{in}]$: owing to symmetry the same number of paths start from any given input node, and looking forward, the paths see exactly the same gates and gating values in the subsequent layers.
+\subsection{First-order feature and kernel}
+Given that the output of a DGN is expressed as $\hat{y}_t(x)=\phi_{x,t}^\top v_t$, we define the following:\\
+$1.$ \textbf{Value gradient:} $\psi_{x,t}^v=(\nabla_{\Theta}v_t)^\top  \phi_{x,t}$, which learns the value of the paths keeping the NPF fixed. \\
+$2.$ \textbf{Feature gradient:}  $\psi_{x,t}^{\phi}=(\nabla_{\Tg}\phi_{x,t})^\top v_t $, which learns the NPFs keeping the value of the paths fixed. Note that the feature gradient is $0$ in the case of hard-gates.
+To the best of our knowledge, for the first time in the literature, we note that the gradient flow has two components. Note that, in the value and feature gradients, quantities $\nabla_{\Theta}v_t$ and $\nabla_{\Tg}\phi_{x,t}$ are $P\times d_{net}$ matrices, which are obtained by computing the derivative of $v_t(p)$ and $\phi_{x,t}(p)$ for all paths $p\in[P]$ with respect to the respective $d_{net}$ parameters.\\
+\textbf{Neural Tangent Feature (NTF):} In the case of explicit parameterisation, i.e., when two distinct set of parameters $\Theta\inrdnet, \Tg\inrdnet$ are used, we have the NTF to be $\psi_{x,t}=[\psi^v_{x,t},\psi^{\phi}_{x,t}]\in \R^{2d_{net}}$. In the case of implicit parameterisation, i.e., when $\Tg=\Theta$, we have the NTF to be $\psi_{x,t}=\psi^v_{x,t}+\psi^{\phi}_{x,t}$, and hence $\psi_{x,t}\inrdnet$.\\
+\textbf{Neural Tangent Kernel (NTK):} In the case of explicit parameterisation, NTK is given by $K_t(x,x')=K^v_t(x,x')+K^{\phi}_t(x,x')$, where $K^v_t(x,x')={\psi^v}^\top_{x,t}\psi^v_{x',t}$ and $K^{\phi}_t(x,x')={\psi^{\phi}}^\top_{x,t}\psi^{\phi}_{x',t}$. In the case of implicit parameterisation, the NTK is given by $K_t(x,x')=K^v_t(x,x')+K^{\phi}_t(x,x')+{\psi^v}^\top_{x,t} \psi^{\phi}_{x',t} + {\psi^{\phi}}^\top_{x,t} \psi^{v}_{x',t}$.
+\begin{assumption}\label{assmp:decouple}
+$\G_0$ is statistically independent of $\Theta_0\inrdnet$ or in the case of parameterised gating, $\Tg_0\inrdnet$ is statistically independent of $\Theta_t\inrdnet$.
+\end{assumption}
+\begin{theorem} Under \Cref{assmp:init,assmp:decouple}, we have:\\
+(i) $\E{K_0}=\E{K^v_0}+\E{K^{\phi}_0}$, where $\E{K^{v}_0}=\sigma^{2(d-1)} (x^\top x)\odot \lambda_0$, and $\E{K^{\phi}_0}=\sigma^{2d}  (x^\top x)\odot \delta_0$.\\
+(ii) In addition, if ${4d}/{w^2}<1$, then $Var\left[K^v_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$.
 \end{theorem}

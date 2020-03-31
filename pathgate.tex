@@ -1,5 +1,5 @@
-\section{Notation: Deep Gated Network and Paths}\label{sec:pathgate}
-
+\section{Deep Gated Network}\label{sec:pathgate}
+\begin{comment}
 \begin{table}[!htb]
 \begin{minipage}{0.5\columnwidth}
 \resizebox{1.0\columnwidth}{!}{
@@ -12,18 +12,76 @@ $A_{t}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,t}(l,\I_l(p))$\\\hline
 }
 \end{minipage}
 \begin{minipage}{0.5\columnwidth}
+%\resizebox{\columnwidth}{!}{
+%\begin{tabular}{|l|l|}\hline
+%\multicolumn{2}{|c|}{Deep Gated Network}\\\hline 
+%Input layer & $z_{x,\Theta_t}(0)=x$ \\\hline
+%Pre-activation & $q_{x,\Theta_t}(l)={\Theta_t(l)}^\top z_{x,\Theta_t}(l-1)$\\\hline
+%Layer output & $z_{x,\Theta_t}(l)=q_{x,\Theta_t}(l)\odot G_{x,t}(l)$ \\\hline
+%Final output & $\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
+%\end{tabular}
+%}
 \resizebox{\columnwidth}{!}{
-\begin{tabular}{|l|l|}\hline
-\multicolumn{2}{|c|}{Deep Gated Network}\\\hline 
-Input layer & $z_{x,\Theta_t}(0)=x$ \\\hline
-Pre-activation & $q_{x,\Theta_t}(l)={\Theta_t(l)}^\top z_{x,\Theta_t}(l-1)$\\\hline
-Layer output & $z_{x,\Theta_t}(l)=q_{x,\Theta_t}(l)\odot G_{x,t}(l)$ \\\hline
-Final output & $\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
+\begin{tabular}{|c|c|c|}\hline
+&Gating Network & Weight Network\\\hline
+Input Layer&$z_{x,\Tg_t}(0)=x$ & $z_{x,\Tv_t}(0)=x$ \\\hline
+Pre-activation& $q_{x,\Tg_t}(l)={\Tg_t(l)}^\top z_{x,\Tg_t}(l-1)$ & $q_{x,\Tv_t}(l)={\Tv_t(l)}^\top z_{x,\Tv_t}(l-1)$\\\hline
+Layer Output& $z_{x,\Tg_t}(l)=q_{x,\Tg_t}(l)\odot G_{x,\Tg}(l)$ & $z_{x,\Tv_t}(l)=q_{x,\Tv_t}(l)\odot G_{x,\Tg_t}(l)$ \\\hline
+Gating& \multicolumn{2}{|c|}{$\hat{y}_{t}(x)={\Tv_t(d)}^\top z_{x,\Tv_t}(d-1)$}\\\hline 
+ &\multicolumn{2}{|c|}{$\begin{aligned}\beta >0: G_{x,\Tg_t}(l,i)&=\chi_{\epsilon}(-\beta q_{x,\Tg_t}(l,i)), \\ \beta=\infty: G_{x,\Tg_t}(l,i)&=\mathbbm{1}_{\{q_{x,\Tg_t}(l,i)>0\}}\end{aligned}$}\\\hline 
 \end{tabular}
 }
 \end{minipage}
 \caption{Here $\Theta(l,i,j)$ denotes the weight connecting node $i$ of layer $l-1$ to node $j$ of layer $l$, and $\odot$ stands for the \emph{Hadamard} product.}
 \label{tb:dgn-path}
 \end{table}
-We consider a dataset given by $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$, and fully connected deep neural network with $d$ layers (i.e., depth $=d$), and $w$ hidden units per layer (i.e., width $=w$). The total number of paths is given by $P=d_{in}w^{(d-1)}$, and an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$.  $\I_{l},l=0,\ldots,d-1$, provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). The value of a path $p$ is denoted by $v_t$ and its activation for input $x\in \R^{d_{in}}$ is given by $A_t(x,p)$. \hfill\\
-In the deep gated network (DGN) in \Cref{tb:dgn-path}, $q(l),z(l)$ and $G(l)$ are $w$-dimensional quantities. In a DGN, the gating values $G_{x,t}(l)$ are handled as independent variables. Thus at time $t$, by specifying the gating values for all the $n$ input examples as $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],l\in[d-1],i\in[w]\}$, we can recover the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset. In the case of DNNs with ReLU units, the gating values are implicit, i.e., $G_{x,t}(l)=\mathbbm{1}_{\{q_{x,\Theta_t}(l)>0\}}$. At time $t$, we denote a DGN parameterised by $\Theta_t\in \R^{d_{net}}$ and gating values $\G_t$ by $\N_G(\Theta_t;\G_t)$, and a DNN with ReLU activations parameterised by $\Theta_t\in\R^{d_{net}}$ by $\N_R(\Theta_t)$. By $\G(\N)$ we denote the fact that gating variables  $\G_t$ are derived from network $\N$.
+
+
+We consider a dataset given by $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$.
+\begin{table}[!htb]
+\begin{tabular}{|c|c|}\hline
+Gating Network & Value Network\\\hline
+$z_{x,\Tg_t}(0)=x$ & $z_{x,\Tv_t}(0)=x$ \\\hline
+$q_{x,\Tg_t}(l)={\Tg_t(l)}^\top z_{x,\Tg_t}(l-1)$ & $q_{x,\Tv_t}(l)={\Tv_t(l)}^\top z_{x,\Tv_t}(l-1)$\\\hline
+$z_{x,\Tg_t}(l)=q_{x,\Tg_t}(l)\odot G_{x,\Tg}(l)$ & $z_{x,\Tv_t}(l)=q_{x,\Tv_t}(l)\odot G_{x,\Tg_t}(l)$ \\\hline
+ \multicolumn{2}{|c|}{$\hat{y}_{t}(x)={\Tv_t(d)}^\top z_{x,\Tv_t}(d-1)$}\\\hline 
+\multicolumn{2}{|c|}{$\begin{aligned}\beta >0: G_{x,\Tg_t}(l,i)&=\chi_{\epsilon}(-\beta q_{x,\Tg_t}(l,i)), \\ \beta=\infty: G_{x,\Tg_t}(l,i)&=\mathbbm{1}_{\{q_{x,\Tg_t}(l,i)>0\}}\end{aligned}$}\\\hline 
+\end{tabular}
+\caption{Shows a parameterised deep gated network. Here, $\epsilon>0$ is a hyper-parameter.}
+\label{tb:dgn}
+\end{table}
+\end{comment}
+
+\begin{table}[!htb]
+\begin{minipage}{0.5\columnwidth}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{|l|l|}\hline
+\multicolumn{2}{|c|}{Deep Gated Network: $\N(\Theta_t;\G_t)$}\\\hline 
+Input layer & $z_{x,\Theta_t}(0)=x$ \\\hline
+Pre-activation & $q_{x,\Theta_t}(l)={\Theta_t(l)}^\top z_{x,\Theta_t}(l-1)$\\\hline
+Layer output & $z_{x,\Theta_t}(l)=q_{x,\Theta_t}(l)\odot G_{x,t}(l)$ \\\hline
+Final output & $\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
+Gating Values& $\begin{aligned}\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],\\l\in[d-1],i\in[w]\}\end{aligned}$\\\hline
+\end{tabular}
+}
+\end{minipage}
+\begin{minipage}{0.5\columnwidth}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{|c|c|}\hline
+Gating Network: $\G(\Tg_t,\beta)$\\\hline
+$z_{x,\Tg_t}(0)=x$  \\\hline
+$q_{x,\Tg_t}(l)={\Tg_t(l)}^\top z_{x,\Tg_t}(l-1)$ \\\hline
+$z_{x,\Tg_t}(l)=q_{x,\Tg_t}(l)\odot G_{x,\Tg_t}(l)$ \\\hline
+{$\begin{aligned}\beta >0: G_{x,\Tg_t}(l,i)&=\frac{1+\epsilon}{1+\exp(-\beta q_{x,\Tg_t}(l,i))} \\ \beta=\infty: G_{x,\Tg_t}(l,i)&=\mathbbm{1}_{\{q_{x,\Tg_t}(l,i)>0\}}\end{aligned}$}\\\hline 
+\end{tabular}
+}
+\end{minipage}
+\caption{Here $\Theta(l,i,j)$ denotes the weight connecting node $i$ of layer $l-1$ to node $j$ of layer $l$, and $\odot$ stands for the \emph{Hadamard} product. The left table shows a DGN, and the right table shows a gating network. }
+\label{tb:dgn}
+\end{table}
+We consider a dataset given by $(x_s,y_s)_{s=1}^n\in \R^{d_{in}}\times \R$, and fully connected deep gated networks with $d$ layers (i.e., depth $=d$), and $w$ hidden units per layer (i.e., width $=w$). In \Cref{tb:dgn}, $q(l),z(l)$ and $G(l)$ are $w$-dimensional quantities, where $G(l)$ are the gating values.  At at time $t$, by specifying the gating values for all the $n$ input examples as $\G_t\stackrel{def}=\{G_{x_{s},t}(l,i), \forall s\in[n],l\in[d-1],i\in[w]\}$, we can recover the outputs $\hat{y}_t(x_s)\in \R$ for all the inputs $\{x_s\}_{s=1}^n$ in the dataset.  A DGN is denoted by $\N(\Theta_t;\G_t)$, i.e., the weights and the gating values are decoupled, and need to be specified to obtain a complete description. This enables the study of following gating methods:\\
+$1.$ \emph{Fixed Random Gating:} Here, for each of the $n$ input examples in the dataset, we sample the $w(d-1)$ corresponding gating values at random from a Bernoulli distribution with parameter $\mu$. Once sampled, these gating values are collected in $\G_0$ and can be held constant ($\G_t=\G_0,\forall t\geq 0$) throughout training. It is obvious that a network with this gating method cannot generalise. However, this gating method is useful in studying the optimisation question.\\
+$2.$ \emph{Soft-Gating:} Here, the gating values belong to $(0,1+\epsilon)$ ($\epsilon>0$ is a hyper-parameter). As seen in the bottom of the table on the right-hand side in \Cref{tb:dgn}, the soft gate replaces the hard indicator in the ReLU by a sigmodial function. A desirable feature here is that the gating values are differentiable with respect to the underlying parameter. We often use the prefix soft to denote the use of soft-gates.\\
+$3.$ \emph{Explicit Parameterised:} Here, we have a separate gating network parameterised by $\Tg\inrdnet$, which, provides the gating values denoted by $\G(\Tg_t,\beta)$. We call these networks as gated linear unit (GaLU) networks denoted by $\N(\Theta_t;\G(\Tg,\beta))$.\\
+$4.$ \emph{Implicit Parameterised:} Here, the gating values are derived implicitly from $\Theta_t$, and we denote these networks by $\N(\Theta_t;\G(\Theta_t,\beta))$, and in particular, the DNN with ReLU activations is given by $\N(\Theta_t;\G(\Theta_t,\infty))$.
+
