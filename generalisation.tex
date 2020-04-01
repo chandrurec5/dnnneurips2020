@@ -5,8 +5,8 @@ Network Architecture and Hyper-parameters:\hfill\\
 \begin{tabular}{|c|c|c|c|c|c|c|}\hline
 &&&&\multicolumn{3}{c|}{GaLU (learnt)}\\\cline{5-7}
 $(w,d)$	&Dataset		&ReLU		&GaLU(not-learned) 		&Good 		&Random Labels 	&Random Pixel\\\hline
-$(128,5)$	& MNIST 		& $98\%$ 		&$96\%$ 		&$96\%$		&$96\%$			&$96\%$\\\hline
-
+$(128,6)$	& MNIST 		& $98.15$ 		&$96$ 		&$98.3$		&$92.6$			&$94.3$\\\hline
+$(256,6)$	& MNIST 		& $98$ 		&$96$ 		&$98$		&$-$			&$-$\\\hline
 \end{tabular}
 \end{table}
 \textbf{Frozen Non-Learned gates generalise poorly:} We trained both ReLU and frozen-GaLU (in $\N_G(\Theta_t,\G(\N_R(\Tg_t)))$ we have $\Tg_t=\Tg_0,\forall t\geq 0$) networks on standard MNIST dataset to close to $100\%$ accuracy. We observed that the frozen-GaLU network trains a bit faster than the ReLU network. However, the test performances were around $96\%$ and  $98\%$ for frozen-GaLU and ReLU networks respectively\footnote{In the case of GaLU, in order to eliminate the effect of initialisation, we trained with identical as well as independent initialisation for the gating as well as the main network in the GaLU. }. We trained ReLU and GaLU networks on standard CIFAR-10 dataset close to $100\%$ training accuracy. In this case, the test performances were around $64\%$ and $72\%$ for GaLU and ReLU networks respectively.\hfill\\
