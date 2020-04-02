@@ -119,8 +119,12 @@ $4.$ \emph{Why increasing the depth beyond hurts training?} Note that for $\sigm
 $5.$ \emph{Generalisation and Feature Learning:} As seen in \Cref{tb:npfs}, we know that, different NPFs give different generalisation performance. In this light, \Cref{th:main} complements the results by \cite{arora2019exact,cao2019generalization}, in that, one can plug-in the NPK in the place of NTK in their generalisation bounds. Further, the gap in the performance of the DNN and the NTK counterparts can be explained by the fact that the NPK keeps changing during training (see \Cref{fig:gen}). We will discuss learning of NPF in \Cref{sec:featlearn}.\\
 $6.$ \Cref{assmp:main} is not satisfied by ReLU activations, i.e., conditioned on the fact that a ReLU is \emph{on}, the incoming weights cannot all be simultaneously negative. This implies that the $\Phi^\top_t$ and $\Phi_t$ terms cannot be pulled out of the expectation as in \eqref{eq:pullout}.
 \subsection{Fixed random gating: Explicit spectral characterisation} 
-\FloatBarrier
-\begin{wrapfigure}{h}{0.25\textwidth}
+\begin{wrapfigure}{h}{0.27\textwidth}
+\includegraphics[scale=0.22]{figs/dgn-fra-ecdf-ideal.png}
+\end{wrapfigure}
+
+\begin{comment}
+\begin{wrapfigure}{h}{0.27\textwidth}
 \includegraphics[scale=0.22]{figs/dgn-fra-ecdf-ideal.png}
 \includegraphics[scale=0.22]{figs/dgn-fra-ecdfbyd-w25.png}
 \includegraphics[scale=0.22]{figs/dgn-fra-ecdfbyd-w500.png}
@@ -129,36 +133,40 @@ $6.$ \Cref{assmp:main} is not satisfied by ReLU activations, i.e., conditioned o
 \caption{}
 \label{fig:dgn-frg-gram-ecdf}
 \end{wrapfigure}
+\end{comment}
 In this section, we consider the a case where the spectrum of $\lambda_0$ (hence $H_0$ and $K_0$) can be explicitly characterised. Here, for each input example in the dataset, we sample gating values from $Ber(\mu)$ taking values in $\{0,1\}$, and collect it in $\G_0$. In this case, it is easy to check that $\mathbb{E}_{\mu}\left[\lambda_0(s,s)\right]=(\mu w)^{(d-1)},\forall s\in[n]$ and $\mathbb{E}_{\mu}\left[\lambda_0(s,s')\right]=(\mu^2 w)^{(d-1)},\forall s,s'\in[n]$.\\
 \textbf{Dataset:} $(x_s,y_s)_{s=1}^n\in \R\times \R$, where $x_s=1,\forall s\in [n]$, and $y_s\sim unif([-1,1])$, $n=200$. \\
-\textbf{NPK:} The input Gram matrix $x^\top x$ is a $n\times n$ matrix with all entries equal to $1$ and its rank is equal to 1, and hence $H_0=\lambda_0$.\\
-\textbf{Spectral Properties:} For $\sigma=\sqrt{\frac{1}{\mu w}}$, and by further averaging $\mathbb{E}_{\mu}\left[K_0(s,s)/d\right]=1$, and $\mathbb{E}_{\mu}\left[K_0(s,s')/d\right]=\mu^{(d-1)}$. Now, let $\rho_i\geq 0,i \in [n]$ be the eigenvalues of $\frac{\E{K_0}}{d}$, and let $\rho_{\max}$ and $\rho_{\min}$ be the largest and smallest eigenvalues. One can easily show that $\rho_{\max}=1+(n-1)\mu^{d-1}$ and corresponds to the eigenvector with all entries as $1$, and $\rho_{\min}=(1-\mu^{d-1})$ repeats $(n-1)$ times, which corresponds to eigenvectors given by $[0, 0, \ldots, \underbrace{1, -1}_{\text{$i$ and $i+1$}}, 0,0,\ldots, 0]^\top \in \R^n$ for $i=1,\ldots,n-1$.\\
-\begin{comment}
+\textbf{NPK:} The input Gram matrix $x^\top x$ is a $n\times n$ matrix with all entries equal to $1$ and its rank is equal to 1, and hence $H_0=\lambda_0$.\WFclear
+\textbf{Spectrum (Theory):} For $\sigma=\sqrt{\frac{1}{\mu w}}$, and by further averaging $\mathbb{E}_{\mu}\left[K_0(s,s)/d\right]=1$, and $\mathbb{E}_{\mu}\left[K_0(s,s')/d\right]=\mu^{(d-1)}$. Now, let $\rho_i\geq 0,i \in [n]$ be the eigenvalues of $\frac{\E{K_0}}{d}$, and let $\rho_{\max}$ and $\rho_{\min}$ be the largest and smallest eigenvalues. One can easily show that $\rho_{\max}=1+(n-1)\mu^{d-1}$ and corresponds to the eigenvector with all entries as $1$, and $\rho_{\min}=(1-\mu^{d-1})$ repeats $(n-1)$ times, which corresponds to eigenvectors given by $[0, 0, \ldots, \underbrace{1, -1}_{\text{$i$ and $i+1$}}, 0,0,\ldots, 0]^\top \in \R^n$ for $i=1,\ldots,n-1$.\\
+
 \begin{figure}[h]
 \resizebox{\textwidth}{!}{
-\begin{tabular}{ccc}
-\includegraphics[scale=0.4]{figs/dgn-fra-ecdf-ideal.png}
+\begin{tabular}{cccc}
+%\includegraphics[scale=0.4]{figs/dgn-fra-ecdf-ideal.png}
+%&
+\includegraphics[scale=0.5]{figs/dgn-fra-ecdfbyd-w25.png}
 &
-\includegraphics[scale=0.4]{figs/dgn-fra-ecdfbyd-w500.png}
+\includegraphics[scale=0.5]{figs/dgn-fra-conv-w25.png}
 &
-\includegraphics[scale=0.4]{figs/dgn-fra-conv-w500.png}
+\includegraphics[scale=0.5]{figs/dgn-fra-ecdfbyd-w500.png}
+&
+\includegraphics[scale=0.5]{figs/dgn-fra-conv-w500.png}
 \end{tabular}
 }
-\caption{Shows the plots for fixed random gating with $\mu=\frac{1}{2}$ and $\sigma=\sqrt{\frac{2}{w}}$. The first plot in the left shows the ideal cumulative eigenvalue (e.c.d.f) for various depths $d=2,4,6,8,12,16,20$. Note that the ideal plot converges to identity matrix as $d$ increases. The second plot from the left shows the cumulative eigenvalues (e.c.d.f) for $w=500$. }
+\caption{Shows the plots for fixed random gating with $\mu=\frac{1}{2}$ and $\sigma=\sqrt{\frac{2}{w}}$. }
 \label{fig:dgn-frg-gram-ecdf}
-
 \end{figure}
-\end{comment}
-\textbf{Numerical Evidence:} We look at the cumulative eigenvalue (e.c.d.f) obtained by first sorting the eigenvalues in ascending order then looking at their cumulative sum. The ideal behaviour (middle plot of \Cref{fig:dgn-frg-gram-ecdf}) as predicted from theory is that for indices $k\in[n-1]$, the e.c.d.f should increase at a linear rate, i.e., the cumulative sum of the first $k$ indices is equal to $k(1-\mu^{d-1})$, and the difference between the last two indices is $1+(n-1)\mu^{d-1}$. In \Cref{fig:dgn-frg-gram-ecdf}, we plot the actual e.c.d.f for various depths $d=2,4,6,8,12,16,20$ and $w=500$. \hfill\\
-In order to compare how the rate of convergence varies with the depth, we set the step-size $\alpha=\frac{0.1}{\rho_{\max}}$, $w=100$. We use the vanilla SGD-optimiser. Note the$ \frac{1}{\rho_{\max}}$ in the stepsize, ensures that the uniformity of maximum eigenvalue across all the instances, and the convergence should be limited by the smaller eigenvalues. We also look at the convergence rate of the ratio $\frac{\norm{e_t}^2_2}{\norm{e_0}^2_2}$, and we observe that the convergence rate gets better with depth as predicted by theory.
+
+\textbf{Spectrum (numerical):} We look at the cumulative eigenvalue (e.c.d.f) obtained by first sorting the eigenvalues in ascending order then looking at their cumulative sum. The ideal behaviour (top plot of \Cref{fig:dgn-frg-gram-ecdf}) as predicted from theory is that for indices $k\in[n-1]$, the e.c.d.f should increase at a linear rate, i.e., the cumulative sum of the first $k$ indices is equal to $k(1-\mu^{d-1})$, and the difference between the last two indices is $1+(n-1)\mu^{d-1}$. In \Cref{fig:dgn-frg-gram-ecdf}, we plot the actual e.c.d.f for various depths $d=2,4,6,8,12,16,20$ and $w=25,500$ a (second and third from top in \Cref{fig:dgn-frg-gram-ecdf}). \hfill\\
+\textbf{Convergence (numerical):} In order to compare how the rate of convergence varies with the depth, we set the step-size $\alpha=\frac{0.1}{\rho_{\max}}$, $w=100$. We use the vanilla SGD-optimiser. Note the$ \frac{1}{\rho_{\max}}$ in the stepsize, ensures that the uniformity of maximum eigenvalue across all the instances, and the convergence should be limited by the smaller eigenvalues. We also look at the convergence rate of the ratio $\frac{\norm{e_t}^2_2}{\norm{e_0}^2_2}$. We notice that for $w=25$, increasing depth till $d=8$ improves the convergence, however increasing beyond $d=8$ worsens the convergence rate. For $w=500$, increasing the depth till $d=12$ improves convergence, and $d=16,20$ are worse than $d=12$.  This matches with the depth phenomena observed in practical DNNs and also matches our theory.
 \section{Feature Learning}
 We saw in experiments (see \Cref{tb:npfs,fig:gen}) that the NFPs are learned during training. 
-Consider a DGN, wherein, the gating network is parameterised by $\Tg\inrdnet$, and let $\Phi_{\Theta}=(\phi_{x_s,\Theta},s\in[n] )\in \R^{P\times n}$ be the NPF matrix $y=(y_s,\in[n])\in\R^n$ be the vector of target values to be learnt, and say we are interested in minimising the square loss given by:
+Consider a DGN, wherein, the gating network is parameterised by $\Tg\inrdnet$, and let $\Phi_{\Theta}=(\phi_{x_s,\Theta},s\in[n] )\in \R^{P\times n}$ be the NPF matrix $y=(y_s,\in[n])\in\R^n$ be the vector of target values to be learnt. Say we are interested in minimising the square loss given by:
 \begin{align}\label{eq:sqloss}
 \min_{\Theta\in \R^{d_{net}}, \Tg\in \R^{d_{net}}}\norm{\Phi_{\Tg}v_{\Theta}-y}^2_2
 \end{align}
-A gradient descent update for the above objective in \eqref{eq:sqloss} involves two gradient components, namely: \\
-(i) The value gradient $\psi^v_{x,t}=\nabla_{\Theta} \hat{y}_t(x)\in\R^{d_{net}}$, which learns the values keeping the NPF fixed.\WFclear
+A gradient descent update for the above objective in \eqref{eq:sqloss} involves two gradient components, namely: 
+(i) The value gradient $\psi^v_{x,t}=\nabla_{\Theta} \hat{y}_t(x)\in\R^{d_{net}}$, which learns the values keeping the NPF fixed.\\
 (ii) The feature gradient $\psi^{\phi}_{x,t}=\nabla_{\Tg} \hat{y}_t(x)\in\R^{d_{net}}$, which learns the NPFs keeping the values fixed.
 An interesting feature to note is that in the case when gating values belong to $\{0,1\}$ (case of $\beta=\infty$ in \Cref{tb:dgn}), the feature gradient is $0$. Further, when $\Tg=\Theta_t$, the NTF is given by $\psi_{x,t}=\psi^v_{x,t}+\psi^{\phi}_{x,t}$, which is a harder case to analysis. The choice of distinct parameters $\Tg\inrdnet$ and $\Theta\inrdnet$ decouples the gradients, in that, the NTF is given by $\psi_{x,t}=(\psi^v_{x,t},\psi^{\phi}_{x,t})\in\R^{2d_{net}}$. A desirable consequence is that the NTK matrix $K_t=K^v_t+K^{\phi}_t$ is an addition of two different Gram matrices, one corresponding to value learning and the other corresponding to feature learning. 
 To start with, we gain insights into the joint optimisation and feature learning in \eqref{eq:sqloss}, we consider the following toy experiment based on simple modification of logistic regression.\\
