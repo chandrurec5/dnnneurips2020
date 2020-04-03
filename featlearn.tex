@@ -1,5 +1,5 @@
 \section{Feature Learning}
-\begin{theorem}\label{th:main} Let $x=(x_s,s\in[n])\in \R^{d_{in}\times n}$ be the data matrix. Then, under \Cref{assmp:main}, we have:\\
+\begin{theorem}\label{th:main} Let $\delta_t(s,s')\stackrel{def}=\sum_{p\rsa i} \ip{\varphi^a_{x_s,p,t},\varphi^a_{x_{s'},p,t}}$, for $s,s'\in[n]$, using any $i\in[d_{in}]$. Then, under \Cref{assmp:main}, we have:\\
 (i) $\E{K_0}=\mathbb{E}\big[K^v_0\big]+\E{K^{\phi}_0}$, where $\E{K^{v}_0}=\sigma^{2(d-1)} (x^\top x)\odot \lambda_0$, and $\E{K^{\phi}_0}=\sigma^{2d}  (x^\top x)\odot \delta_0$.
 \end{theorem}
 \textbf{Discussion:}We hypothesise the following:\\
@@ -10,8 +10,7 @@ We gain insights into the joint optimisation and feature learning in \eqref{eq:s
 We check the performance of frozen-gates versus adaptable gates in this network. We consider a binary classification task, with $n=500$ example for each class, with class $+1$ and $-1$ examples sampled from $U([0.1,1]\times [-a,a])$ and $U([-1,-0.1]\times[-a,a])$ respectively. We considered two cases $a=1$ (first two plots from the left in \Cref{fig:feat}), and $a=100$ (right most plot in \Cref{fig:feat}). 
 We trained the simple neural network using gradient descent with step-size of $0.1$, initialisation $\Tg_0=\Theta_0=(0,0)\in\R^2$, and binary cross entropy loss for the following two cases: i) frozen-gates, wherein, we set $\Tg_0=\Tg_t=\Tg_0,\forall t\geq 0$, and train only $\Theta_t$ ii) adaptable gates, wherein, we train both $\Tg_t$ and $\Theta_t$. In all the plots, green bold and black dotted lines corresponds to classifier learned  by adaptable and frozen gates respectively, and the points are represented using the NPF.
 %While both cases train for $T=10^4$ epochs, for $T=10^3$ epochs only the model with adaptable gates trains successfully. The results are shown in \Cref{fig:feat}, notice that the right most plot shows that in the case when the gates are adapting, they learn to suppress the second co-ordinate (the scale of $\phi_{x_s,T}$ is from $-15$ to $15$ as opposed to $-100$ to $100$ in $x_s$).
-\FloatBarrier
-\begin{figure}[h]
+\begin{figure*}[!b]
 \begin{minipage}{0.15\columnwidth}
 \includegraphics[scale=0.15]{figs/featlearn.png}
 \end{minipage}
@@ -40,7 +39,7 @@ We trained the simple neural network using gradient descent with step-size of $0
 
 \caption{From left: second and third plots shows the training performance of frozen and adaptable gates respectively. In both plots, the bold line in green is the classifier learnt in the case of adaptable gates, and the dotted black line is the classifier learnt in the case of frozen gates. Notice the transformation of the feature space in the case of adaptable gates.}
 \label{fig:feat}
-\end{figure}
+\end{figure*}
 \textbf{Observations:}\\
 $1.$ Initially for both networks $\tg_0=(0,0)^\top$, which means the horizontal and vertical co-ordinates in the NPF are both scaled by a factor of $0.5$. For the case of $a=1$, both networks train successfully in $T=10^2$ epochs, and we do not see any change in the NPFs. However, when trained for $T=10^3$ epochs, the network with adaptable gates learns to scale the horizontal co-ordinate in the NPF by factor $1.0$, while it retains a value of $0.5$ for the vertical co-ordinate (see second plot from left of \Cref{fig:feat}).\\
 $2.$ In the case of $a=100$ (right-most plot), the adaptable network successfully trains in $T=10^3$ epochs by learning to scale the vertical co-ordinate down by a factor close to $0.15$. However, the network with frozen-gates does not train. We also observed that both networks trained successfully for $T=10^4$ epochs.

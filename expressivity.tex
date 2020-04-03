@@ -46,7 +46,7 @@ From \Cref{lm:npk} it follows that the similarity of two inputs $s,s'\in[n]$ is 
 \input{npf}
 \section{First-Order Information: Neural Tangent Feature and Kernel}
 Consider a DGN, wherein, the gating network is parameterised by $\Tg\inrdnet$ with $\beta>0$.  We have 
-\begin{align}\nabla_{\Theta,\Tg}\hat{y}_t=(\psi^v_{x,t}, \psi^{\phi}_{x,t})=\left((\nabla_{\Theta|_{\Theta=\Theta_t}}v_{\Theta})^\top \Phi_{\Tg_t}, (\nabla_{\Tg|_{\Tg=\Tg_t}}\Phi_{\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}}
+\begin{align}\nabla_{\Theta,\Tg}\hat{y}_t=\psi_{x,t}=(\psi^v_{x,t}, \psi^{\phi}_{x,t})=\left((\nabla_{\Theta|_{\Theta=\Theta_t}}v_{\Theta})^\top \Phi_{\Tg_t}, (\nabla_{\Tg|_{\Tg=\Tg_t}}\Phi_{\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}}
 \end{align}
 $1.$ The \emph{value gradient}  $\psi^v_{x,t}$ flows through the network of active paths: For a path $p$, the derivative of its value with respect to any weight in the path is given by:\\
 \begin{align}\label{eq:vft}{\partial v_t(p)}/{\partial \Theta\left(l,\I_{l'-1}(p),\I_{l'}(p)\right)}|_{\Theta=\Theta_t}= \underset{l=1}{\underset{l\neq l'}{\overset{d}{\Pi}}} \Theta_t\left(l,\I_{l-1}(p),\I_{l}(p)\right)
@@ -66,7 +66,13 @@ $\delta_t(s,s')=\sum_{p\rsa i} \ip{\varphi^a_{x_s,p,t},\varphi^a_{x_{s'},p,t}}$,
 \end{definition}
 \textbf{Gradient Flow via Sub-Networks:} Note that in the case of $\beta=\infty$ (see \Cref{tb:dgn}), i.e, when the gating values belong to $\{0,1\}$, it follows that the activity $A_t\in\{0,1\}$, and hence AD and FG are $0$. Thus, in the case of DNNs with ReLU activations, there is no flow of the feature gradient, however, since the gating parameter $\Tg$ identical with $\Theta$, (i.e., $\Tg_t=\Theta_t,\forall t$), $A_t$ changes with time and so does the NPF. In the case of $\beta>0$, for an input $x\in\R^{d_{in}}$, let $\N^{\S}_{x,t}(\tau_{\S})=\{p\in[P]: |\partial_{\tg} A_t(x,p)|>\tau_{\S}\}$ be the set of paths, which have activations whose gradient to any of $\Tg\inrdnet$ is greater than some threshold $\tau>0$. Note that when all the gates are close to $1$ in a path $p$, then it follows that $\partial A_t(x_s,p)$ will be very small. Thus, using the property that the slope of the sigmoid diminishes in the extremities, we can reason that for appropriate choices of $\tau_{\A}$ (sufficiently close to $1$) and $\tau_{\S}$ (large enough), $\P^{\S}(\tau_{S})\cup \P^{\A}(\tau_{\A})=\emptyset$. Thus, there are two separate networks for the two separate gradient flows, i.e., the value gradient flow via the active sub-network and the feature gradient flow via the sensitive sub-network.\\
 \end{comment}
-\textbf{Neural Tangent Feature and Kernel:}
+\begin{assumption}\label{assmp:init}
+The weights $\Theta_0$ are sampled i.i.d from a distribution such that for any $\theta_0\in\{\Theta_0\cup \Tg_0\}$,  we have $\E{\theta_0}=0$, and  $\E{\theta^2_0}=\sigma^2$, and $\E{\theta^4_0}={\sigma'}^2$.
+\end{assumption}
+\begin{lemma}\label{lm:disentangle}[Disentanglement] Let $\varphi_{p,t}=\nabla_{\Theta} v_t(p)\inrdnet$, 
+under \Cref{assmp:init}, $\forall\,\theta\in\Theta$, for paths $p,p'\in [P], p\neq p'$:  i) $\E{\ip{\varphi_{p,0},\varphi_{p',0}}}= 0$ and ii)$\E{\ip{\varphi_{p,0},\varphi_{p,0}}}= \sigma^{2(d-1)}$, iii) $\E{v_0(p)v_0(p')}=0$, iv) $\E{v^2_0(p)}=\sigma^{2d}$.
+\end{lemma}
+\textbf{Neural Tangent Feature and Kernel:} Let $\Psi^v_t=(\psi^v_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ and $\Psi^{\phi}_t=(\psi^{\phi}_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ be the NTF matrices, then the corresponding NTK matrices are given in \Cref{tb:ntks}
 \FloatBarrier
 \begin{table}[h]
 \begin{minipage}{0.5\columnwidth}
@@ -86,8 +92,8 @@ NTK 		&$K_t=K^v_t+K^{\phi}_t+{\Psi^{\phi}}^\top_t\Psi^v_t+ {\Psi^{v}}^\top_t\Psi
 \end{tabular}
 %}
 \end{minipage}
-\caption{Shows NTK and NTF for the distinct ($\Tg\neq\Theta$) on the left and shared parameterisation ($\Tg=\Theta$) on the right. Here, $K^v_t={\Psi^{v}}^\top_t\Psi^v_t$ and $K^{\phi}_t={\Psi^{\phi}}^\top_t\Psi^{\phi}_t$, with $\Psi^v_t=(\psi^v_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ and $\Psi^{\phi}_t=(\psi^{\phi}_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$}
-\label{tb:terms}
+\caption{Shows NTK and NTF for the distinct ($\Tg\neq\Theta$) on the left and shared parameterisation ($\Tg=\Theta$) on the right. Here, $K^v_t={\Psi^{v}}^\top_t\Psi^v_t$ and $K^{\phi}_t={\Psi^{\phi}}^\top_t\Psi^{\phi}_t$.}
+\label{tb:ntks}
 \end{table}
 
 \begin{comment}
