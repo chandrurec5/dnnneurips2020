@@ -1,7 +1,8 @@
-\section{Information Flow in DGNs}\label{sec:expressivity}
+
 \textbf{Paths:} We have a total of $P=d_{in}w^{(d-1)}$ paths. Let us say that an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$. Let $\I_{l},l=0,\ldots,d-1$ provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). We then define:\\
 $1.$ The value of a path $p$ by $v_t(p)\stackrel{def}=\Pi_{l=1}^d \Theta_t(l,\I_{l-1}(p),\I_l(p))$.\\
-$2.$ The activity of a path $p$ for an input $x\in \R^{d_{in}}$ by $A_{t}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,t}(l,\I_l(p))$.
+$2.$ The activity of a path $p$ for an input $x\in \R^{d_{in}}$ by $A_{t}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,t}(l,\I_l(p))$.\\
+\begin{comment}
 \FloatBarrier
 \begin{table}[h]
 \begin{minipage}{0.5\columnwidth}
@@ -30,6 +31,7 @@ NTK 		&$K_t(x,x')=\ip{\psi_{x,t}\psi_{x',t}}$\\\hline
 \caption{Shows all zeroth-order and first-order quantities related to information flow in a DGN.}
 \label{tb:terms}
 \end{table}
+\end{comment}
 The \textbf{neural path feature (NPF)} of an input example $x_s\in \R^{d_{in}}$ is given by $\phi_{x_s,\G_t}=(x_s(\I_0(p))A_t(x_s,p) ,p\in[P])\in\R^P$. Here, for a path $p$, $\I_0(p)$ is the input node at which the path starts and $A_t(x_s,p)$ is its activation level. By arranging the NPF of the $n$ input examples in a matrix $\Phi_t=(\phi_{x_s,\G_t},s\in[n)\in\R^{P\times n}$, we can express the predicted output of a DGN as: 
 \begin{align}\label{eq:npfbasic}
 \hat{y}_t=\Phi_t^\top v_t,
@@ -50,20 +52,44 @@ Consider a DGN, wherein, the gating network is parameterised by $\Tg\inrdnet$,  
 \textbf{Value Derivative:} For a path $p$, the derivative of its value with respect to any weight in the path is: 
 \begin{align}\label{eq:vft}{\partial v_t(p)}/{\partial \Theta\left(l,\I_{l'-1}(p),\I_{l'}(p)\right)}|_{\Theta=\Theta_t}= \underset{l=1}{\underset{l\neq l'}{\overset{d}{\Pi}}} \Theta_t\left(l,\I_{l-1}(p),\I_{l}(p)\right)
 \end{align}
-If a path $p$ does not pass through a $\theta\in\Theta$, then ${\partial v_t(p)}/{\partial \theta}=0$. We collect the value derivates in a vector called the \textbf{value tangent of a path} (VTP) as $\varphi^v_{p,t}=(\partial_{\theta}v_t(p),\theta\in\Theta)\inrdnet$.\\
+If a path $p$ does not pass through a $\theta\in\Theta$, then ${\partial v_t(p)}/{\partial \theta}=0$. We collect the value derivates in a vector called the \textbf{value tangent of a path} (VTP) as $\varphi^v_{p,t}=(\partial_{\theta}v_t(p),\theta\in\Theta)\inrdnet$.
+\begin{lemma}\label{lm:disentangle}[Disentanglement] Let $\varphi_{p,t}=(\nabla_{\Theta} v_t(p))\inrdnet$, 
+under \Cref{assmp:main}-(ii), $\forall\,\theta\in\Theta$, for paths $p,p'\in [P], p\neq p'$:  i) $\E{\ip{\varphi_{p,0},\varphi_{p',0}}}= 0$ and ii)$\E{\ip{\varphi_{p,0},\varphi_{p,0}}}= \sigma^{2(d-1)}$, iii) $\E{v_0(p)v_0(p')}=0$, iv) $\E{v^2_0(p)}=\sigma^{2d}$.
+\end{lemma}
 \textbf{Activity Derivative:} For a path $p$, and an input $x\inrdin$ the derivative of its activity with respect to any weight is given by 
 \begin{align}
 \frac{\partial A_{t}(x,p)}{\partial \tg}= \sum_{l=1}^{d-1} \Big(\frac{\partial G_{x,\Tg_t}(l,\I_l(p))}{\partial \tg} \Big)\Big(\Pi_{l'\neq l} G_{x,\Tg_t}(l',I_{l'}(p))\Big)
 \end{align}
 We collect the activity derivatives in a vector called the \textbf{activity tangent of a path} (ATP) as $\varphi^a_{x,p,t}=(\partial_{\tg}A_t(x,p),\tg\in\Tg)\inrdnet$.
-\begin{lemma}\label{lm:disentangle}[Disentanglement] Let $\varphi_{p,t}=(\nabla_{\Theta} v_t(p))\inrdnet$, 
-under \Cref{assmp:main}-(ii), $\forall\,\theta\in\Theta$, for paths $p,p'\in [P], p\neq p'$:  i) $\E{\ip{\varphi_{p,0},\varphi_{p',0}}}= 0$ and ii)$\E{\ip{\varphi_{p,0},\varphi_{p,0}}}= \sigma^{2(d-1)}$, iii) $\E{v_0(p)v_0(p')}=0$, iv) $\E{v^2_0(p)}=\sigma^{2d}$.
-\end{lemma}
-\textbf{Gradient Flow via Sub-Networks:} Note that in the case of $\beta=\infty$ (see \Cref{tb:dgn}), i.e, when the gating values belong to $\{0,1\}$, it follows that the activity $A_t\in\{0,1\}$, and hence AD and FG are $0$. Thus, in the case of DNNs with ReLU activations, there is no flow of the feature gradient, however, since the gating parameter $\Tg$ identical with $\Theta$, (i.e., $\Tg_t=\Theta_t,\forall t$), $A_t$ changes with time and so does the NPF. In the case of $\beta>0$, for an input $x\in\R^{d_{in}}$, let $\P^{\S}_{x,t}(\tau_{\S})=\{p\in[P]: |\partial_{\tg} A_t(x,p)|>\tau_{\S}\}$ be the set of paths, which have activations whose gradient to any of $\Tg\inrdnet$ is greater than some threshold $\tau>0$. Note that when all the gates are close to $1$ in a path $p$, then it follows that $\partial A_t(x_s,p)$ will be very small. Thus, using the property that the slope of the sigmoid diminishes in the extremities, we can reason that for appropriate choices of $\tau_{\A}$ (sufficiently close to $1$) and $\tau_{\S}$ (large enough), $\P^{\S}(\tau_{S})\cup \P^{\A}(\tau_{\A})=\emptyset$. Thus, there are two separate networks for the two separate gradient flows, i.e., the value gradient flow via the active sub-network and the feature gradient flow via the sensitive sub-network.\\
 \begin{definition}\label{def:delta}
 $\delta_t(s,s')=\sum_{p\rsa i} \ip{\varphi^a_{x_s,p,t},\varphi^a_{x_{s'},p,t}}$, for $s,s'\in[n]$, using any $i\in[d_{in}]$.
 \end{definition}
-\textbf{Overlap of Sensitive Sub-Networks:} \\
+\textbf{Gradient Flow via Sub-Networks:} Note that in the case of $\beta=\infty$ (see \Cref{tb:dgn}), i.e, when the gating values belong to $\{0,1\}$, it follows that the activity $A_t\in\{0,1\}$, and hence AD and FG are $0$. Thus, in the case of DNNs with ReLU activations, there is no flow of the feature gradient, however, since the gating parameter $\Tg$ identical with $\Theta$, (i.e., $\Tg_t=\Theta_t,\forall t$), $A_t$ changes with time and so does the NPF. In the case of $\beta>0$, for an input $x\in\R^{d_{in}}$, let $\P^{\S}_{x,t}(\tau_{\S})=\{p\in[P]: |\partial_{\tg} A_t(x,p)|>\tau_{\S}\}$ be the set of paths, which have activations whose gradient to any of $\Tg\inrdnet$ is greater than some threshold $\tau>0$. Note that when all the gates are close to $1$ in a path $p$, then it follows that $\partial A_t(x_s,p)$ will be very small. Thus, using the property that the slope of the sigmoid diminishes in the extremities, we can reason that for appropriate choices of $\tau_{\A}$ (sufficiently close to $1$) and $\tau_{\S}$ (large enough), $\P^{\S}(\tau_{S})\cup \P^{\A}(\tau_{\A})=\emptyset$. Thus, there are two separate networks for the two separate gradient flows, i.e., the value gradient flow via the active sub-network and the feature gradient flow via the sensitive sub-network.\\
+\textbf{Neural Tangent Feature and Kernel:}
+\FloatBarrier
+\begin{table}[h]
+\begin{minipage}{0.5\columnwidth}
+%\resizebox{\columnwidth}{!}{
+\begin{tabular}{|c|l|}\hline								 								 													
+NTF		&$\psi_{x_s,t}=(\psi^v_{x_s,t},\psi^{\phi}_{x_s,t})\in\R^{2d_{net}}$\\\hline
+NTK 		&$K_t=K^v_t+K^{\phi}_t$\\\hline
+\end{tabular}
+%}
+\end{minipage}
+%\hspace{15pt}
+\begin{minipage}{0.5\columnwidth}
+%\resizebox{\columnwidth}{!}{
+\begin{tabular}{|c|l|}\hline								 								 													
+NTF		&$\psi_{x_s,t}=(\phi^v_{x_s,t}+\psi^{\phi}_{x_s,t})\in\R^{d_{net}}$\\\hline
+NTK 		&$K_t=K^v_t+K^{\phi}_t+{\Psi^{\phi}}^\top_t\Psi^v_t+ {\Psi^{v}}^\top_t\Psi^{\phi}_t$\\\hline
+\end{tabular}
+%}
+\end{minipage}
+\caption{Shows NTK and NTF for the distinct ($\Tg\neq\Theta$) on the left and shared parameterisation ($\Tg=\Theta$) on the right. Here, $K^v_t={\Psi^{v}}^\top_t\Psi^v_t$ and $K^{\phi}_t={\Psi^{\phi}}^\top_t\Psi^{\phi}_t$, with $\Psi^v_t=(\psi^v_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ and $\Psi^{\phi}_t=(\psi^{\phi}_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$}
+\label{tb:terms}
+\end{table}
 
+\begin{comment}
 The \textbf{neural tangent feature} (NTF) is given by $\psi_{x_s,t}=(\psi^v_{x_s,t},\psi^{\phi}_{x_s,t})\in\R^{2d_{net}}$, when the gating network is parameterised by $\Tg$ which is distinct from $\Theta$. When the parameters are shared ($\Tg_t=\Theta_t\forall t\geq 0$), then we have $\psi_{x_s,t}=(\phi^v_{x_s,t}+\psi^{\phi}_{x_s,t})\in\R^{d_{net}}$.\\
 When the gating network is parameterised by $\Tg$ which is distinct from $\Theta$, the \textbf{neural tangent kernel} (NTK) matrix is given by $K_t=K^v_t+K^{\phi}_t$, where $K^v_t={\Psi^{v}}^\top_t\Psi^v_t$ and $K^{\phi}_t={\Psi^{\phi}}^\top_t\Psi^{\phi}_t$, with $\Psi^v_t=(\psi^v_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ and $\Psi^{\phi}_t=(\psi^{\phi}_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$. In the case of shared parameterisation ($\Tg_t=\Theta_t\forall t\geq 0$), we have $K_t=K^v_t+K^{\phi}_t+{\Psi^{\phi}}^\top_t\Psi^v_t+ {\Psi^{v}}^\top_t\Psi^{\phi}_t$.
+\end{comment}
