@@ -32,7 +32,7 @@ NTK 		&$K_t(x,x')=\ip{\psi_{x,t}\psi_{x',t}}$\\\hline
 \label{tb:terms}
 \end{table}
 \end{comment}
-\subsection{Zeroth-Order: Active Sub-Network, Neural Path Feature and Kernel}
+%\subsection{Zeroth-Order: Active Sub-Network, Neural Path Feature and Kernel}
 The \emph{neural path feature (NPF)} of an input example $x_s\in \R^{d_{in}}$ is given by $\phi_{x_s,\G_t}=(x_s(\I_0(p))A_t(x_s,p) ,p\in[P])\in\R^P$. Here, for a path $p$, $\I_0(p)$ is the input node at which the path starts, and $A_t(x_s,p)$ is its activity. By arranging the NPF of the $n$ input examples in a matrix $\Phi_t=(\phi_{x_s,\G_t},s\in[n])\in\R^{P\times n}$, we can express the predicted output of a DGN as: 
 \begin{align}\label{eq:npfbasic}
 \hat{y}_t=\Phi_t^\top v_t,
@@ -44,10 +44,12 @@ The significance of the NPF is that it separates the \emph{signal} form the \emp
 Let $\lambda_t(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_t(x_s,p) A_t(x_{s'},p)$, $\forall s,s'\in[n]$, any $i\in [d_{in}]$ and let the \textbf{neural path kernel} (NPK) matrix is defined as $H_t\stackrel{def}=\Phi^\top_t\Phi_t$. It follows that $H_t= (x^\top x')\odot\lambda_t$, where $\odot$ stands for the Hadamard product.
 \end{lemma}
 \textbf{Active Sub-Network:} Let $\N^{\A}_{x_s,t}(\tau_{\A})=\{p\in[P]:A_t(x,p)>\tau_{\A}\}$ be the \emph{active sub-network} comprising of the set of paths whose activity is greater than some threshold value $\tau_{\A}>0$. In the case of hard gates, $\N^{\A}_{x_s,t}(0)$ denotes the set of all the active paths, and $\lambda_t(s,s')$ in \Cref{lm:npk} denotes the overlap of the sub-networks that are active for both $s,s'\in[n]$.\\
-\subsection{First-Order: Sensitive Sub-Network, Twin Gradients, Neural Tangent Feature and Kernel}
+%\subsection{First-Order: Sensitive Sub-Network, Twin Gradients, Neural Tangent Feature and Kernel}
 Consider a DGN, wherein, the gating network is parameterised by $\Tg\inrdnet$ and $\beta>0$.  We have 
-\begin{align*}\nabla_{\Theta,\Tg}\hat{y}_t(x_s)=\psi_{x_s,t}=(\psi^v_{x_s,t}, \psi^{\phi}_{x_s,t})=\left((\nabla_{\Theta|_{\Theta=\Theta_t}}v_{\Theta})^\top \Phi_{\Tg_t}, (\nabla_{\Tg|_{\Tg=\Tg_t}}\Phi_{\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}}
-\end{align*}
+%\begin{align*}\nabla_{\Theta,\Tg}\hat{y}_t(x_s)=\psi_{x_s,t}=(\psi^v_{x_s,t}, \psi^{\phi}_{x_s,t})=\left((\nabla_{\Theta|_{\Theta=\Theta_t}}v_{\Theta})^\top \Phi_{\Tg_t}, (\nabla_{\Tg|_{\Tg=\Tg_t}}\Phi_{\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}}
+%\end{align*}
+\begin{align}\label{eq:twin}\nabla_{\Theta,\Tg}\hat{y}_t(x_s)=\psi_{x_s,t}=(\psi^v_{x_s,t}, \psi^{\phi}_{x_s,t})=\left((\nabla_{\Theta}v_{\Theta_t})^\top \phi_{x_s\Tg_t}, (\nabla_{\Tg}\phi_{x_s,\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}}
+\end{align}
 \textbf{Sensitive Sub-Network:} Let $\N^{\S}_{x,t}(\tau_{\S})=\{p\in[P]: |\partial_{\tg} A_t(x,p)|>\tau_{\S}\}$ be sensitive sub-network, whose path activity gradient with respect to any of $\Tg\inrdnet$ is greater than some threshold $\tau_{\S}>0$. Using the property that the slope of the sigmoid diminishes in the extremities, we can reason that for appropriate choices of $\tau_{\A}$ (sufficiently close to $1$) and $\tau_{\S}$ (large enough), $\N^{\S}(\tau_{S})\cup \N^{\A}(\tau_{\A})=\emptyset$. Thus, there are two separate networks for the two separate gradient flows, i.e., the value gradient flow via the active sub-network and the feature gradient flow via the sensitive sub-network.\\
 \textbf{Value and Feature gradients:} The \emph{value gradient}  $\psi^v_{x,t}$ flows through the network of active paths. For a path $p$, the derivative of its value with respect to any weight in the path is given by:
 ${\partial_{\Theta\left(l,\I_{l'-1}(p),\I_{l'}(p)\right)} v_t(p)}|_{\Theta=\Theta_t}= {\underset{l=1,l\neq l'}{\overset{d}{\Pi}}} \Theta_t\left(l,\I_{l-1}(p),\I_{l}(p)\right)
