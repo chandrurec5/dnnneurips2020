@@ -33,40 +33,63 @@ NTK 		&$K_t(x,x')=\ip{\psi_{x,t}\psi_{x',t}}$\\\hline
 \end{table}
 \end{comment}
 %\subsection{Zeroth-Order: Active Sub-Network, Neural Path Feature and Kernel}
-The \emph{neural path feature (NPF)} of an input example $x_s\in \R^{d_{in}}$ is given by $\phi_{x_s,\G_t}=(x_s(\I_0(p))A_t(x_s,p) ,p\in[P])\in\R^P$. Here, for a path $p$, $\I_0(p)$ is the input node at which the path starts, and $A_t(x_s,p)$ is its activity. By arranging the NPF of the $n$ input examples in a matrix $\Phi_t=(\phi_{x_s,\G_t},s\in[n])\in\R^{P\times n}$, we can express the predicted output of a DGN as: 
+The \textbf{neural path feature (NPF)} of an input example $x_s\in \R^{d_{in}}$ is given by $\phi_{x_s,\G_t}=(x_s(\I_0(p))A_t(x_s,p) ,p\in[P])\in\R^P$. Here, for a path $p$, $\I_0(p)$ is the input node at which the path starts, and $A_t(x_s,p)$ is its activity. By arranging the NPF of the $n$ input examples in a matrix $\Phi_t=(\phi_{x_s,\G_t},s\in[n])\in\R^{P\times n}$, we can express the predicted output of a DGN as: 
 \begin{align}\label{eq:npfbasic}
 \hat{y}_t=\Phi_t^\top v_t,
 \end{align}
-where, the value of the path $v_t$ is the equivalent of the so called \emph{weight-vector} in a standard linear approximation. 
-The significance of the NPF is that it separates the \emph{signal} form the \emph{wire}. Note that $\Phi$ encodes the signal: say for a DNN with ReLU activations, the co-ordinate corresponding to path $p$ is either $x(\I_0(p))$ if the path is active for that input (i.e., $A_t(x,p)=1$) or $0$ if the path is inactive for that input  (i.e., $A_t(x,p)=0$). The value of the path encodes the \emph{wire}, i.e., the information contained in the weights of the network.
+where, the value of the path $v_t$ is the equivalent of the so called \emph{weight-vector} in a standard linear approximation. \\
+\textbf{`Signal' vs `Wire': }The significance of the NPF is that it separates the \emph{signal} form the \emph{wire}. Note that $\Phi$ encodes the signal: say for a DNN with ReLU activations, the co-ordinate corresponding to path $p$ is either $x(\I_0(p))$ if the path is active for that input (i.e., $A_t(x,p)=1$) or $0$ if the path is inactive for that input  (i.e., $A_t(x,p)=0$). The value of the path encodes the \emph{wire}, i.e., the information contained in the weights of the network.\\
+\textbf{Active Sub-Network:} Let $\N^{\A}_{x_s,t}(\tau_{\A})=\{p\in[P]:A_t(x,p)>\tau_{\A}\}$ be the \emph{active sub-network} comprising of the set of paths whose activity is greater than some threshold value $\tau_{\A}>0$. In the case of hard gates, $\N^{\A}_{x_s,t}(0)$ denotes the set of all the active paths, and uniquely determines the NPF.\\
+
 % \textbf{Active Sub-Network:}  For input $x_s\in\R^{d_{in}}$, let $\N^{\A}_{x_s,t}(\tau_{\A})=\{p\in[P]:A_t(x,p)>\tau_{\A}\}$ be the \emph{active sub-network} comprising of the set of paths whose activity is greater than some threshold value $\tau_{\A}>0$. In the case of ReLU activations, $\N^{\A}_{x_s,t}(0)$ completely determines the NPF $\phi_{x_s,\G_t}$.  $\lambda_t(x_s,x_{s'})$ is a measure of overlap of active sub-networks for input examples $s,s'\in[n]$.
-\begin{lemma}\label{lm:npk}
-Let $\lambda_t(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_t(x_s,p) A_t(x_{s'},p)$, $\forall s,s'\in[n]$, any $i\in [d_{in}]$ and let the \textbf{neural path kernel} (NPK) matrix is defined as $H_t\stackrel{def}=\Phi^\top_t\Phi_t$. It follows that $H_t= (x^\top x')\odot\lambda_t$, where $\odot$ stands for the Hadamard product.
+\begin{lemma}[\textbf{Neural Path Kernel (NPK)}]\label{lm:npk}
+Let $\lambda_t(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_t(x_s,p) A_t(x_{s'},p)$, $\forall s,s'\in[n]$, any $i\in [d_{in}]$ and let the {neural path kernel} (NPK) matrix be defined as $H_t\stackrel{def}=\Phi^\top_t\Phi_t$. It follows that $H_t= (x^\top x)\odot\lambda_t$, where $\odot$ stands for the Hadamard product.
 \end{lemma}
-\textbf{Active Sub-Network:} Let $\N^{\A}_{x_s,t}(\tau_{\A})=\{p\in[P]:A_t(x,p)>\tau_{\A}\}$ be the \emph{active sub-network} comprising of the set of paths whose activity is greater than some threshold value $\tau_{\A}>0$. In the case of hard gates, $\N^{\A}_{x_s,t}(0)$ denotes the set of all the active paths, and $\lambda_t(s,s')$ in \Cref{lm:npk} denotes the overlap of the sub-networks that are active for both $s,s'\in[n]$.\\
+\textbf{Correlation of active sub-networks:} $\lambda_t(s,s')$ in \Cref{lm:npk} denotes the overlap of the sub-networks that are active for both $s,s'\in[n]$. The special structure of the NPK matrix is that the signal correlation given by $(x^\top x)$ and the correlation of the active sub-networks interact as a Hadamard product: another instance of \emph{signal-wire} decoupling.\\
 %\subsection{First-Order: Sensitive Sub-Network, Twin Gradients, Neural Tangent Feature and Kernel}
-Consider a DGN, wherein, the gating network is parameterised by $\Tg\inrdnet$ and $\beta>0$.  We have 
+\textbf{Twin Gradients:} When the gating network is parameterised by $\Tg\inrdnet$ and $\beta>0$, we have:
 %\begin{align*}\nabla_{\Theta,\Tg}\hat{y}_t(x_s)=\psi_{x_s,t}=(\psi^v_{x_s,t}, \psi^{\phi}_{x_s,t})=\left((\nabla_{\Theta|_{\Theta=\Theta_t}}v_{\Theta})^\top \Phi_{\Tg_t}, (\nabla_{\Tg|_{\Tg=\Tg_t}}\Phi_{\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}}
 %\end{align*}
-\begin{align}\label{eq:twin}\nabla_{\Theta,\Tg}\hat{y}_t(x_s)=\psi_{x_s,t}=(\psi^v_{x_s,t}, \psi^{\phi}_{x_s,t})=\left((\nabla_{\Theta}v_{\Theta_t})^\top \phi_{x_s\Tg_t}, (\nabla_{\Tg}\phi_{x_s,\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}}
+\begin{align}\label{eq:twin}\nabla_{\Theta,\Tg}\hat{y}_t(x_s)=\psi_{x_s,t}=(\psi^v_{x_s,t}, \psi^{\phi}_{x_s,t})=\left((\nabla_{\Theta}v_{\Theta_t})^\top \phi_{x_s\Tg_t}, (\nabla_{\Tg}\phi_{x_s,\Tg_t})^\top v_{\Theta_t}\right)\in \R^{2d_{net}},
 \end{align}
+where  $\nabla_{\Theta}v_{\Theta_t}\in \R^{P\times d_{net}}$ is the matrix of the derivatives given by $\partial_{\theta}v_t(p),\,\forall\,p\in[P],\theta\in\Theta$, and  $\nabla_{\Tg}\phi_{x_s,\Tg_t}\in \R^{P\times d_{net}}$ is the matrix of the derivatives $\partial_{\tg}\left(x(\I_0)A_t(x_s,p)\right)(p,\tg), \,\forall\,p\in[P],\theta\in\Theta$.\\
 \textbf{Sensitive Sub-Network:} Let $\N^{\S}_{x,t}(\tau_{\S})=\{p\in[P]: |\partial_{\tg} A_t(x,p)|>\tau_{\S}\}$ be sensitive sub-network, whose path activity gradient with respect to any of $\Tg\inrdnet$ is greater than some threshold $\tau_{\S}>0$. Using the property that the slope of the sigmoid diminishes in the extremities, we can reason that for appropriate choices of $\tau_{\A}$ (sufficiently close to $1$) and $\tau_{\S}$ (large enough), $\N^{\S}(\tau_{S})\cup \N^{\A}(\tau_{\A})=\emptyset$. Thus, there are two separate networks for the two separate gradient flows, i.e., the value gradient flow via the active sub-network and the feature gradient flow via the sensitive sub-network.\\
-\textbf{Value and Feature gradients:} The \emph{value gradient}  $\psi^v_{x,t}$ flows through the network of active paths. For a path $p$, the derivative of its value with respect to any weight in the path is given by:
+The \textbf{value gradient}  $\psi^v_{x,t}$ flows through the network of active paths. For a path $p$, the derivative of its value with respect to any weight in the path is given by:
 ${\partial_{\Theta\left(l,\I_{l'-1}(p),\I_{l'}(p)\right)} v_t(p)}|_{\Theta=\Theta_t}= {\underset{l=1,l\neq l'}{\overset{d}{\Pi}}} \Theta_t\left(l,\I_{l-1}(p),\I_{l}(p)\right)
 $.
 Note that, if a path $p$ does not pass through a $\theta\in\Theta$, then ${\partial v_t(p)}/{\partial \theta}=0$. Further, since $\psi^v_{x,t}=(\nabla_{\Theta|_{\Theta=\Theta_t}}v_{\Theta})^\top \Phi_{\Tg_t}$, the value derivatives of those paths which are not active, i.e., $A_t(x_s,p)$ close to $0$ will not contribute significantly in $\psi^v_{x,t}$.\\
-The \emph{feature gradient}  $\psi^{\phi}_{x,t}$ flows through the network of sensitive paths. Note that for a weight $\tg\in \Tg$, $\partial_{\tg} \phi_{x_s,t}(p) = x(\I_0(p))\partial_{\tg} A_t(x_s,p)$, wherein:
+The \textbf{feature gradient}  $\psi^{\phi}_{x,t}$ flows through the network of sensitive paths. Note that for a weight $\tg\in \Tg$, $\partial_{\tg} \phi_{x_s,t}(p) = x(\I_0(p))\partial_{\tg} A_t(x_s,p)$, wherein:
 $
 {\partial_{\tg} A_{t}(x,p)}= \sum_{l=1}^{d-1} \Big({\partial_{\tg} G_{x,\Tg_t}(l,\I_l(p))} \Big)\Big(\Pi_{l'\neq l} G_{x,\Tg_t}(l',I_{l'}(p))\Big)
 $.
 Note that if all the activations in a path are close to $0$ or $1$, then $\partial_{\tg} A_t(x_s,p)$ is close to $0$.\\
-\textbf{ReLU artefact:} In the case of $\beta=\infty$ (see \Cref{tb:dgn}), i.e, when the gating values belong to $\{0,1\}$, it follows that the activity $A_t\in\{0,1\}$ and hence $\partial_{\tg} A_t(\cdot,\cdot)=0$. Thus, in the case of DNNs with ReLU activations, there is no flow of the feature gradient, however, since the gating parameter $\Tg$ identical with $\Theta$, (i.e., $\Tg_t=\Theta_t,\forall t$), $A_t$ changes with time and so does the NPF. \\
+\begin{definition}\label{def:delta}
+$\delta(s,s')\stackrel{def}= \underset{{p\rsa i}}{\sum} \sum_{\tg\in\Tg}\frac{\partial A_{\Tg_0}(x_s,p)}{\partial \tg} \frac{\partial A_{\Tg_0}(x_{s'},p)}{\partial \tg}$, for $s,s'\in[n]$, using any $i\in[d_{in}]$.
+\end{definition}
+\textbf{Correlation of sensitive sub-networks:} $\delta_t(s,s')$ in \Cref{def:delta} denotes the overlap of the sub-networks that are sensitive for both $s,s'\in[n]$. \\
+We now assume that the gates and the weights are statistically decoupled, and the weights are randomly distributed.
+\begin{assumption}\label{assmp:main}
+(i) $\Theta_0\inrdnet$ is statistically independent of $\G_0$, (ii) The weights $\Theta_0$ are sampled i.i.d from a distribution such that for any $\theta_0\in\{\Theta_0\cup \Tg_0\}$,  we have $\E{\theta_0}=0$, and  $\E{\theta^2_0}=\sigma^2$, and $\E{\theta^4_0}={\sigma'}^2$.
+\end{assumption}
+\begin{comment}
+\begin{lemma}\label{lm:disentangle}[Disentanglement] Let $\nabla_{\Theta} v_t\in \R^{P\times d_{net}}$ be matrix whose entries are given by $\nabla_{\Theta} v_t (p,\theta)=\partial_{\theta}v_t(p),\forall p\in [P], \theta\in\Theta$, and let $I_P$ be the $P\times P$ identity matrix. Then, 
+under \Cref{assmp:main}-(ii), it follows that $\E{\nabla_{\Theta}v_{\Theta_t})(\nabla_{\Theta}v_{\Theta_t})^\top }= d\sigma^{2(d-1)}I_{P}$.
+\end{lemma}
+\end{comment}
+Let $\Psi^v_t=(\psi^v_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ and $\Psi^{\phi}_t=(\psi^{\phi}_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ be the NTF matrices, and let $K^v_t={\Psi^{v}}^\top_t\Psi^v_t$ and $K^{\phi}_t={\Psi^{\phi}}^\top_t\Psi^{\phi}_t$. 
+\begin{theorem}[\textbf{Main Result}]\label{th:main} For a parameterised DGN satisfying \Cref{assmp:main}, we have:\\
+(i) $\E{K_0}=\mathbb{E}\big[K^v_0\big]+\E{K^{\phi}_0}$, where $\E{K^{v}_0}=d\sigma^{2(d-1)} (x^\top x)\odot \lambda_0$, and $\E{K^{\phi}_0}=\sigma^{2d}  (x^\top x)\odot \delta_0$.\\
+(ii) In addition, if ${4d}/{w^2}<1$, then $Var\left[K^v_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$.
+\end{theorem}
+
+
 \begin{comment}
 \begin{definition}\label{def:delta}
 $\delta_t(s,s')=\sum_{p\rsa i} \ip{\varphi^a_{x_s,p,t},\varphi^a_{x_{s'},p,t}}$, for $s,s'\in[n]$, using any $i\in[d_{in}]$.
 \end{definition}
 \textbf{Gradient Flow via Sub-Networks:} Note that in the case of $\beta=\infty$ (see \Cref{tb:dgn}), i.e, when the gating values belong to $\{0,1\}$, it follows that the activity $A_t\in\{0,1\}$, and hence AD and FG are $0$. Thus, in the case of DNNs with ReLU activations, there is no flow of the feature gradient, however, since the gating parameter $\Tg$ identical with $\Theta$, (i.e., $\Tg_t=\Theta_t,\forall t$), $A_t$ changes with time and so does the NPF. In the case of $\beta>0$, for an input $x\in\R^{d_{in}}$, let $\N^{\S}_{x,t}(\tau_{\S})=\{p\in[P]: |\partial_{\tg} A_t(x,p)|>\tau_{\S}\}$ be the set of paths, which have activations whose gradient to any of $\Tg\inrdnet$ is greater than some threshold $\tau>0$. Note that when all the gates are close to $1$ in a path $p$, then it follows that $\partial A_t(x_s,p)$ will be very small. Thus, using the property that the slope of the sigmoid diminishes in the extremities, we can reason that for appropriate choices of $\tau_{\A}$ (sufficiently close to $1$) and $\tau_{\S}$ (large enough), $\P^{\S}(\tau_{S})\cup \P^{\A}(\tau_{\A})=\emptyset$. Thus, there are two separate networks for the two separate gradient flows, i.e., the value gradient flow via the active sub-network and the feature gradient flow via the sensitive sub-network.\\
 \end{comment}
+\begin{comment}
 \textbf{Neural Tangent Feature and Kernel:} Let $\Psi^v_t=(\psi^v_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ and $\Psi^{\phi}_t=(\psi^{\phi}_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ be the NTF matrices, then the corresponding NTK matrices are given in \Cref{tb:ntks}
 \FloatBarrier
 \begin{table}[h]
@@ -90,7 +113,7 @@ NTK 		&$K_t=K^v_t+K^{\phi}_t+{\Psi^{\phi}}^\top_t\Psi^v_t+ {\Psi^{v}}^\top_t\Psi
 \caption{Shows NTK and NTF for the distinct ($\Tg\neq\Theta$) on the left and shared parameterisation ($\Tg=\Theta$) on the right. Here, $K^v_t={\Psi^{v}}^\top_t\Psi^v_t$ and $K^{\phi}_t={\Psi^{\phi}}^\top_t\Psi^{\phi}_t$.}
 \label{tb:ntks}
 \end{table}
-
+\end{comment}
 \begin{comment}
 The \textbf{neural tangent feature} (NTF) is given by $\psi_{x_s,t}=(\psi^v_{x_s,t},\psi^{\phi}_{x_s,t})\in\R^{2d_{net}}$, when the gating network is parameterised by $\Tg$ which is distinct from $\Theta$. When the parameters are shared ($\Tg_t=\Theta_t\forall t\geq 0$), then we have $\psi_{x_s,t}=(\phi^v_{x_s,t}+\psi^{\phi}_{x_s,t})\in\R^{d_{net}}$.\\
 When the gating network is parameterised by $\Tg$ which is distinct from $\Theta$, the \textbf{neural tangent kernel} (NTK) matrix is given by $K_t=K^v_t+K^{\phi}_t$, where $K^v_t={\Psi^{v}}^\top_t\Psi^v_t$ and $K^{\phi}_t={\Psi^{\phi}}^\top_t\Psi^{\phi}_t$, with $\Psi^v_t=(\psi^v_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$ and $\Psi^{\phi}_t=(\psi^{\phi}_{x_s,t},s\in[n])\in\R^{d_{net}\times n}$. In the case of shared parameterisation ($\Tg_t=\Theta_t\forall t\geq 0$), we have $K_t=K^v_t+K^{\phi}_t+{\Psi^{\phi}}^\top_t\Psi^v_t+ {\Psi^{v}}^\top_t\Psi^{\phi}_t$.
