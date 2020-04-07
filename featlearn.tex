@@ -3,53 +3,55 @@ The output of a parameterised DGN is given by:
 \begin{align}
 \hat{y}_t=\Phi_{\Tg_t}v_{\Theta_t},
 \end{align}
-which in comparison to \eqref{eq:fixednpf} has both the NPFs as well as the path values changing during training. As a result, the NTK matrix (see \Cref{tb:ntks}) $K_t=K^v_t+K^{\phi}_t$ has two components: i) $K^v_t\in \R^{n\times n}$ captures the dynamics due to the flow of the value gradient through the corresponding active sub-networks, and ii) $K^{\phi}_t$ captures the dynamics due to the flow of feature gradient through the corresponding sensitive sub-networks. And under \Cref{assmp:main}, we know from \Cref{th:main}, that 
+which in comparison to \eqref{eq:fixednpf} has both the NPFs as well as the path values changing during training. As a result, the NTK matrix $K_t=K^v_t+K^{\phi}_t$ has two components: i) $K^v_t\in \R^{n\times n}$ captures the dynamics due to the flow of the value gradient through the corresponding active sub-networks, and ii) $K^{\phi}_t$ captures the dynamics due to the flow of feature gradient through the corresponding sensitive sub-networks. And under \Cref{assmp:main}, we know from \Cref{th:main}, that 
 \begin{align*}
 \E{K_0}=\mathbb{E}\big[K^v_0\big]+\E{K^{\phi}_0}=d\sigma^{2(d-1)} (x^\top x)\odot \lambda_0+\sigma^{2d}  (x^\top x)\odot \delta_0,
 \end{align*}
-where $\delta_0\in\R^{n\times n}$ is the correlation matrix of the sensitive sub-networks for the $n$ examples. Considering the fact that $\hat{y}_t=\Phi_{\Tg_t}v_{\Theta_t}$, the gradient with respect to $\Tg$ will change the NPF matrix $\Phi_{\Tg_t}$ in such a manner to reduce the loss, i.e., increase the margin of each of the classified examples. Subject to the `well-conditioned' ness of $K^{\phi}_t$, such margin increase can be perhaps achieved for all the $n$ examples. 
-We gain insights into the joint optimisation and feature learning in \eqref{eq:sqloss}, we consider the following toy experiment based on simple modification of logistic regression.\\
+where $\delta_0\in\R^{n\times n}$ is the correlation matrix of the sensitive sub-networks for the $n$ examples. Say in the case of classification with cross entropy loss, the gradient with respect to $\Tg$ will change the NPF matrix $\Phi_{\Tg_t}$ in such a manner to reduce the loss, i.e., increase the margin of each of the classified examples. Subject to the `well-conditioned' ness of $K^{\phi}_t$, such margin increase can be perhaps achieved for all the $n$ examples. To check our intuition on feature learning, we consider the following experiment on logistic regression with learnable features.\\
 \begin{comment}
 In the case of implicit parameterisation, i.e., when $\Tg=\Theta$, the NTK (see \Cref{tb:ntks}) is given by $K_t=K^v_t+K^{\phi}_t+{\Psi^{\phi}}^\top_t\Psi^v_t+ {\Psi^{v}}^\top_t\Psi^{\phi}_t$, where, in addition to $K^v_t$ and $K^{\phi}_t$, the other two terms occur due to the fact that the parameterisation is implicit. We now state the following theorem for the case of DGNs explicit parameterisation. A\begin{theorem}\label{th:main} Let $\delta(s,s')\stackrel{def}= \underset{{p\rsa i}}{\sum} \sum_{\tg\in\Tg}\frac{\partial A_{\Tg_0}(x_s,p)}{\partial \tg} \frac{\partial A_{\Tg_0}(x_{s'},p)}{\partial \tg}$, for $s,s'\in[n]$, using any $i\in[d_{in}]$. Then, under \Cref{assmp:main}, we have, $\E{K_0}=\mathbb{E}\big[K^v_0\big]+\E{K^{\phi}_0}$, where $\E{K^{v}_0}=d\sigma^{2(d-1)} (x^\top x)\odot \lambda_0$, and $\E{K^{\phi}_0}=\sigma^{2d}  (x^\top x)\odot \delta_0$.
 \end{theorem}
 \end{comment}
-\textbf{Logistic Regression with feature learning:} We look at a simple neural network with $d_{in}=2$, $w=2$ and $1$-hidden layer (see first diagram on the left in \Cref{fig:feat}). The first layer weights is an identity matrix, and for input $x\in\R^2$ to the network, the first layer output is given by $z_{t}(i)=x(i)G_t(i),i=1,2$, where $G_t(i)=\frac{1}{1+\exp(-\tg(i))},i=1,2$. In this network, there are $2$ paths, and the NPF is given by $\phi_{x,t}=(x(1)G_t(1),x(2)G_t(2))\in \R^2$ (note that this mimics the general structure of the NPF as presented in \Cref{sec:expressivity}).
-We check the performance of frozen-gates versus adaptable gates in this network. We consider a binary classification task, with $n=500$ example for each class, with class $+1$ and $-1$ examples sampled from $U([0.1,1]\times [-a,a])$ and $U([-1,-0.1]\times[-a,a])$ respectively. We considered two cases $a=1$ (first two plots from the left in \Cref{fig:feat}), and $a=100$ (right most plot in \Cref{fig:feat}). 
-We trained the simple neural network using gradient descent with step-size of $0.1$, initialisation $\Tg_0=\Theta_0=(0,0)\in\R^2$, and binary cross entropy loss for the following two cases: i) frozen-gates, wherein, we set $\Tg_0=\Tg_t=\Tg_0,\forall t\geq 0$, and train only $\Theta_t$ ii) adaptable gates, wherein, we train both $\Tg_t$ and $\Theta_t$. In all the plots, green bold and black dotted lines corresponds to classifier learned  by adaptable and frozen gates respectively, and the points are represented using the NPF.\\
+\begin{wrapfigure}{h}{0.25\textwidth}
+\includegraphics[scale=0.14]{figs/featlearn.png}
+\caption{\label{fig:net}}
+\end{wrapfigure}
+\textbf{Logistic Regression with feature learning:} We look at a simple neural network in \Cref{fig:net} with $d_{in}=2$, $w=2$ and $1$-hidden layer. The first layer weights is an identity matrix, and for input $x\in\R^2$ to the network, the first layer output is given by $z_{t}(i)=x(i)G_t(i),i=1,2$, where $G_t(i)=\frac{1}{1+\exp(-\tg(i))},i=1,2$. In this network, there are $2$ paths, and the NPF is given by $\phi_{x,t}=(x(1)G_t(1),x(2)G_t(2))\in \R^2$. We check the performance of fixed-gates versus learnable gates in this network. We consider a binary classification task, with $n=500$ example for each class, with class $+1$ and $-1$  examples sampled from $U([0.1,1]\times [-a,a])$ and $U([-1,-0.1]\times[-a,a])$ respectively. \WFclear We considered two cases $a=1$ (first two plots from the left in \Cref{fig:feat}), and $a=100$ (right most plot in \Cref{fig:feat}). 
+We trained the simple neural network using gradient descent with step-size of $0.1$, initialisation $\Tg_0=\Theta_0=(0,0)\in\R^2$, and binary cross entropy loss for the following two cases: i) fixed-gates, wherein, we set $\Tg_0=\Tg_t=\Tg_0,\forall t\geq 0$, and train only $\Theta_t$ ii) learnable gates, wherein, we train both $\Tg_t$ and $\Theta_t$. In all the plots, green bold and black dotted lines corresponds to classifier learned  by learnable and fixed gates respectively, and the points are represented using the NPF.\\
 %While both cases train for $T=10^4$ epochs, for $T=10^3$ epochs only the model with adaptable gates trains successfully. The results are shown in \Cref{fig:feat}, notice that the right most plot shows that in the case when the gates are adapting, they learn to suppress the second co-ordinate (the scale of $\phi_{x_s,T}$ is from $-15$ to $15$ as opposed to $-100$ to $100$ in $x_s$).
-\begin{figure*}[!b]
-\begin{minipage}{0.15\columnwidth}
-\includegraphics[scale=0.15]{figs/featlearn.png}
-\end{minipage}
-\hspace{50pt}
-\begin{minipage}{0.8\columnwidth}
+\begin{figure*}[!t]
+%\begin{minipage}{0.15\columnwidth}
+%\includegraphics[scale=0.15]{figs/featlearn.png}
+%\end{minipage}
+%\hspace{50pt}
+\begin{minipage}{1\columnwidth}
 \resizebox{1\columnwidth}{!}{
 \begin{tabular}{cccc}
-\includegraphics[scale=0.2]{figs/simple-1e2.png}
+\includegraphics[scale=0.2]{figs/fixed-1e2-ae1.png}
 &
-\includegraphics[scale=0.2]{figs/simple-1e3.png}
+\includegraphics[scale=0.2]{figs/fixed-1e3-ae1.png}
 &
-\includegraphics[scale=0.2]{figs/simple.png}
+\includegraphics[scale=0.2]{figs/fixed-1e3-ae100.png}
 &
-%\includegraphics[scale=0.2]{figs/simple-1e4.png}
+\includegraphics[scale=0.2]{figs/fixed-1e4-ae100.png}
 \\
-\includegraphics[scale=0.2]{figs/adapt-1e2.png}
+\includegraphics[scale=0.2]{figs/learn-1e2-ae1.png}
 &
-\includegraphics[scale=0.2]{figs/adapt-1e3.png}
+\includegraphics[scale=0.2]{figs/learn-1e3-ae1.png}
 &
-\includegraphics[scale=0.2]{figs/adapt.png}
+\includegraphics[scale=0.2]{figs/learn-1e3-ae100.png}
 &
-%\includegraphics[scale=0.2]{figs/adapt-1e4.png}
+\includegraphics[scale=0.2]{figs/learn-1e4-ae100.png}
 \end{tabular}
 }
 \end{minipage}
 
-\caption{From left: second and third plots shows the training performance of frozen and adaptable gates respectively. In both plots, the bold line in green is the classifier learnt in the case of adaptable gates, and the dotted black line is the classifier learnt in the case of frozen gates. Notice the transformation of the feature space in the case of adaptable gates.}
+\caption{From left: second and third plots shows the training performance of fixed and learnable gates respectively. In both plots, the bold line in green is the classifier learnt in the case of learnable gates, and the dotted black line is the classifier learnt in the case of fixed gates. Notice the transformation of the feature space in the case of learnable gates.}
 \label{fig:feat}
 \end{figure*}
 \textbf{Observations:}\\
-$1.$ Initially for both networks $\tg_0=(0,0)^\top$, which means the horizontal and vertical co-ordinates in the NPF are both scaled by a factor of $0.5$. For the case of $a=1$, both networks train successfully in $T=10^2$ epochs, and we do not see any change in the NPFs. However, when trained for $T=10^3$ epochs, the network with adaptable gates learns to scale the horizontal co-ordinate in the NPF by factor $1.0$, while it retains a value of $0.5$ for the vertical co-ordinate (see second plot from left of \Cref{fig:feat}).\\
-$2.$ In the case of $a=100$ (right-most plot), the adaptable network successfully trains in $T=10^3$ epochs by learning to scale the vertical co-ordinate down by a factor close to $0.15$. However, the network with frozen-gates does not train. We also observed that both networks trained successfully for $T=10^4$ epochs.
+$1.$ Initially for both networks $\tg_0=(0,0)^\top$, which means the horizontal and vertical co-ordinates in the NPF are both scaled by a factor of $0.5$. For the case of $a=1$, both networks train successfully in $T=10^2$ epochs, and we do not see any change in the NPFs. However, when trained for $T=10^3$ epochs, the network with learnable gates learns to scale the horizontal co-ordinate in the NPF by factor $1.0$, while it retains a value of $0.5$ for the vertical co-ordinate (see second plot from left of \Cref{fig:feat}).\\
+$2.$ In the case of $a=100$ (right-most plot), the learnable network successfully trains in $T=10^3$ epochs by learning to scale the vertical co-ordinate down by a factor close to $0.15$. However, the network with fixed-gates does not train. We also observed that both networks trained successfully for $T=10^4$ epochs.
 %\textbf{An open question:} Informally speaking, in the above example, even though the gating parameters had $2$-degrees of freedom, it was nonetheless sufficient to adapt the features. Thus, perhaps we can hypothesise that subject to the `well-conditioned' ness of $K^a_t$, such margin increase can be perhaps achieved for all the $n$ examples.  However, in practice, both $\Tg_t$ as well as $\Theta_t$ change, and an open question is to understand how the joint optimisation and feature learning happens. 
 
 \begin{comment}
