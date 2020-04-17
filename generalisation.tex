@@ -1,4 +1,4 @@
-\subsection{Generalisation}\label{sec:generalisation}
+\section{Generalisation}\label{sec:generalisation}
 We trained DGN on standard datasets namely MNIST and CIFAR-10, under the following conditions: i) the gates are fixed $\G_t=\G_0,\forall t\geq 0$ and ii) the gating values are obtained from a ReLU network, which acts as the gating network (see \Cref{tb:dgn}). Since, the gates are fixed, the NPFs are fixed and the (stochastic) GD learns only the path values. We compare the performance of $4$ different NPFs, wherein, the gates are copied from i) from a randomly initialised ReLU network (untrained), ii) from a ReLU network trained with good dataset iii) ReLU network trained on random labels and iv) ReLU network trained on random pixels. Note that the DGN with these fixed (gates) NPFs are trained on the standard dataset with good labels. From the results in \Cref{tb:npfs}, we can conclude that NPFs are learnt during training, i.e., NPFs obtained from trained networks perform better than NPFs obtained at random initialisation.\\
 %\FloatBarrier
 \begin{table}[!b]
