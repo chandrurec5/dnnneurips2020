@@ -1,5 +1,5 @@
 \section{Feature Learning}
-The output of a parameterised DGN is given by:
+\begin{comment}The output of a parameterised DGN is given by:
 \begin{align}
 \hat{y}_t=\Phi_{\Tg_t}v_{\Theta_t},
 \end{align}
@@ -8,6 +8,7 @@ which in comparison to \eqref{eq:fixednpf} has both the NPFs as well as the path
 \E{K_0}=\mathbb{E}\big[K^v_0\big]+\E{K^{\phi}_0}=d\sigma^{2(d-1)} (x^\top x)\odot \lambda_0+\sigma^{2d}  (x^\top x)\odot \delta_0,
 \end{align*}
 where $\delta_0\in\R^{n\times n}$ is the correlation matrix of the sensitive sub-networks for the $n$ examples. Say in the case of classification with cross entropy loss, the gradient with respect to $\Tg$ will change the NPF matrix $\Phi_{\Tg_t}$ in such a manner to reduce the loss, i.e., increase the margin of each of the classified examples. Subject to the `well-conditioned' ness of $K^{\phi}_t$, such margin increase can be perhaps achieved for all the $n$ examples. To check our intuition on feature learning, we consider the following experiment on logistic regression with learnable features.\\
+\end{comment}
 \begin{comment}
 In the case of implicit parameterisation, i.e., when $\Tg=\Theta$, the NTK (see \Cref{tb:ntks}) is given by $K_t=K^v_t+K^{\phi}_t+{\Psi^{\phi}}^\top_t\Psi^v_t+ {\Psi^{v}}^\top_t\Psi^{\phi}_t$, where, in addition to $K^v_t$ and $K^{\phi}_t$, the other two terms occur due to the fact that the parameterisation is implicit. We now state the following theorem for the case of DGNs explicit parameterisation. A\begin{theorem}\label{th:main} Let $\delta(s,s')\stackrel{def}= \underset{{p\rsa i}}{\sum} \sum_{\tg\in\Tg}\frac{\partial A_{\Tg_0}(x_s,p)}{\partial \tg} \frac{\partial A_{\Tg_0}(x_{s'},p)}{\partial \tg}$, for $s,s'\in[n]$, using any $i\in[d_{in}]$. Then, under \Cref{assmp:main}, we have, $\E{K_0}=\mathbb{E}\big[K^v_0\big]+\E{K^{\phi}_0}$, where $\E{K^{v}_0}=d\sigma^{2(d-1)} (x^\top x)\odot \lambda_0$, and $\E{K^{\phi}_0}=\sigma^{2d}  (x^\top x)\odot \delta_0$.
 \end{theorem}
