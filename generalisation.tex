@@ -1,4 +1,29 @@
 \section{Generalisation and Feature Learning}\label{sec:generalisation}
+$K^{\phi}_{\Theta}$ is the NTK of the features, and describes the dynamics of feature learning due to the flow of the feature gradients, which, for each input example, decides which of the sensitive yet inactive paths should become active, and which of the sensitive yet active paths should become inactive. The NTK of features can be expanded as $K^{\phi}_{\Theta}=\sum_{\theta \in \Theta}\partial_{\theta} \Phi^\top_{\theta}v_{\Theta}v^\top_{\Theta}\partial_{\theta}\Phi_{\Theta}$. The significance here is that $\partial \Phi_{\Theta}$ terms contain, $\partial A_{\Theta}(\cdot,\cdot)$, which in turn contains $\partial G$ terms, which in turn contains $\dot{G}$ term which is the derivative of the gate with respect to its pre-activation input. NTK expression in prior works \eqref{eq:ntkold} only capture the $\chi$ and $\dot{\chi}$ terms. As shown in \Cref{fig:actgate}, only $\dot{G}$ (right-most plot) captures the gates that are in the verge of transition (either from $0$ to $1$ or from $1$ to $0$).
+%$\bullet$ $(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta}$, is a symmetric matrix which is the cross-term obtained as an interaction of the value and the feature gradients.
+\FloatBarrier
+\begin{figure}[h]
+%\begin{minipage}{0.78\columnwidth}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{ccc}
+\includegraphics[scale=0.4]{figs/act.png}
+\includegraphics[scale=0.4]{figs/der-act.png}
+\includegraphics[scale=0.4]{figs/gate.png}
+\includegraphics[scale=0.4]{figs/der-gate.png}
+%\includegraphics[scale=0.5]{figs/nntwin-blck.png}
+%\includegraphics[scale=0.5]{figs/nn.png}
+%\includegraphics[scale=0.5]{figs/nn.png}
+\end{tabular}
+}
+%\end{minipage}
+%\begin{minipage}{0.18\columnwidth}
+%\resizebox{\columnwidth}{!}{
+%\includegraphics[scale=0.5]{figs/nnconv.png}
+%}
+%\end{minipage}
+\caption{Activations and Gates}
+\label{fig:actgate}
+\end{figure}
 We trained DGN on standard datasets namely MNIST and CIFAR-10, under the following conditions: i) the gates are fixed $\G_t=\G_0,\forall t\geq 0$ and ii) the gating values are obtained from a ReLU network, which acts as the gating network (see \Cref{tb:dgn}). Since, the gates are fixed, the NPFs are fixed and the (stochastic) GD learns only the path values. We compare the performance of $4$ different NPFs, wherein, the gates are copied from i) from a randomly initialised ReLU network (untrained), ii) from a ReLU network trained with good dataset iii) ReLU network trained on random labels and iv) ReLU network trained on random pixels. Note that the DGN with these fixed (gates) NPFs are trained on the standard dataset with good labels. From the results in \Cref{tb:npfs}, we can conclude that NPFs are learnt during training, i.e., NPFs obtained from trained networks perform better than NPFs obtained at random initialisation.\\
 %\FloatBarrier
 \begin{table}[!b]

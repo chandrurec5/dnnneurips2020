@@ -1,4 +1,14 @@
 \section{Optimisation}\label{sec:optimisation}
+$K^v_{\Theta}$, the NTK of path values, describes the dynamics of optimisation due to the value gradient, which, for a given input example, tunes the weights in the active sub-networks. We let $\nabla_{\Theta}v_{\Theta}$ to be the $P\times d_{net}$ matrix consisting of the derivative of the NPVs with respect to the weights of the network, whose entries are given by $\nabla_{\Theta}v_{\Theta}(p,\theta)=\partial_{\theta}v_{\Theta}(p)$. We now expand $K^v_{\Theta}$:
+\begin{align}\label{eq:kv}
+K^{v}_{\Theta}=\Phi^\top_{\Theta}(\nabla_{\Theta} v_{\Theta})(\nabla_{\Theta} v_{\Theta})^\top \Phi_{\Theta},
+\end{align}
+using which and \Cref{lm:nec} we connect the NPK and NTK.
+\begin{lemma}\label{lm:nec}
+Let $A\in\R^{u\times v}$ and $B\in\R^{w\times u}$, and let $\rho_{\min}(M)$ and $\rho_{\max}(M)$ denote the smallest and the largest eigenvalue of a matrix $M\in\R^{r\times r}$. Then it follows that $\rho_{\min}(A^\top A)\rho_{\max}(B^\top B)\geq \rho_{\min}(A^\top B^\top BA)$.
+\end{lemma}
+From \Cref{lm:nec}, a necessary condition to ensue that $\rho_{\min}(K^v_{\Theta})$ is bounded away from $0$ is to ensure that $\rho_{\min}(H_{\Theta})$ is bounded away from $0$.\\
+\subsection{Optimisation with Fixed NPFs}
 In this section, we study optimisation with fixed NPFs, i.e., a setting in which $\ip{\partial \phi,v}=0$. Here, we are interested in learning $\hat{y}_{\Theta}(x)=\ip{\phi_{x,\Theta'}, v_{\Theta}}$, where $\Theta'\in\R^{d_{net}}$ is a fixed parameter that is non-trainable and $\phi_{x,\Theta'}$ is the corresponding fixed NPF, and optimising with GD boils down to learning the NPVs $v_{\Theta}$. In order to separate the NPFs from the NPVs, we use the DGN framework, wherein, there is a separate gating network to hold $\Theta'$, i.e, the fixed NPFs and the NPVs are learned in a different network known as the value network parameterised by $\Theta$. We study the following two interesting cases of fixed NPFs:\\
 \textbf{Case $1.$} \emph{Random NPFs} obtained from the gates of a randomly initialised (a random $\Theta'$) neural network. We demonstrate that networks trained with fixed random NPFs can generalise.\\
 \textbf{Case $2.$} We first train a DNN (with ReLU) till $T$ epochs. We then obtain the NPFs by letting $\Theta'=\Theta_T$. We then reset the weights $\Theta$ by initialising them randomly, and learn the NPVs again by training $\Theta$. We show in experiments there is only a marginal decrease in performance when learning with fixed learnt NPFs.
