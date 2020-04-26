@@ -1,11 +1,6 @@
 \section{Kernels}\label{sec:kernels}
 In this section, we look at the relationship between the \emph{neural path kernel} (NPK) obtained from the NPFs, and the \emph{neural tangent kernel} (NTK) obtained from the \emph{neural tangent features}. In what follows, let $(x_s,y_s)_{s=1}^n\in\R^{d_{in}}\times\R$ be the dataset. 
-\subsection{Neural Path Kernel}
-The NPF matrix is given by $\Phi_{\Theta}=(\phi_{x_s,\Theta},s\in[n])\in\R^{P\times n}$. The NPK matrix is then given by $H_{\Theta}=\Phi^\top_{\Theta}\Phi_{\Theta}$. The NPK matrix has a special structure as given in \Cref{lm:npk} below.
-\begin{lemma}\label{lm:npk}
-Let $p\rsa i$ denote the fact that path $p$ passes through input node $i\in[d_{in}]$, and let $\Lambda_{\Theta}(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_{\Theta}(x_s,p) A_{\Theta}(x_{s'},p)$, $\forall s,s'\in[n]$, any $i\in [d_{in}]$. It follows that $H_{\Theta}= \Sigma\odot\Lambda_{\Theta}$, where $\odot$ stands for the Hadamard product, and $\Sigma \in \R^{n\times n}$ is the input Gram matrix.
-\end{lemma}
-In the \Cref{lm:npk} above, $\Lambda_{\Theta}\in\R^{n\times n}$ is the correlation matrix of the active sub-networks of different input pairs $s,s'\in[n]$. Note that the definition of $\Lambda$ is not dependent on the choice of input node $i$, because, the terms inside the summation depend only on the path followed from the first layer onwards and excludes the input node.
+\begin{comment}
 \subsection{Neural Tangent Kernel in Prior Works}
 The \emph{neural tangent feature} (NTF) matrix, denoted by $\Psi_{\Theta}$ is a $d_{net}\times n$ matrix, whose entries are given by $\Psi(\theta,s)=\partial_{\theta} \hat{y}_{\Theta}(x_s),\theta\in\Theta, s\in[n]$\footnote{Here $\partial_{\theta}(\cdot)$ stands for $\frac{\partial (\cdot)}{\partial \theta}$}. The \emph{neural tangent kernel} (NTK) matrix is given by $K_{\Theta}=\Psi_{\Theta}^\top\Psi_{\Theta}$. The NTK is useful in the following two ways:\\
 $1.$ Recent works have used the \emph{trajectory} based analysis to show that GD achieves zero training loss in the over-parameterised regime. Suppose we are interested in minimising the squared loss, using GD, and then the trajectory analysis looks at the evolution of the error term $e_t=(\hat{y}_{\Theta_t}(x_s)-y_s,s\in[n])\in\R^n$. The dynamics of the error can given by:
@@ -21,12 +16,21 @@ $2.$ The NTK matrix has also been used to design pure-kernel based methods \cite
 &\tilde{K}^{(l+1)}=\tilde{K}^{(l)}\odot \dot{\Sigma}^{(l+1)}+\Sigma^{(l+1)},\nn
 \end{align}
 where $s,s'\in[n]$ are two input examples in the dataset, $\Sigma$ is the data Gram matrix, $\dot{\chi}$ stands for the derivative of the activation function with respect to the pre-activation input, $N(0,M)$ stands for the mean-zero Gaussian distribution with co-variance matrix $M$. The final limiting matrix is given by $K^{(d)}=\left(\tilde{K}^{(d)}+\Sigma^{(d)}\right)/2$. Prior works show that at randomised initialisation $\Theta_0$, $K_{\Theta_0}\ra K^{(d)}$ as $w\ra \infty$.
-\subsection{Neural Tangent Kernel in Path View}
+\end{comment}
+\section{Neural Tangent Kernel in `Path-View'}
 Using the `path-view', we obtain a different decomposition for the NTK matrix $K{\Theta}$, and compare our expression to the previously obtained expression in \Cref{eq:ntkold}. To this end, let us by define $d_{net}\times n$ matrices $\Psi^v_t$, and $\Psi^{\phi}_t$, whose entries are given by $\Psi^v_t(\theta,s)=\ip{\phi_{x_s,\Theta},\partial_{\theta}v_{\Theta}}$, and  $\Psi^{\phi}_t(\theta,s)=\ip{\partial_{\theta}\phi_{x_s,\Theta}, v_{\Theta}}$. Now, we have the following NTK decomposition (for a soft-ReLU DNN):
 \begin{align}\label{eq:ntknew}
 K_{\Theta}=K^v_{\Theta}+K^{\phi}_{\Theta}+(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta},\,\text{where},
 \end{align}
-$K^v_{\Theta}$ is the NTK of path values due to the value gradient, $K^{\phi}_{\Theta}$ is the NTK of the features due to the feature gradient, and $(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta}$, is a symmetric matrix which is the cross-term obtained as an interaction of the value and the feature gradients.The recursive relationship in \eqref{eq:ntkold} is due to the fact that both zeroth-order (forward propagation) and first-order (backward propagation) information use a layer after layer expression for information flow. Also, \eqref{eq:ntkold} derives a limiting matrix ($w\ra\infty$) that occurs at a random $\Theta_0$. On the contrary, \eqref{eq:ntknew} holds for any parameter setting and for finite $w$ and $d$, and further has a term $K^{\phi}_{\Theta}$ that separately models feature learning.
+$K^v_{\Theta}$ is the NTK of path values due to the value gradient, $K^{\phi}_{\Theta}$ is the NTK of the features due to the feature gradient, and $(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta}$, is a symmetric matrix which is the cross-term obtained as an interaction of the value and the feature gradients. We now list the salient points about the decomposition in \eqref{eq:ntknew}. The recursive relationship in \eqref{eq:ntkold} is due to the fact that both zeroth-order (forward propagation) and first-order (backward propagation) information use a layer after layer expression for information flow. Also, \eqref{eq:ntkold} derives a limiting matrix ($w\ra\infty$) that occurs at a random $\Theta_0$. On the contrary, \eqref{eq:ntknew} holds for any parameter setting and for finite $w$ and $d$.\\
+%\subsection{Neural Path Kernel and Optimisation}
+%\subsection{Gate Dynamics and Feature Learning}
+%$\bullet$ $(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta}$, is a symmetric matrix which is the cross-term obtained as an interaction of the value and the feature gradients.
+\begin{comment}
+$K^v_{\Theta}$ is the NTK of path values due to the value gradient, $K^{\phi}_{\Theta}$ is the NTK of the features due to the feature gradient, and $(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta}$, is a symmetric matrix which is the cross-term obtained as an interaction of the value and the feature gradients. We now list the salient points about the decomposition in \eqref{eq:ntknew}.\\
+$1.$ \textbf{Non-recursive:} The recursive relationship in \eqref{eq:ntkold} is due to the fact that both zeroth-order (forward propagation) and first-order (backward propagation) information use a layer after layer expression for information flow. Also, \eqref{eq:ntkold} derives a limiting matrix ($w\ra\infty$) that occurs at a random $\Theta_0$. On the contrary, \eqref{eq:ntknew} holds for any parameter setting and for finite $w$ and $d$.\\
+$2.$ \textbf{Gate Dynamics and Feature Learning:} 
+\end{comment}
 %\subsection{Neural Path Kernel and Optimisation}
 \begin{comment}$\bullet$ \textbf{Role of Active Sub-Network:} Input Gram matrix and 
 \begin{theorem}[\citet{ando}]\label{th:ando}
