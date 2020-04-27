@@ -32,16 +32,16 @@ $4.$
 \textbf{Gate Dynamics and Feature Learning(Resolving Gap I ):}
 A major step towards understanding feature learning in DNNs is to tie the \emph{neural path features} to the gates and as a result feature learning to the dynamics of the gates. Three key ingredients that separate this paper from the previous works are i) explicitly allocating separate variable for gating in our analysis, ii) the `path-view', and iii) the `soft-ReLU' gate. We now describe the significance of these three ingredients to the problem of understanding feature learning via gate dynamics.\\
 $1.$ The expression for the output $\hat{y}_{\Theta}(x)=\ip{\phi_{x,\Theta},v_{\Theta}}$ reveals that there are two separate learning problems, one that of learning the NPFs and the other that of learning the NPVs. This viewpoint of two learning problems does not naturally emerge in the standard recursive `layer-by-layer' expression for the output of DNNs.\\
-$2.$ The gradient (i.e., the \emph{neural tangent feature}) $\psi_{x,\Theta} $naturally splits into two namely the value gradient $\psi^v_{x,\Theta}$ and the feature gradient $\psi^{\phi}_{x,\Theta}$ (see line $5$ of \Cref{tb:compare}) which leads to the following  decomposition (obtained by expanding the expression in  line $6$ of \Cref{tb:compare}) of the NTK matrix:
+$2.$ The gradient (i.e., the \emph{neural tangent feature}) $\psi_{x,\Theta} $naturally splits into two namely the value gradient $\psi^v_{x,\Theta}$ and the feature gradient $\psi^{\phi}_{x,\Theta}$ (see row $5$ of \Cref{tb:compare}) which leads to the following  decomposition (obtained by expanding the expression in  row $6$ of \Cref{tb:compare}) of the NTK matrix:
 \begin{align}
-K_{\Theta}=K^v_{\Theta}+K^{\phi}_{\Theta}+(\Psi^v_{\Theta})^\top \Psi^{\phi}_{\Theta}+(\Psi^v_{\Theta})^\top\Psi^{\phi}_{\Theta},
+K_{\Theta}=K^v_{\Theta}+K^{\phi}_{\Theta}+K^{cross}_{\Theta},
 \end{align}
-where $K^v_{\Theta}=(\Psi^v_{\Theta})^\top \Psi^v_{\Theta}$ is the Gram matrix of the value gradient, $K^{\phi}_{\Theta}=(\Psi^{\phi}_{\Theta})^\top \Psi^{\phi}_{\Theta}$ is the Gram matrix due to the feature gradient, and $(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta}$, is a symmetric matrix which is the cross-term obtained as an interaction of the value and the feature gradients.\\
+where $K^v_{\Theta}=(\Psi^v_{\Theta})^\top \Psi^v_{\Theta}$ is the Gram matrix of the value gradient, $K^{\phi}_{\Theta}=(\Psi^{\phi}_{\Theta})^\top \Psi^{\phi}_{\Theta}$ is the Gram matrix due to the feature gradient, and $K^{cross}_{\Theta}=(\Psi^v_\Theta)^\top \Psi^{\phi}_{\Theta} +(\Psi^{\phi}_\Theta)^\top \Psi^{v}_{\Theta}$, is a symmetric matrix which is the cross-term obtained as an interaction of the value and the feature gradients.\\
 $3.$ The kernel matrices $K^v_{\Theta}$ and $K^{\phi}_{\Theta}$ have different functions, with $K^v_{\Theta}$ captures the dynamics of learning the NPVs keeping for a given NPF and $K^{\phi}_{\Theta}$ capture the dynamics of feature learning.\\
-$4.$ The soft-ReLU activation plays a key part: note that, in prior works, in the expression for the limit NTK $K^{(d)}$ in \eqref{eq:ntkold}, $\dot{\chi}$ is either a Heaviside step function or a logit function. Both these functions capture the \emph{on/off} behaviour of the gates, and hence the $K^{(d)}$ captures only the flow of value gradient through the active sub-networks. On the contrary, in the case of soft-ReLU (see line $3$ of \Cref{tb:compare}), $\dot{\chi}_{SR}$ contains both the \emph{on/off} information via the $\dot{\chi}_{SP}$ term as well as the information on the dynamics of sensitive gates via the $\dot{G}_{SR}$ term.
+$4.$ The soft-ReLU activation plays a key part: note that, in prior works, in the expression for the limit NTK $K^{(d)}$ in \eqref{eq:ntkold}, $\dot{\chi}$ is either a Heaviside step function or a logit function. Both these functions capture the \emph{on/off} behaviour of the gates, and hence the $K^{(d)}$ captures only the flow of value gradient through the active sub-networks. On the contrary, in the case of soft-ReLU (see row $3$ of \Cref{tb:compare}), $\dot{\chi}_{SR}$ contains both the \emph{on/off} information via the $\dot{\chi}_{SP}$ term as well as the information on the dynamics of sensitive gates via the $\dot{G}_{SR}$ term.
 \FloatBarrier
-\begin{figure*}[h]
-%\begin{minipage}{0.78\columnwidth}
+\begin{figure*}[h]\centering
+\begin{minipage}{0.78\columnwidth}
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{ccc}
 \includegraphics[scale=0.4]{figs/act.png}
@@ -53,7 +53,7 @@ $4.$ The soft-ReLU activation plays a key part: note that, in prior works, in th
 %\includegraphics[scale=0.5]{figs/nn.png}
 \end{tabular}
 }
-%\end{minipage}
+\end{minipage}
 %\begin{minipage}{0.18\columnwidth}
 %\resizebox{\columnwidth}{!}{
 %\includegraphics[scale=0.5]{figs/nnconv.png}
@@ -87,8 +87,52 @@ $\dot{\Sigma}^{(l+1)}(s,s')$	&$\dot{\chi}_{SP}(q)\dot{\chi}_{SP}(q')$ &$\begin{a
 \label{tb:compare}
 \end{table}
 $5.$ Plugging the soft-ReLU instead of softplus/ReLU in \eqref{eq:ntkold} will indeed bring in the additional terms related to gate dynamics (see last row of \Cref{tb:compare}) in $K^{(d)}$. However, note that $K^{(d)}$ is a single matrix, and only due to the `path-view', we can identify its components namely $K^v_{\Theta}$, and $K^{\phi}_{\Theta}$ which have completely different functions.
-
-\textbf{New Idealised Regime with fixed NPF(Resolving Gap II):} 
+\FloatBarrier
+\begin{table}[h]\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{| l | l | l |}\hline
+Standard (finite $w$) &Fixed NTK ($w\ra\infty$) & Fixed NPK (finite $w$)\\\hline
+$\dot{\Theta}_t=-\sum_{s=1}^n \psi_{x,t}e_t(s)$ &$\dot{\Theta}_t\approx0$ &$\dot{\Theta}_t=-\sum_{s=1}^n \psi^v_{x,t}e_t(s)$ \\\hline
+$\dot{\phi}_{x_s,t}(p)=x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t$ &$\dot{\phi}_{x_s,t}(p)\approx 0$ &$\dot{\phi}_{x_s,t}(p)=0$\\\hline
+$\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t$ &$\dot{v}_t(p)\approx 0$ &$\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t$\\\hline
+$\dot{e}_t=-(K^v_t+K^{\phi}_t+K^{cross}_{\Theta})e_t$ &$\dot{e}_t=-(K^v_t)e_t$ &$\dot{e}_t=-(K^v_t)e_t$\\\hline
+\end{tabular}
+}
+\caption{Overall Dynamics}
+\label{tb:dynamics}
+\end{table}
+\begin{comment}
+\FloatBarrier
+\begin{table}[h]\centering
+\begin{tabular}{|l| lll |}\hline
+\text{Parameter}&$\dot{\Theta}_t$&$=$&$-\sum_{s=1}^n \psi_{x,t}e_t(s)$\\\hline
+\text{NPF}		&$\dot{\phi}_{x_s,t}(p)$&$=$&$x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t,\forall p\in[P], s\in[n]$\\\hline
+\text{NPV}		&$\dot{v}_t(p)$&$=$&$\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t,\forall p\in[P]$\\\hline
+\text{Error}	 &$\dot{e}_t$&$=$&$-(K^v_t+K^{\phi}_t+(\Psi^v_{t})^\top \Psi^{\phi}_{t}+(\Psi^v_{t})^\top\Psi^{\phi}_{t})e_t$\\\hline
+\end{tabular}
+\caption{Overall Dynamics}
+\label{tb:dynamics}
+\end{table}
+\end{comment}
+\textbf{New Idealised Regime with fixed NPF(Resolving Gap II):} In the case of squared loss, the GD dynamics for infinitesimal step-size can be described by the ordinary differential equation in \Cref{tb:dynamics}
+\begin{comment}
+\begin{tabular}{ll}
+\text{Parameter Update}&$\begin{aligned}\dot{\Theta}_t=-\sum_{s=1}^n \psi_{x,\Theta_t}e_t(s)\end{aligned}$\\
+\text{NPF Update}		&$\begin{aligned}\dot{\phi}_{x_s,t}(p)=x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p),\forall p\in[P], s\in[n]\end{aligned}$\\
+\text{NPV Update}		&$\begin{aligned}\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p),\forall p\in[P]\end{aligned}$\\
+\text{Error Trajectory}	 &$\begin{aligned}\dot{e}_t=-(K^v_t+K^{\phi}_t+(\Psi^v_{t})^\top \Psi^{\phi}_{t}+(\Psi^v_{t})^\top\Psi^{\phi}_{t})e_t\end{aligned}$
+\end{tabular}
+\end{comment}
+\begin{comment}
+\begin{align}
+&\text{Parameter Update:}&\dot{\Theta}_t&=&\quad-\sum_{s=1}^n \psi_{x,\Theta_t}e_t(s)\\
+&\text{NPF Update:}		&\dot{\phi}_{x_s,t}(p)&=&\quad x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p),\forall p\in[P], s\in[n]\\
+&\text{NPV Update:}		&\dot{v}_t(p)&=&\quad\sum_{\theta\in\Theta}\partial_{\theta}v_t(p),\forall p\in[P]\\
+&\text{Error Trajectory:}	 &\dot{e}_t&=&\quad-(K^v_t+K^{\phi}_t+(\Psi^v_{t})^\top \Psi^{\phi}_{t}+(\Psi^v_{t})^\top\Psi^{\phi}_{t})e_t
+\end{align}
+\end{comment}
+In this setting, we forcefully \emph{turn-off} feature learning, i.e. let the feature gradient $\psi^{\phi}_{x,\Theta}=0$. In order to do this, we hold the gates and hence the NPFs in a separate gating network and the NPVs in a different network called value network. By letting the parameters of the gating network non-trainable, we can force $\psi^{\phi}_{x,\Theta}$ to be $0$. We first show that fixed NPFs can be trained and they also generalise \Cref{th:main}. 
+In the limit of infinite width
 \begin{table}[h] 
 \begin{minipage}{0.75\columnwidth}
 \resizebox{\columnwidth}{!}{
