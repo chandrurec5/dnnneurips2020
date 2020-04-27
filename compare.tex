@@ -41,7 +41,7 @@ $3.$ The kernel matrices $K^v_{\Theta}$ and $K^{\phi}_{\Theta}$ have different f
 $4.$ The soft-ReLU activation plays a key part: note that, in prior works, in the expression for the limit NTK $K^{(d)}$ in \eqref{eq:ntkold}, $\dot{\chi}$ is either a Heaviside step function or a logit function. Both these functions capture the \emph{on/off} behaviour of the gates, and hence the $K^{(d)}$ captures only the flow of value gradient through the active sub-networks. On the contrary, in the case of soft-ReLU (see row $3$ of \Cref{tb:compare}), $\dot{\chi}_{SR}$ contains both the \emph{on/off} information via the $\dot{\chi}_{SP}$ term as well as the information on the dynamics of sensitive gates via the $\dot{G}_{SR}$ term.
 \FloatBarrier
 \begin{figure*}[h]\centering
-\begin{minipage}{0.78\columnwidth}
+%\begin{minipage}{0.78\columnwidth}
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{ccc}
 \includegraphics[scale=0.4]{figs/act.png}
@@ -53,7 +53,7 @@ $4.$ The soft-ReLU activation plays a key part: note that, in prior works, in th
 %\includegraphics[scale=0.5]{figs/nn.png}
 \end{tabular}
 }
-\end{minipage}
+%\end{minipage}
 %\begin{minipage}{0.18\columnwidth}
 %\resizebox{\columnwidth}{!}{
 %\includegraphics[scale=0.5]{figs/nnconv.png}
@@ -98,7 +98,7 @@ $\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t$ &$\do
 $\dot{e}_t=-(K^v_t+K^{\phi}_t+K^{cross}_{\Theta})e_t$ &$\dot{e}_t=-K^{(d)}e_t$ &$\dot{e}_t=-K^v_te_t$\\\hline
 \end{tabular}
 }
-\caption{Overall Dynamics}
+\caption{Dynamics in various regimes. Here $p\in[P], s\in[n]$.}
 \label{tb:dynamics}
 \end{table}
 \begin{comment}
@@ -110,7 +110,7 @@ $\dot{e}_t=-(K^v_t+K^{\phi}_t+K^{cross}_{\Theta})e_t$ &$\dot{e}_t=-K^{(d)}e_t$ &
 \text{NPV}		&$\dot{v}_t(p)$&$=$&$\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t,\forall p\in[P]$\\\hline
 \text{Error}	 &$\dot{e}_t$&$=$&$-(K^v_t+K^{\phi}_t+(\Psi^v_{t})^\top \Psi^{\phi}_{t}+(\Psi^v_{t})^\top\Psi^{\phi}_{t})e_t$\\\hline
 \end{tabular}
-\caption{Overall Dynamics}
+\caption{Dynamics in various regimes. Here $p\in[P], s\in[n]$.}
 \label{tb:dynamics}
 \end{table}
 \end{comment}
