@@ -1,0 +1,13 @@
+\section{Main Result and Discussion}
+The NPF matrix is given by $\Phi_{\Theta}=(\phi_{x_s,\Theta},s\in[n])\in\R^{P\times n}$. The NPK matrix is then given by $H_{\Theta}=\Phi^\top_{\Theta}\Phi_{\Theta}$. The NPK matrix has a special structure as given in \Cref{lm:npk} below.
+\begin{lemma}\label{lm:npk}
+Let $p\rsa i$ denote the fact that path $p$ passes through input node $i\in[d_{in}]$, and let $\Lambda_{\Theta}(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_{\Theta}(x_s,p) A_{\Theta}(x_{s'},p)$, $\forall s,s'\in[n]$, any $i\in [d_{in}]$. It follows that $H_{\Theta}= \Sigma\odot\Lambda_{\Theta}$, where $\odot$ stands for the Hadamard product, and $\Sigma \in \R^{n\times n}$ is the input Gram matrix.
+\end{lemma}
+In the \Cref{lm:npk} above, $\Lambda_{\Theta}\in\R^{n\times n}$ is the correlation matrix of the active sub-networks of different input pairs $s,s'\in[n]$. Note that the definition of $\Lambda$ is not dependent on the choice of input node $i$, because, the terms inside the summation depend only on the path followed from the first layer onwards and excludes the input node.
+\begin{assumption}\label{assmp:main}
+(i) $\Theta_0\inrdnet$ is statistically independent of NPFs, (ii) $\Theta_0$ are sampled i.i.d from a distribution such that for any $\theta_0\in\Theta_0$,  we have $\E{\theta_0}=0$, and  $\E{\theta^2_0}=\sigma^2$, and $\E{\theta^4_0}={\sigma'}^2$.
+\end{assumption}
+\begin{theorem}[\textbf{Main Result}]\label{th:main} Under \Cref{assmp:main}, we have:\\
+(i) $\E{K_0}=d\sigma^{2(d-1)} H_0=d\sigma^{2(d-1)} (x^\top x)\odot \lambda_0$.\\
+(ii) In addition, if ${4d}/{w^2}<1$, then $Var\left[K_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$.
+\end{theorem}
