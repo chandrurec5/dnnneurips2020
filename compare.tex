@@ -1,27 +1,3 @@
-\section{Background: Prior Work and Open Questions}
-In what follows, the dataset is denoted by $(x_s,y_s)_{s=1}^n\in\R^{d_{in}}\times \R$ and $y=(y_s,s\in[n])\in\R^n$ denotes the labelling function.
-
-\textbf{Neural Tangent Kernel:}
-For a parameter setting $\Theta\in\R^{d_{net}}$, for an input $x\in \R^{d_{in}}$, the \emph{neural tangent feature} (NTF) is given by $\psi_{x,\Theta}=\left(\partial_{\theta}\hat{y}_{\Theta}(x),\theta\in\Theta\right)\in\R^{d_{net}}$. The associated \emph{neural tangent kernel} (NTK) is given by $K_{\Theta}(x,x')=\ip{\psi_{x,\Theta},\psi_{x',\Theta}}$. The NTFs of all the $n$ examples in the dataset can be collected in a NTF matrix $\Psi_{\Theta}=(\psi_{x_s,\Theta},s\in[n])\in\R^{d_{net}\times n}$, and let $K_{\Theta}=\Psi^\top_{\Theta}\Psi_{\Theta}$ be the NTK matrix evaluated on the dataset. Say, we are in the setting, wherein, we are training a over-parameterised DNN using GD procedure to minimise the squared loss $L_{\Theta}=\frac{1}{2}\sum_{s=1}^n \left(\hat{y}_{\Theta}(x_s)-y_s\right)$, Recent works have used the \emph{trajectory based} analysis to show that GD achieves zero training error for this setting. According to the trajectory analysis, the dynamics of the error, $e_t=(\hat{y}_{\Theta_t}(x_s)-y_s,s\in[n])\in\R^n$ can be given by:
-\begin{align}
-e_{t+1}\approx e_t-\alpha_t K_{\Theta_t} e_t,
-\end{align}
-where $\alpha_t>0$ is a small step-size used by the GD procedure. Thus, the spectral properties, and in particular, $\rho_{\min}(K_{\Theta_t})$ the minimum eigenvalue of $K_{\Theta_t}$ dictates the rate of convergence.
-
-\textbf{Idealised regime with fixed NTK:}
-Prior works considered the idealised regime in the limit of infinite width, i.e., width $w\ra\infty$. In this regime, for a DNN of depth $d$, for randomised initialisation, as the width $w\ra\infty$, the following has been shown to hold:\\
-$1.$ \cite{arora2019exact} show that the NTK matrix $K_{\Theta_0}\ra K^{(d)}$ as $w\ra\infty$and during training $K_{\Theta_t}$ remains close to $K_{\Theta_0}$ (and hence the NTK can be said to be `fixed' during training). Here $K^{(d)}$ is a deterministic matrix (derived via a recursion similar to the one in \eqref{eq:ntkold}). A trained DNN is equivalent to the kernel regression predictor (with $K^{(d)}$ as the kernel), and hence enjoys the same generalisation ability.\\
-$2.$  \cite{cao2019generalization} showed a generalisation bound in the form of $\tilde{\mathcal{O}}\left(d\cdot\sqrt{y^\top K^{(d)} y/n}\right)$\footnote{$a_t=\mathcal{O}(b_t)$ if $\lim\sup_{t\ra\infty}|a_t/b_t|<\infty$, and $\tilde{\mathcal{O}}(\cdot)$ is used to hide logarithmic factors in $\mathcal{O}(\cdot)$.}.\\
-\textbf{Expression for $K^{(d)}$} is given by the following recursion: 
-\begin{align}\label{eq:ntkold}
-&\tilde{K}^{(1)}(s,s')=\Sigma^{(1)}(s,s')=\Sigma(s,s'), M^{(l)}_{ss'}=\left[\begin{matrix}\Sigma^{(l)}(s,s) & \Sigma^{(l)}(s,s')\\ \Sigma^{(l)}(s',s) & \Sigma^{(l)}(s',s')\end{matrix}\right]\in \R^2,\\
-&\Sigma^{(l+1)}(s,s')= 2\cdot\mathbb{E}_{(q,q')\sim N(0,M_{ss'}^{(l)})} \left[\chi(q)\chi(q')\right], \dot{\Sigma}^{(l+1)}(s,s')= 2\cdot\mathbb{E}_{(q,q')\sim N(0,M_{ss'}^{(l)})}\left[\dot{\chi}(q)\dot{\chi}(q')\right],\nn\\
-&\tilde{K}^{(l+1)}=\tilde{K}^{(l)}\odot \dot{\Sigma}^{(l+1)}+\Sigma^{(l+1)},\nn
-\end{align}
-where $s,s'\in[n]$ are two input examples in the dataset, $\Sigma$ is the data Gram matrix, $\dot{\chi}$ stands for the derivative of the activation function with respect to the pre-activation input, $N(0,M)$ stands for the mean-zero Gaussian distribution with co-variance matrix $M$. The final limiting matrix is given by $K^{(d)}=\left(\tilde{K}^{(d)}+\Sigma^{(d)}\right)/2$. 
-
-\textbf{Research Gap I (Feature Learning):} In the fixed NTK regime, the DNNs are linear learner using the random NTFs at random initialisation. This implies that there is little or no feature learning. Is this true?\\
-\textbf{Research Gap II (Finite vs Infinite):} While pure-kernel methods based on the limiting NTK (i.e., $K^{(d)}$) outperform other state-of-the-art kernel methods, the finite width DNNs (CNNs) still outperform their NTK (CNTK)\footnote{CNTK: Convolutional Neural Tangent Kernel, the NTK for CNNs} counterpart.
 \begin{comment}
 $1$ A fully-trained wide neural net enjoys the same generalization ability as its corresponding NTK.
 $2.$ A fully-trained sufficiently wide ReLU neural network is equivalent to the kernel regression predictor.
