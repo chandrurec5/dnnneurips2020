@@ -1,9 +1,10 @@
-\section{Gradient Dynamics with Feature Learning}
+\subsection{Gradient Dynamics with Feature Learning}
 \begin{align}
-\text{Parameter}&\dot{\Theta}_t&=&-\sum_{s=1}^n \psi_{x,t}e_t(s)\\
-\text{NPF}              &\dot{\phi}_{x_s,t}(p)&=&x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t,\forall p\in[P], s\in[n]\\
-\text{NPV}              &\dot{v}_t(p)&=&\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t,\forall p\in[P]\\
-\text{Error}     &\dot{e}_t&=&-(K^v_t+K^{\phi}_t+(\Psi^v_{t})^\top \Psi^{\phi}_{t}+(\Psi^v_{t})^\top\Psi^{\phi}_{t})e_t
+&\text{Parameter}&\dot{\Theta}_t&=&-\sum_{s=1}^n \psi_{x,t}e_t(s)\\
+&\text{NPF}              &\dot{\phi}_{x_s,t}(p)&=&x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t,\forall p\in[P], s\in[n]\\
+&\text{NPV}              &\dot{v}_t(p)&=&\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t,\forall p\in[P]\\
+&\text{Kernel}              &K_{\Theta}=(K^v_{\Theta}+K^{\phi}_{\Theta}+(\Psi^v_{\Theta})^\top \Psi^{\phi}_{\Theta}+(\Psi^v_{\Theta})^\top\Psi^{\phi}_{\Theta})\\
+&\text{Error}     &\dot{e}_t&=&-(K^v_t+K^{\phi}_t+(\Psi^v_{t})^\top \Psi^{\phi}_{t}+(\Psi^v_{t})^\top\Psi^{\phi}_{t})e_t
 \end{align}
 \subsection{Relation between $K^v_{\Theta}$, $K^{\phi}_{\Theta}$ and $K^{(d)}$ }
 \subsection{Role of gates in feature learning}
