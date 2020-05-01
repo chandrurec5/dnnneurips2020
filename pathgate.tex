@@ -1,9 +1,9 @@
-\section{Path-View:  Feature Learning In Finite Width Regime}\label{sec:pathgate}
+\section{Finite Width Regime: Capturing Feature Learning Via `Path-View' }\label{sec:pathgate}
 \textbf{Notation:} We consider fully connected deep networks with $d$ layers, and $w$ hidden units per layer, which accepts an input $x\in\R^{d_{in}}$, and produces an output $\hat{y}_{\Theta}\in \R$ where $\Theta\in\R^{d_{net}}$ ($d_{net}=w^2(d-2)+w(d_{in}+1)$). We denote by $\Theta(l,i,j)$ the weight connecting the $i^{th}$ hidden unit of layer $l-1$ to the $j^{th}$ hidden unit of layer $l$, and we use $G_{x,\Theta}(l,i)$ be the gating value ($0/1$) of the $i^{th}$ hidden unit in layer $l$ for an input $x\in \R^{d_{in}}$.
 \subsection{Paths and Gates}
 We have a total of $P=d_{in}w^{(d-1)}$ paths. Let us say that an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$. Let $\I_{l}\colon [P]\ra [w],l=0,\ldots,d-1$ provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). The activity of a path $p$ for an input $x\in \R^{d_{in}}$ by $A_{\Theta}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,\Theta}(l,\I_l(p))$.
 
-In what follows, we consider two kinds of gates namely, i) hard gates, taking values in $\{0,1\}$, and ii) soft gates, taking values in $(0,1)$. For a pre-activation input $q\in\R$, the  hard and soft gates are given by $G_{r}(q)=\mathbbm{1}_{\{\q>0\}}$ and $G_{sr}(q)=\frac{1}{1+\exp(-\beta q)}$, where $\beta>0$ is a positive constant. Using the hard and soft gates, we can specify the ReLU and `soft-ReLU' activations as $\chi_{r}(q)=q\cdot\mathbbm{1}_{\{q>0\}}$ and $\chi_{sr}(q)=q\cdot\left(\frac{1}{1+\exp(-\beta q)}\right)$. Here, in $G$ and $\chi$, the subscripts $`r'$ and $`sr'$ stand for `ReLU' and `soft-ReLU' respectively.
+In what follows, we consider two kinds of gates namely, i) hard gates, taking values in $\{0,1\}$, and ii) soft gates, taking values in $(0,1)$. For a pre-activation input $q\in\R$, the  hard and soft gates are given by $G_{r}(q)=\mathbbm{1}_{\{\q>0\}}$ and $G_{sr}(q)=\frac{1}{1+\exp(-\beta q)}$, where $\beta>0$ is a positive constant. Using the hard and soft gates, we can specify the ReLU and `soft-ReLU' activations as $\chi_{r}(q)=q\cdot\mathbbm{1}_{\{q>0\}}$ and $\chi_{sr}(q)=q\cdot\left(\frac{1}{1+\exp(-\beta q)}\right)$. Here, in $G$ and $\chi$, the subscripts `$r$' and `$sr$' stand for `ReLU' and `soft-ReLU' respectively.
 \subsection{Neural Path Feature and Values}
 The \emph{neural path feature} (NPF) of an input $x\in\R^{d_{in}}$ is given by 
 \begin{align}\label{eq:npfdef}
@@ -49,18 +49,23 @@ The zeroth and first-order terms of a DNN can be written as:
 \caption{Cartoon illustration of usefulness of path-view and DGN framework.}
 \label{fig:cartoon}
 \end{figure}
-
+\begin{comment}
 \textbf{Translation Invariance:} Consider a convolution network using $l$ layers of circular convolutions\footnote{Here, instead of zero-padding in the corners, we follow the convention that index $d_{in}+k$ will be interpreted as $k$, for $k>0$, and $-k$ will be interpreted as $d_{in}-k$.} with filter size $k'<d_{in}$ and unit stride, and let $x^l(i)$ be the output of the $i^{th}$ channel after either $\max$-/global-average-pooling. Looking at the third and fourth (from left) illustrations in \Cref{fig:cartoon}, it is easy to check the translation invariance property: each of the red, blue, green lines have the same path values due to weight sharing in the convolutional layers, this leads to a circular symmetry in the path values, due to which, a translation in the input will cause all the internal variable to translate, and final invariance results from the invariance of the $\max$/average operation.
-
+\end{comment}
 \textbf{Sensitive Sub-Network:} In a DNN with soft-ReLU, $\partial A_{\Theta}(x,p)=\sum_{l=1}^d \partial G_{x,\Theta}(l)\Pi_{l'\neq l}G_{x,\Theta}(l')$ is significant for those paths $p$ for which one of the $d-1$ gating values is close to $0.5$ (say such a gate is in layer $l$, and for such a gate $\partial G_{x,\Theta}$ is significant) and rest of the $d-2$ gates are close to $1$, so that $\Pi_{l'\neq l}G_{x,\Theta}(l')$ is significant. The set of paths for which $\partial A_{\Theta}(x,p)$ is significant, form the sensitive sub-network for that input. The sensitive paths are shown in cartoon $(c)$ of \Cref{fig:cartoon}. In the case of, standard ReLU, sensitive paths are those which contain one of the gates with pre-activation close to $0$, and rest of the $d-2$ gates are $1$.
 \subsection{Gradient Dynamics with Feature Learning}
-\begin{align}
-\dot{\Theta}_t&=-\sum_{s=1}^n \psi_{x,t}e_t(s)\\
-\dot{\phi}_{x_s,t}(p)&=x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t,\forall p\in[P], s\in[n]\\
-\dot{v}_t(p)&=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t,\forall p\in[P]\\
-K_{\Theta_t}&=K^v_{\Theta_t}+K^{\phi}_{\Theta_t}+(\Psi^v_{\Theta_t})^\top \Psi^{\phi}_{\Theta_t}+(\Psi^v_{\Theta_t})^\top\Psi^{\phi}_{\Theta_t}\\
-\dot{e}_t&=-K_{\Theta_t}e_t
+Recall that the \emph{neural tangent feature} (NTF) of an input $x\in\R^{d_{in}}$ is given by $\psi_{x,\Theta}=\left(\partial_{\theta}\hat{y}_{\Theta}(x),\theta\in\Theta\right)\in\R^{d_{net}}$. From \eqref{eq:first} we have $\psi_{x,\Theta}=\psi^v_{x,\Theta}+\psi^{\phi}_{x,\Theta}$, where $\psi^v_{x,\Theta}=\left(\ip{\phi_{x,\Theta}, \partial_{\theta} v_{\Theta}},\theta\in\Theta\right)\in\R^{d_{net}}$ and  $\psi^{\phi}_{x,\Theta}=\left(\ip{\partial_{\theta}\phi_{x,\Theta}, v_{\Theta}},\theta\in\Theta\right)\in\R^{d_{net}}$.  Let $\Psi^v_{\Theta}=\left(\psi^v_{x_s,\Theta},s\in[n]\right)$ and $\Psi^{\phi}_{\Theta}=\left(\psi^{\phi}_{x_s,\Theta},s\in[n]\right)$ be $d_{net}\times n$ matrices, and let $K^{v}_{\Theta}=(\Psi^{v}_{\Theta})^\top \Psi^{v}_{\Theta}$, $K^{\phi}_{\Theta}=(\Psi^{\phi}_{\Theta})^\top \Psi^{\phi}_{\Theta}$, $K^{cross}_{\Theta}=(\Psi^v_{\Theta})^\top \Psi^{\phi}_{\Theta}+(\Psi^{\phi}_{\Theta})^\top\Psi^{v}_{\Theta}$ be $n\times n$ matrices. The GD dynamics with NPF learning can be given by:
+\begin{align}\label{eq:graddyna} 
+\begin{split}
+\dot{\Theta}_t&=-\sum_{s=1}^n \psi_{x,t}e_t(s)\quad(\text{Parameter Dynamics})\\
+\dot{\phi}_{x_s,t}(p)&=x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t,\forall p\in[P], s\in[n]\quad(\text{NPF Dynamics})\\
+\dot{v}_t(p)&=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t,\forall p\in[P]\quad(\text{NPV Dynamicss})\\
+K_{\Theta_t}&=K^v_{\Theta_t}+K^{\phi}_{\Theta_t}+K^{cross}_{\Theta_t}\quad(\text{Kernel Decomposition})\\
+\dot{e}_t&=-K_{\Theta_t}e_t\quad(\text{Error Dynamics})
+\end{split}
 \end{align}
+$\bullet$ $K^v_{\Theta}$ is the kernel corresponding to learning NPVs. Let $\Phi_{\Theta}=\left(\phi_{x_s,\Theta},s\in[n]\right)\in\R^{P\times d_{net}}$ be the NPF matrix, and define a $P\times d_{net}$ matrix with entries $\nabla_{\Theta}v_{\Theta}(p,\theta)=\partial_{\theta}v_{\Theta}$. Then, $K^v_{\Theta}=\Phi^\top_{\Theta}(\nabla_{\Theta}v_{\Theta})(\nabla_{\Theta}v_{\Theta})^\top \Phi^\top_{\Theta}$. Thus, as the NPF matrix $\Phi_{\Theta_t}$ changes with time $K^v_{\Theta_t}$ changes with time.\\
+$\bullet$ $K^{\phi}_{\Theta}$ is the kernel corresponding to learning NPFs. Note that $K^{\phi}_{\Theta}=\sum_{\theta\in\Theta}\partial_{\theta}\Phi^\top_{\Theta}vv^\top\partial_{\theta}\Phi_{\Theta}$.
 \begin{comment}
  \textbf{Translation Invariance:} Consider a convolution network using $l$ layers of circular convolutions\footnote{Here, instead of zero-padding in the corners, we follow the convention that index $d_{in}+k$ will be interpreted as $k$, for $k>0$, and $-k$ will be interpreted as $d_{in}-k$.} with filter size $k'<d_{in}$ and unit stride, and let $x^l(i)$ be the output of the $i^{th}$ channel after either $\max$-/global-average-pooling. Looking at the third and fourth (from left) illustrations in \Cref{fig:cartoon}, it is easy to check the translation invariance property: each of the red, blue, green lines have the same path values due to weight sharing in the convolutional layers, this leads to a circular symmetry in the path values, due to which, a translation in the input will cause all the internal variable to translate, and final invariance results from the invariance of the $\max$/average operation.\\
 $3.$ \textbf{Active Sub-Network:} 
