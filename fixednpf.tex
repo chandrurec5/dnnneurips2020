@@ -1,10 +1,10 @@
 \section{Fixed NPF regime}
-\textbf{A New semi-idealised regime with fixed NPF(Resolving Gap II):} \Cref{tb:dynamics} shows the dynamics of GD for infinitesimal step-size (expressed in the form of coupled ordinary differential equations) in three regimes namely i) \emph{standard regime}, in  which practical DNNs operate, ii) \emph{fixed NTK regime}, an idealised regime which has been studied in recent works and iii) \emph{fixed NPF regime}, a new, semi-ideal regime which we introduce and study in this paper. In the standard regime, all the underlying quantities namely the weights, the NPFs, the NPVs and the error changes with time. In the fixed NTK regime, owing to the infinite width, while the weights and activations stay close to initialisation, and the cumulative effect drives the output to the required values, thereby reducing the training error. The fixed NPF regime, holds for any finite $w$, and here, we forcefully \emph{turn-off} feature learning, i.e. let the feature gradient $\psi^{\phi}_{x,\Theta}=0$. In order to do this, we hold the gates and hence the NPFs in a separate gating network and the NPVs in a different network called value network. By letting the parameters of the gating network non-trainable, we can force $\psi^{\phi}_{x,\Theta}$ to be $0$. Note that, in the limit of infinite width, the fixed NPF regime transitions to the fixed NTK regime. 
+In the fixed NPF regime we forcefully \emph{turn-off} feature learning, i.e. let the feature gradient $\psi^{\phi}_{x,\Theta}=0$. In order to do this, we hold the gates and hence the NPFs in a separate gating network and the NPVs in a different network called value network. By letting the parameters of the gating network non-trainable, we can force $\psi^{\phi}_{x,\Theta}$ to be $0$.
 \FloatBarrier
 \begin{table}[h]\centering
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{| l | l | l |}\hline
-Standard (finite $w$) &Fixed NTK ($w\ra\infty$) & Fixed NPK (finite $w$)\\\hline
+Finite $w$ with NPF learning & Large-Width & Fixed NPF\\\hline
 $\dot{\Theta}_t=-\sum_{s=1}^n \psi_{x,t}e_t(s)$ &$\dot{\Theta}_t\ra 0$ &$\dot{\Theta}_t=-\sum_{s=1}^n \psi^v_{x,t}e_t(s)$ \\\hline
 $\dot{\phi}_{x_s,t}(p)=x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t$ &$\dot{\phi}_{x_s,t}(p)\ra 0$ &$\dot{\phi}_{x_s,t}(p)=0$\\\hline
 $\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t$ &$\dot{v}_t(p)\ra 0$ &$\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t$\\\hline
