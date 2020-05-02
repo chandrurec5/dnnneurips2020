@@ -47,28 +47,23 @@ Output & None &$\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
 
 (ii) In addition, if ${4d}/{w^2}<1$, then $Var\left[K_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$.
 \end{theorem}
-The above result says that in the fixed NPF regime, in the limit of infinite width, at random initialisation as per \Cref{assmp:main}, the NTK $K_{\Theta_0}$ is equal to the NPK $H_{\Theta_0}$ times a scaling constant. From pervious results, \cite{arora2019exact,cao2019generalization}, if follows that as $w\ra\infty$, the optimisation and generalisation properties of the fixed NPF learner can be tied down to $H_{\Theta_0}$. We will now discuss about an interesting application of \Cref{th:main} to the problem of learning with fixed random NPFs.
+The above result says that in the fixed NPF regime, in the limit of infinite width, at random initialisation as per \Cref{assmp:main}, the NTK $K_{\Theta_0}$ is equal to the NPK $H_{\Theta_0}$ times a scaling constant. From pervious results, \cite{arora2019exact,cao2019generalization}, if follows that as $w\ra\infty$, the optimisation and generalisation properties of the fixed NPF learner can be tied down to $H_{\Theta_0}$. The NPK has a special \emph{Hadamard} structure as show below in \Cref{lm:npk}.
+\begin{lemma}\label{lm:npk}
+Let $p\rsa i$ denote the fact that path $p$ passes through input node $i\in[d_{in}]$, and let $\Lambda_{\Theta}(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_{\Theta}(x_s,p) A_{\Theta}(x_{s'},p)$, $\forall s,s'\in[n]$, any $i\in [d_{in}]$. It follows that $H_{\Theta}= \Sigma\odot\Lambda_{\Theta}$, where $\odot$ stands for the Hadamard product, and $\Sigma \in \R^{n\times n}$ is the input Gram matrix.
+\end{lemma}
+In the \Cref{lm:npk} above, $\Lambda_{\Theta}\in\R^{n\times n}$ is the correlation matrix of the active sub-networks (consisting of the activations that are \emph{on}) of different input pairs $s,s'\in[n]$. Note that the definition of $\Lambda$ is not dependent on the choice of input node $i$, because, the terms inside the summation depend only on the path followed from the first layer onwards and excludes the input node.
+
+We will now discuss about an interesting application of \Cref{th:main} to the problem of learning with fixed random NPFs.
 \subsection{Learning with fixed random NPFs obtained at random initialisation}
 At random initialisation, the output of a DNN is given by $\hat{y}_{\Theta_0}=\ip{\phi_{x,\Theta_0},v_{\Theta_0}}$, where, $\phi_{x,\Theta_0}$ is the random NPF and $v_{\Theta_0}$ is the random NPV. We are interested in learning with the random NPF $\phi_{x,\Theta_{0}}$, we have the following two interesting cases:
 
 \textbf{Case I: $w\ra\infty$, dependent initialisation:} In this case, we let $\Tg_0=\Theta_0$, and keep the parameters of the gating network fixed by letting $\Tg_t=\Tg_0,\forall t\geq 0$. The name dependent initialisation denotes that NPFs and NPVs are statistically dependent at initialisation, in which case \Cref{assmp:main} does not hold. In this case, $K_{\Theta_0}\ra K^{(d)}$. Since the feature gradient is $0$, and hence $\dot{G}=0$, $K^{(d)}$ can be calculated by letting $\chi=\chi_{r}$ in \eqref{eq:ntkold}.
 
 \textbf{Case II: $w\ra\infty$, independent initialisation:} In this case, while the parameters of the gating network fixed by letting $\Tg_t=\Tg_0,\forall t\geq 0$, at initialisation $\Tg_0$ and $\Theta_0$ are sampled independently. As a result, the NPVs and NPFs are statistically independent, and the output is given by $\hat{y}_{\Theta_t}(x)=\ip{\phi_{x,\Tg_0},v_{\Theta_t}}$. In this case, \Cref{assmp:main} can be satisfied if we choose $\Theta_0$ according to \Cref{assmp:main}-(ii). Here, as mentioned before the optimisation and generalisation is tied down to $H_{\Theta_0}$. 
-\subsection{Structure of NPK and Role of Depth in Optimisation}
-\begin{lemma}\label{lm:npk}
-Let $p\rsa i$ denote the fact that path $p$ passes through input node $i\in[d_{in}]$, and let $\Lambda_{\Theta}(s,s')\stackrel{def}{=}\sum_{p\rsa i} A_{\Theta}(x_s,p) A_{\Theta}(x_{s'},p)$, $\forall s,s'\in[n]$, any $i\in [d_{in}]$. It follows that $H_{\Theta}= \Sigma\odot\Lambda_{\Theta}$, where $\odot$ stands for the Hadamard product, and $\Sigma \in \R^{n\times n}$ is the input Gram matrix.
-\end{lemma}
-In the \Cref{lm:npk} above, $\Lambda_{\Theta}\in\R^{n\times n}$ is the correlation matrix of the active sub-networks of different input pairs $s,s'\in[n]$. Note that the definition of $\Lambda$ is not dependent on the choice of input node $i$, because, the terms inside the summation depend only on the path followed from the first layer onwards and excludes the input node.
-
+\subsection{Role of Depth in Optimisation}
 \textbf{Kernel Whitening:} Consider the case of independent initialisation, with $w\ra\infty$. Here, $K_{\Theta_0}\ra d\sigma^{(d-1)}H_{\Theta_0}$. For random initialisation, due to symmetry only half the activations are \emph{on} per-layer, and the diagonal entries of $\Lambda_0$ grow at a rate roughly $(w/2)^{(d-1)}$, and choosing $\sigma=\sqrt{\frac{2}w}$ will have a normalising effect. However, for two different inputs $s,s'\in[n]$ which are not parallel, the per-layer overlap will not be $100\%$ and hence $\Lambda_0(s,s')$ grows at a rate roughly $(w/2)^{(d-1)}\Pi_{l=1}^d \mu_l(s,s')$, where $\mu_{l}(s,s')\in(0,1)$ is the fractional overlap of \emph{on} activations in layer $l$ for inputs $s,s'$. Thus as depth increases, the non-diagonal terms decay at an exponential rate when compared to diagonal terms.
 
-\textbf{Role of Depth:} When optimising with fixed NPFs, when the width is finite, increasing depth till a point helps in training performance due to the whitening of the kernel. Increasing depth beyond a point hurts, because, the variance term has a depth dependence, due to which, the entires of $K_{\Theta_0}$ deviate from their expected values.
-
-
-
-
-
-
+When optimising with fixed NPFs, when the width is finite, increasing depth till a point helps in training performance due to the whitening of the kernel. Increasing depth beyond a point hurts, because, the variance term has a depth dependence, due to which, the entires of $K_{\Theta_0}$ deviate from their expected values.
 
 \begin{comment}
 \begin{table}[h]
