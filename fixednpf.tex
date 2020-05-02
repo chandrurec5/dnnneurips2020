@@ -7,9 +7,9 @@ In the fixed NPF regime, we forcefully \emph{turn-off} feature learning, i.e., w
 Layer& Gating Network (NPF)&Value Network (NPV)\\\hline 
 Input & $z_{x,\Tg_t}(0)=x$ &$z_{x,\Theta_t}(0)=x$ \\\hline
 Activation & $q_{x,\Tg_t}(l)={\Tg_t(l)}^\top z_{x,\Tg_t}(l-1)$& $q_{x,\Theta_t}(l)={\Theta_t(l)}^\top z_{x,\Theta_t}(l-1)$\\\hline
-Hidden &$z_{x,\Tg_t}(l)=q_{x,\Tg_t}(l)\odot G_{x,\Tg_t}(l)$& $z_{x,\Theta_t}(l)=q_{x,\Theta_t}(l)\odot G_{x,t}(l)$ \\\hline
+Hidden &$z_{x,\Tg_t}(l)=\chi^G\left(q_{x,\Tg_t}(l)\right)$& $z_{x,\Theta_t}(l)=q_{x,\Theta_t}(l)\odot G_{x,\Tg_t}(l)$ \\\hline
 Output & None &$\hat{y}_t(x)={\Theta_t(d)}^\top z_{x,\Theta_t}(d-1)$\\\hline
-\multicolumn{3}{|l|}{Gating Values}\\\hline
+\multicolumn{3}{|l|}{Gating Values:\quad$ G_{x,\Tg_t}(l)= \gamma_{r}\left(q_{x,\Tg_t}(l)\right)\quad$or $G_{x,\Tg_t}(l)= \gamma_{sr}\left(q_{x,\Tg_t}(l)\right)$}\\\hline
 \end{tabular}
 }
 \end{minipage}
@@ -72,10 +72,11 @@ ii) $H_{\Theta}= \Sigma\odot\Lambda_{\Theta}$, where $\odot$ stands for the Hada
 
 We will now discuss about an interesting application of \Cref{th:main} to the problem of learning with fixed random NPFs.
 \subsection{Optimisation with fixed random NPFs at random initialisation: Role of Depth}
-\textbf{Kernel Whitening:} Consider the case of independent initialisation, with $w\ra\infty$. Here, $K_{\Theta_0}\ra d\sigma^{(d-1)}H_{\Theta_0}$. For random initialisation, due to symmetry only half the activations are \emph{on} per-layer, and the diagonal entries of $\Lambda_0$ grow at a rate roughly $(w/2)^{(d-1)}$, and choosing $\sigma=\sqrt{\frac{2}w}$ will have a normalising effect. However, for two different inputs $s,s'\in[n]$ which are not parallel, the per-layer overlap will not be $100\%$ and hence $\Lambda_0(s,s')$ grows at a rate roughly $(w/2)^{(d-1)}\Pi_{l=1}^d \mu_l(s,s')$, where $\mu_{l}(s,s')\in(0,1)$ is the fractional overlap of \emph{on} activations in layer $l$ for inputs $s,s'$. Thus as depth increases, the non-diagonal terms decay at an exponential rate when compared to diagonal terms.
+Consider the case of independent initialisation, with $w\ra\infty$. Here, $K_{\Theta_0}\ra d\sigma^{(d-1)}H_{\Tg_0}=d(\Sigma)\odot(\sigma^{2(d-1)}\Lambda_{\Tg_0})$. Let us look at the diagonal and non-diagonal entries of $\sigma^{2(d-1)}\Lambda_0$, when $\Tg_0$ is initialised according to \Cref{assmp:main}-(ii) for $\sigma=\sqrt{\frac2w}$.\\
+$\bullet$ \emph{Diagonal terms:} $\sqrt{\frac2w}\Lambda_{\Tg_0}(s,s)=2^{(d-1)}\Pi_{l=1}^{(d-1)}\frac{\tau_{\Tg_0}(s,s',l)}w$. Note that as $w\ra\infty$, $\frac{\tau_{\Tg_0}(s,s',l)}w\ra\frac12$, and hence $\sqrt{\frac2w}\Lambda_o(s,s)\ra 1$.\\
+$\bullet$ \emph{Non-Diagonal terms:} As $w\ra\infty$, $\sqrt{\frac2w}\Lambda_{\Tg_0}(s,s')=2^{(d-1)}\Pi_{l=1}^{(d-1)}\frac{\tau_{\Tg_0}(s,s',l)}w\ra \Pi_{l=1}^{(d-1)}\mu_l(s,s')$, where $\mu_l(s,s')\in(0,1)$ is the fractional overlap between \emph{on} activation in layer $l$ for inputs $s,s'\in[n]$. 
 
 When optimising with fixed NPFs, when the width is finite, increasing depth till a point helps in training performance due to the whitening of the kernel. Increasing depth beyond a point hurts, because, the variance term has a depth dependence, due to which, the entires of $K_{\Theta_0}$ deviate from their expected values.
-
 \begin{comment}
 \begin{table}[h]
 \centering
