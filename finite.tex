@@ -58,7 +58,7 @@ Recall that the \emph{neural tangent feature} (NTF) of an input $x\in\R^{d_{in}}
 \FloatBarrier
 \begin{table}[h]
 \begin{tabular}{| l | lll |}\hline
-Parameter Dynamics & $\dot{\Theta}_t$&$=$&$-\sum_{s=1}^n \psi_{x,t}e_t(s)$\\\hline
+Parameter Dynamics & $\dot{\Theta}_t$&$=$&$-\sum_{s=1}^n \psi_{x_s,t}e_t(s)=\sum_{s=1}^n (\psi^v_{x_s,t}+\psi^{\phi}_{x_s,t})e_t(s)$\\\hline
 NPF Dynamics& $\dot{\phi}_{x_s,t}(p)$&$=$&$x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t,\forall p\in[P], s\in[n]$\\\hline
 NPV Dynamics& $\dot{v}_t(p)$&$=$&$\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t,\forall p\in[P]$\\\hline
 Kernel Decompostion& $K_{\Theta_t}$&$=$&$K^v_{\Theta_t}+K^{\phi}_{\Theta_t}+K^{cross}_{\Theta_t}$\\\hline

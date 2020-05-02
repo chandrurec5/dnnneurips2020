@@ -31,7 +31,7 @@ A comparison of the GD dynamics across the three regimes namely i) the standard 
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{| l | l | l |}\hline
 Finite $w$ with NPF learning (standard) & Large-Width & Fixed NPF\\\hline
-$\dot{\Theta}_t=-\sum_{s=1}^n \psi_{x,t}e_t(s)$ &$\dot{\Theta}_t\ra 0$ &$\dot{\Theta}_t=-\sum_{s=1}^n \psi^v_{x,t}e_t(s)$ \\\hline
+$\dot{\Theta}_t=-\sum_{s=1}^n (\psi^v_{x_s,t}+\psi^{\phi}_{x_s,t})e_t(s)$ &$\dot{\Theta}_t\ra 0$ &$\dot{\Theta}_t=-\sum_{s=1}^n \psi^v_{x,t}e_t(s)$ \\\hline
 $\dot{\phi}_{x_s,t}(p)=x(\I_0(p))\sum_{\theta\in\Theta}\partial_{\theta}A_t(x_s,p)\dot{\theta}_t$ &$\dot{\phi}_{x_s,t}(p)\ra 0$ &$\dot{\phi}_{x_s,t}(p)=0$\\\hline
 $\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t$ &$\dot{v}_t(p)\ra 0$ &$\dot{v}_t(p)=\sum_{\theta\in\Theta}\partial_{\theta}v_t(p)\dot{\theta}_t$\\\hline
 $\dot{e}_t=-(K^v_t+K^{\phi}_t+K^{cross}_{t})e_t$ &$\dot{e}_t=-K^{(d)}e_t$ &$\dot{e}_t=-K^v_te_t$\\\hline
@@ -48,7 +48,7 @@ $\dot{e}_t=-(K^v_t+K^{\phi}_t+K^{cross}_{t})e_t$ &$\dot{e}_t=-K^{(d)}e_t$ &$\dot
 
 (ii) In addition, if ${4d}/{w^2}<1$, then $Var\left[K_0\right]\leq O\left(d^2_{in}\sigma^{4(d-1)}\max\{d^2w^{2(d-2)+1}, d^3w^{2(d-2)}\}\right)$.
 \end{theorem}
-\textbf{Remark on\Cref{assmp:main} :} This is known as the \emph{independent initialisation} case, because, the NPVs $v_{\Theta_0}$ and NPFs $\phi_{x_s,\Tg_0},s\in[n]$ are statistically independent at initialisation. Note that, in a standard DNN with ReLU activations, at initialisation, NPFs and NPV are derived from the same $\Theta_0$, i.e., $\Tg_0=\Theta_0$; we call this case as the \emph{dependent initialisation} which does not satisfy \Cref{assmp:main}. In the case of \emph{dependent initialisation}, $K_{\Theta_0}\ra K^{(d)}$, where $K^{(d)}$ can be calculated by letting $\chi=\chi_{r}$ in \eqref{eq:ntkold} (note that in the fixed NPF regime feature gradient is $0$, and hence $\dot{G}=0$).
+\textbf{Remark on\Cref{assmp:main} :} This is known as the \emph{independent initialisation} case, because, the NPVs $v_{\Theta_0}$ and NPFs $\phi_{x_s,\Tg_0},s\in[n]$ are statistically independent at initialisation. Note that, in a standard DNN with ReLU activations, at initialisation, NPFs and NPV are derived from the same $\Theta_0$, i.e., $\Tg_0=\Theta_0$; we call this case as the \emph{dependent initialisation} which does not satisfy \Cref{assmp:main}. In the case of \emph{dependent initialisation}, $K_{\Theta_0}\ra K^{(d)}$, where $K^{(d)}$ can be calculated by letting $\chi=\chi_{r}$ in \eqref{eq:ntkold} (note that in the fixed NPF regime feature gradient is $0$, and hence $\dot{\gamma}=0$).
 
 \textbf{Remark on \Cref{th:main}:} This result says that in the fixed NPF regime, in the limit of infinite width, at random initialisation as per \Cref{assmp:main}, the NTK $K_{\Theta_0}$ is equal to the NPK $H_{\Tg_0}$ times a scaling constant. From pervious results, \cite{arora2019exact,cao2019generalization}, if follows that as $w\ra\infty$, the optimisation and generalisation properties of the fixed NPF learner can be tied down to $H_{\Tg_0}$. \Cref{th:main} can be applied in the following two interesting scenarios:\\
 $1.$ Learning with random fixed NPFs. Here, we choose $\Tg_0$ according to \Cref{assmp:main}-(ii) and statistically independent of $\Theta_0$. The learning problem in this case is $\hat{y}_{\Theta_t}(x)=\ip{\phi_{x,\Tg_0},v_{\Theta_t}}$.\\
@@ -74,9 +74,9 @@ We will now discuss about an interesting application of \Cref{th:main} to the pr
 \subsection{Optimisation with fixed random NPFs at random initialisation: Role of Depth}
 Consider the case of independent initialisation, with $w\ra\infty$. Here, $K_{\Theta_0}\ra d\sigma^{(d-1)}H_{\Tg_0}=d(\Sigma)\odot(\sigma^{2(d-1)}\Lambda_{\Tg_0})$. Let us look at the diagonal and non-diagonal entries of $\sigma^{2(d-1)}\Lambda_0$, when $\Tg_0$ is initialised according to \Cref{assmp:main}-(ii) for $\sigma=\sqrt{\frac2w}$.\\
 $\bullet$ \emph{Diagonal terms:} $\sqrt{\frac2w}\Lambda_{\Tg_0}(s,s)=2^{(d-1)}\Pi_{l=1}^{(d-1)}\frac{\tau_{\Tg_0}(s,s',l)}w$. Note that as $w\ra\infty$, $\frac{\tau_{\Tg_0}(s,s',l)}w\ra\frac12$, and hence $\sqrt{\frac2w}\Lambda_o(s,s)\ra 1$.\\
-$\bullet$ \emph{Non-Diagonal terms:} As $w\ra\infty$, $\sqrt{\frac2w}\Lambda_{\Tg_0}(s,s')=2^{(d-1)}\Pi_{l=1}^{(d-1)}\frac{\tau_{\Tg_0}(s,s',l)}w\ra \Pi_{l=1}^{(d-1)}\mu_l(s,s')$, where $\mu_l(s,s')\in(0,1)$ is the fractional overlap between \emph{on} activation in layer $l$ for inputs $s,s'\in[n]$. 
+$\bullet$ \emph{Non-Diagonal terms:} As $w\ra\infty$, $\sqrt{\frac2w}\Lambda_{\Tg_0}(s,s')=2^{(d-1)}\Pi_{l=1}^{(d-1)}\frac{\tau_{\Tg_0}(s,s',l)}w\ra \Pi_{l=1}^{(d-1)}\mu_l(s,s')$, where $\mu_l(s,s')\in(0,1)$ is the fractional overlap between \emph{on} activation in layer $l$ for inputs $s,s'\in[n]$. Thus as depth increases the non-diagonal terms get suppressed by a factor $\Pi_{l}^{(d-1)}\mu_{l}(s,s')$.
 
-When optimising with fixed NPFs, when the width is finite, increasing depth till a point helps in training performance due to the whitening of the kernel. Increasing depth beyond a point hurts, because, the variance term has a depth dependence, due to which, the entires of $K_{\Theta_0}$ deviate from their expected values.
+When optimising with fixed NPFs, when the width is finite, increasing depth till a point helps in training due to the suppression of the non-diagonal terms of $H_{\Tg_0}$. Increasing depth beyond a point hurts, because, the variance term has a depth dependence, due to which, the entires of $K_{\Theta_0}$ deviate from their expected values.
 \begin{comment}
 \begin{table}[h]
 \centering
