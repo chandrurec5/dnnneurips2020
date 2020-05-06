@@ -1,14 +1,14 @@
-\section{Experiments: Fixed NPFs vs NPF learning}\label{sec:generalisation}
+\section{Experiments: Fixed NPF Regime vs  Standard Regime}\label{sec:generalisation}
 The result of the numerical experiments are in \Cref{tb:npfs}. We used standard datasets namely MNIST, CIFAR-10, and CIFAR-100, with categorical cross entropy loss. The rows correspond to various architectures; Arch-$1$, Arch-$2$, Arch-$3$ and Arch-$4$ are fully connect DNNs with ReLU activations with $(w=128,d=6)$, $(w=128,d=10)$, $(w=256,d=6)$ and $(w=256,d=10)$ respectively. Arch-$5$ is a vanilla convolution neural network without pooling, residual connections, dropout or batch-normalisations, and is given by: input layer is $(32, 32, 3)$, followed by convolution layers with a stride of $(3, 3)$ and channels $64$, $64$, $128$, $128$ followed by a flattening to layer with $256$ hidden units, followed by a fully connected layer with $256$ units, and finally a  $10/100$ width soft-max layer to produce the final predictions. Rows $3$ shows the result for standard ReLU network. Row $4,5,6$ and $7$ shows the result for training with various fixed NPFs using the setup in \Cref{tb:dgn}. Row $4$ shows the result for training with random fixed NPFs. Row $5$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on datasets with true labels. Row $6$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on dataset with random labels. Row $7$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on dataset with random pixels. Note that in Row $5,6,7$, once the NPF is fixed, we train the NPVs, i.e., parameter $\Theta$ on a dataset with true labels.
 %\FloatBarrier
 \begin{table}[!b]
-\begin{tabular}{|c|c|c|c|c|c|c|}\hline
-&&&&\multicolumn{3}{c|}{NPF (trained)}\\\cline{5-7}
-	&Dataset		&ReLU		&NPF(Un-trained) 		&Good Label		&Random Label 	&Random Pixel\\\hline
-Arch-$1$	& MNIST 		& $98.15$ 		&$96$ 		&$98.3$		&$92.6$			&$94.3$\\\hline
-Arch-$2$	& MNIST 		& $98.5$ 		&$96.6$ 		&$98.4$		&$92.0$			&$81.1$\\\hline
-$(256,10)$	& CIFAR 		& $72.9$ 		&$65.2$ 		&$70.5$		&$54.8$			&$62.5$\\\hline
-$(256,10)$	& MNIST 		& $98.4$ 		&$96.2$ 		&$98.2$		&$72.9$			&$80.3$\\\hline
+\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+&&&&&\multicolumn{3}{c|}{NPF (trained)}\\\cline{6-8}
+	&Dataset		&ReLU		&NPF(II) &NPF(DI) 		&Good Label		&Random Label 	&Random Pixel\\\hline
+Arch-$1$	& MNIST 		& $98.15$ 		&$96$&$96$ 		&$98.3$		&$92.6$			&$94.3$\\\hline
+Arch-$2$	& MNIST 		& $98.5$ 		&$96.6$&$96.6$ 		&$98.4$		&$92.0$			&$81.1$\\\hline
+$(256,10)$	& CIFAR 		& $72.9$ 		&$65.2$&$65.2$ 		&$70.5$		&$54.8$			&$62.5$\\\hline
+$(256,10)$	& MNIST 		& $98.4$ 		&$96.2$&$96.2$ 		&$98.2$		&$72.9$			&$80.3$\\\hline
 \end{tabular}
 \caption{Shows the training and generalisation performance of various NPFs.}
 \label{tb:npfs}
