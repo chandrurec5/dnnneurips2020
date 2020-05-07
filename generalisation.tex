@@ -5,10 +5,12 @@ The result of the numerical experiments are in \Cref{tb:npfs}. We used standard 
 \begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
 &&&&&\multicolumn{3}{c|}{NPF (trained)}\\\cline{6-8}
 	&Dataset		&ReLU		&NPF(II) &NPF(DI) 		&Good Label		&Random Label 	&Random Pixel\\\hline
-Arch-$1$	& MNIST 		& $98.15$ 		&$96$&$96$ 		&$98.3$		&$92.6$			&$94.3$\\\hline
-Arch-$2$	& MNIST 		& $98.5$ 		&$96.6$&$96.6$ 		&$98.4$		&$92.0$			&$81.1$\\\hline
-$(256,10)$	& CIFAR 		& $72.9$ 		&$65.2$&$65.2$ 		&$70.5$		&$54.8$			&$62.5$\\\hline
-$(256,10)$	& MNIST 		& $98.4$ 		&$96.2$&$96.2$ 		&$98.2$		&$72.9$			&$80.3$\\\hline
+Arch-$1$	& MNIST 		& $98.14\pm0.07$ 		&$96.02\pm0.13$&$96.09\pm0.12$ 		&$97.82\pm0.02$		&$95.21\pm0.18$			&$96.30\pm0.11$\\\hline
+Arch-$2$	& MNIST 		& $98.11\pm0.08$ 		&$95.69\pm0.12$&$95.54\pm0.13$ 		&$98.11\pm0.05$		&$93.40\pm0.17$			&$94.64\pm0.22$\\\hline
+Arch-$3$	& MNIST 		& $98.42\pm0.05$ 		&$96.81\pm0.12$&$96.90\pm0.14$ 		&$98.33\pm0.06$		&$94.92\pm0.13$			&$95.06\pm0.19$\\\hline
+Arch-$4$	& MNIST 		& $$ 		&$$&$$ 		&$$		&$$			&$$\\\hline
+Arch-$5$	& CIFAR-$10$ 		& $$ 		&$$&$$ 		&$$		&$$			&$$\\\hline
+Arch-$5$	& CIFAR-$100$ 		& $$ 		&$$&$$ 		&$$		&$$			&$$\\\hline
 \end{tabular}
 \caption{Shows the training and generalisation performance of various NPFs.}
 \label{tb:npfs}
