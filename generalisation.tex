@@ -2,19 +2,19 @@
 The result of the numerical experiments are in \Cref{tb:npfs}. We used standard datasets namely MNIST, CIFAR-10, and CIFAR-100, with categorical cross entropy loss. The rows correspond to various architectures; Arch-$1$, Arch-$2$, Arch-$3$ and Arch-$4$ are fully connect DNNs with ReLU activations with $(w=128,d=6)$, $(w=128,d=10)$, $(w=256,d=6)$ and $(w=256,d=10)$ respectively. Arch-$5$ is a vanilla convolution neural network without pooling, residual connections, dropout or batch-normalisations, and is given by: input layer is $(32, 32, 3)$, followed by convolution layers with a stride of $(3, 3)$ and channels $64$, $64$, $128$, $128$ followed by a flattening to layer with $256$ hidden units, followed by a fully connected layer with $256$ units, and finally a  $10/100$ width soft-max layer to produce the final predictions. Rows $3$ shows the result for standard ReLU network. Row $4,5,6$ and $7$ shows the result for training with various fixed NPFs using the setup in \Cref{tb:dgn}. Row $4$ shows the result for training with random fixed NPFs. Row $5$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on datasets with true labels. Row $6$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on dataset with random labels. Row $7$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on dataset with random pixels. Note that in Row $5,6,7$, once the NPF is fixed, we train the NPVs, i.e., parameter $\Theta$ on a dataset with true labels.
 %\FloatBarrier
 \begin{table}[!b]
-\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
-&&&&&\multicolumn{3}{c|}{NPF (trained)}\\\cline{6-8}
-	&Dataset		&ReLU		&NPF(II) &NPF(DI) 		&Good Label		&Random Label 	&Random Pixel\\\hline
-Arch-$1$	& MNIST 		& $98.14\pm0.07$ 		&$96.02\pm0.13$&$96.09\pm0.12$ 		&$97.82\pm0.02$		&$95.21\pm0.18$			&$96.30\pm0.11$\\\hline
-Arch-$1$-SGD	& MNIST 		& $97.85\pm0.09$ 		&$95.85\pm0.10$&$95.85\pm0.17$ 		&$97.10\pm0.09$		&$\pm$			&$\pm$\\\hline
-Arch-$2$	& MNIST 		& $98.11\pm0.08$ 		&$95.69\pm0.12$&$95.54\pm0.13$ 		&$98.11\pm0.05$		&$93.40\pm0.17$			&$94.64\pm0.22$\\\hline
-Arch-$2$-SGD	& MNIST 		& $97.80\pm0.08$ 		&$95.76\pm0.07$&$95.81\pm0.09$ 		&$97.22\pm0.08$		&$\pm$			&$\pm$\\\hline
-Arch-$3$	& MNIST 		& $98.42\pm0.05$ 		&$96.81\pm0.12$&$96.90\pm0.14$ 		&$98.33\pm0.06$		&$94.92\pm0.13$			&$95.06\pm0.19$\\\hline
-Arch-$3$SGD	& MNIST 		& $98.05\pm0.06$ 		&$96.23\pm0.13$&$96.63\pm0.14$ 		&$97.54\pm0.08$		&$\pm$			&$\pm$\\\hline
-Arch-$4$	& MNIST 		& $98.41\pm0.06$ 		&$96.52\pm0.11$&$96.71\pm0.22$ 		&$98.45\pm0.06$		&$$			&$$\\\hline
-Arch-$4$-SGD	& MNIST 		& $97.98\pm0.05$ 		&$95.81\pm0.32$&$96.25\pm0.0.05$ 		&$97.70\pm0.13$		&$$			&$$\\\hline
-Arch-$5$	& CIFAR-$10$ 		& $67.02\pm0.43$ 		&$58.92\pm0.62$&$58.83\pm0.27$ 		&$63.06\pm0.73$		&$$			&$$\\\hline
-Arch-$5$	& CIFAR-$100$ 		& $$ 		&$$&$$ 		&$$		&$$			&$$\\\hline
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}\hline
+&&&&&&\multicolumn{3}{c|}{NPF (trained)}\\\cline{7-9}
+	&Dataset		&ReLU &Twin		&NPF(II) &NPF(DI) 		&GL		&RL 	&RP\\\hline
+Arch-$1$	& MNIST 		& $98.14\pm0.07$ &		&$96.02\pm0.13$&$96.09\pm0.12$ 		&$97.82\pm0.02$		&$95.21\pm0.18$			&$96.30\pm0.11$\\\hline
+Arch-$1$-SGD	& MNIST 		& $97.85\pm0.09$ &		&$95.85\pm0.10$&$95.85\pm0.17$ 		&$97.10\pm0.09$		&$\pm$			&$\pm$\\\hline
+Arch-$2$	& MNIST 		& $98.11\pm0.08$  &		&$95.69\pm0.12$&$95.54\pm0.13$ 		&$98.11\pm0.05$		&$93.40\pm0.17$			&$94.64\pm0.22$\\\hline
+Arch-$2$-SGD	& MNIST 		& $97.80\pm0.08$  &		&$95.76\pm0.07$&$95.81\pm0.09$ 		&$97.22\pm0.08$		&$\pm$			&$\pm$\\\hline
+Arch-$3$	& MNIST 		& $98.42\pm0.05$ 	&	&$96.81\pm0.12$&$96.90\pm0.14$ 		&$98.33\pm0.06$		&$94.92\pm0.13$			&$95.06\pm0.19$\\\hline
+Arch-$3$SGD	& MNIST 		& $98.05\pm0.06$ &		&$96.23\pm0.13$&$96.63\pm0.14$ 		&$97.54\pm0.08$		&$\pm$			&$\pm$\\\hline
+Arch-$4$	& MNIST 		& $98.41\pm0.06$ 	&	&$96.52\pm0.11$&$96.71\pm0.22$ 		&$98.45\pm0.06$		&$$			&$$\\\hline
+Arch-$4$-SGD	& MNIST 		& $97.98\pm0.05$ &		&$95.81\pm0.32$&$96.25\pm0.0.05$ 		&$97.70\pm0.13$		&$$			&$$\\\hline
+Arch-$5$	& CIFAR-$10$ 		& $67.02\pm0.43$ &		&$58.92\pm0.62$&$58.83\pm0.27$ 		&$63.06\pm0.73$		&$$			&$$\\\hline
+%Arch-$5$	& CIFAR-$100$ 		& $$ 		&$$&$$ 		&$$		&$$			&$$\\\hline
 \end{tabular}
 \caption{Shows the training and generalisation performance of various NPFs.}
 \label{tb:npfs}
