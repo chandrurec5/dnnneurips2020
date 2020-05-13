@@ -1,0 +1,11 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Standard Regime: Capturing Feature Learning Via `Path-View' }{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Paths and Gates}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Neural Path Feature and Values}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Information Flow via Sub-Networks}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Gradient Dynamics with Feature Learning}{section.2}% 6
+\BOOKMARK [1][-]{section.3}{Large-Width Regime: Comparison with Prior Result}{}% 7
+\BOOKMARK [1][-]{section.4}{Fixed NPF regime}{}% 8
+\BOOKMARK [2][-]{subsection.4.1}{Hadamard Structure of NPK}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.2}{Optimisation with fixed random NPFs at random initialisation: Role of Depth}{section.4}% 10
+\BOOKMARK [1][-]{section.5}{Experiments: Fixed NPF Regime vs Standard Regime}{}% 11

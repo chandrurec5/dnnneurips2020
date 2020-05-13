@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: neurips_2020.aux
+The style file: plainnat.bst
+Database file #1: refs.bib
+Warning--I didn't find a database entry for "du2018"
+Warning--I didn't find a database entry for "arora2019exact"
+Warning--I didn't find a database entry for "cao2019generalization"
+You've used 3 entries,
+            2773 wiz_defined-function locations,
+            610 strings with 5378 characters,
+and the built_in function-call counts, 1422 in all, are:
+= -- 112
+> -- 117
+< -- 1
++ -- 39
+- -- 36
+* -- 117
+:= -- 238
+add.period$ -- 9
+call.type$ -- 3
+change.case$ -- 21
+chr.to.int$ -- 3
+cite$ -- 6
+duplicate$ -- 59
+empty$ -- 93
+format.name$ -- 41
+if$ -- 281
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 3
+newline$ -- 23
+num.names$ -- 12
+pop$ -- 42
+preamble$ -- 1
+purify$ -- 18
+quote$ -- 0
+skip$ -- 51
+stack$ -- 0
+substring$ -- 6
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 33
+warning$ -- 0
+while$ -- 9
+width$ -- 0
+write$ -- 43
+(There were 3 warnings)

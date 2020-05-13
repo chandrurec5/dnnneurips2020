@@ -1,0 +1,24 @@
+\begin{thebibliography}{3}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Du and Hu(2019)]{dudln}
+Simon~S Du and Wei Hu.
+\newblock Width provably matters in optimization for deep linear neural
+  networks.
+\newblock \emph{arXiv preprint arXiv:1901.08572}, 2019.
+
+\bibitem[Du et~al.(2018)Du, Lee, Li, Wang, and Zhai]{dudnn}
+Simon~S Du, Jason~D Lee, Haochuan Li, Liwei Wang, and Xiyu Zhai.
+\newblock Gradient descent finds global minima of deep neural networks.
+\newblock \emph{arXiv preprint arXiv:1811.03804}, 2018.
+
+\bibitem[Zhang et~al.(2016)Zhang, Bengio, Hardt, Recht, and Vinyals]{ben}
+Chiyuan Zhang, Samy Bengio, Moritz Hardt, Benjamin Recht, and Oriol Vinyals.
+\newblock Understanding deep learning requires rethinking generalization.
+\newblock \emph{arXiv preprint arXiv:1611.03530}, 2016.
+
+\end{thebibliography}
