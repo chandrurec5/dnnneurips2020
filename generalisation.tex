@@ -1,6 +1,7 @@
 \section{Experiments: Fixed NPF Regime vs  Standard Regime}\label{sec:generalisation}
 The result of the numerical experiments are in \Cref{tb:npfs}. We used standard datasets namely MNIST, CIFAR-10, and CIFAR-100, with categorical cross entropy loss. The rows correspond to various architectures; Arch-$1$, Arch-$2$, Arch-$3$ and Arch-$4$ are fully connect DNNs with ReLU activations with $(w=128,d=6)$, $(w=128,d=10)$, $(w=256,d=6)$ and $(w=256,d=10)$ respectively. Arch-$5$ is a vanilla convolution neural network without pooling, residual connections, dropout or batch-normalisations, and is given by: input layer is $(32, 32, 3)$, followed by convolution layers with a stride of $(3, 3)$ and channels $64$, $64$, $128$, $128$ followed by a flattening to layer with $256$ hidden units, followed by a fully connected layer with $256$ units, and finally a  $10/100$ width soft-max layer to produce the final predictions. Rows $3$ shows the result for standard ReLU network. Row $4,5,6$ and $7$ shows the result for training with various fixed NPFs using the setup in \Cref{tb:dgn}. Row $4$ shows the result for training with random fixed NPFs. Row $5$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on datasets with true labels. Row $6$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on dataset with random labels. Row $7$ shows the result for fixed NPFs obtained a DNN with ReLU activations trained on dataset with random pixels. Note that in Row $5,6,7$, once the NPF is fixed, we train the NPVs, i.e., parameter $\Theta$ on a dataset with true labels.
 %\FloatBarrier
+
 \begin{table}[!b]
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|}\hline
 &&&&&&\multicolumn{3}{c|}{NPF (trained)}\\\cline{7-9}
@@ -19,6 +20,21 @@ Arch-$5$	& CIFAR-$10$ 		& $67.02\pm0.43$ &		&$58.92\pm0.62$&$58.83\pm0.27$ 		&$6
 \caption{Shows the training and generalisation performance of various NPFs.}
 \label{tb:npfs}
 \end{table}
+
+\begin{table}[!b]
+\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+Arch			&Optimiser	&Dataset		&FRNPF (II) 			&FRNPF (DI)			&DGN					&FLNPF						&ReLU\\\hline
+FC			&SGD		&MNIST 		&$95.85\pm0.10$		&$95.85\pm0.17$		&$97.86\pm0.11$			&$97.10\pm0.09$				&$97.85\pm0.09$\\\hline
+FC			&Adam		&MNIST 		&$96.02\pm0.13$		&$96.09\pm0.12$		&$\mathbf{98.22\pm0.05}$	&$\mathbf{97.82\pm0.02}$		&$\mathbf{98.14\pm0.07}$\\\hline
+VCONV		&SGD		&CIFAR-$10$	&$58.92\pm0.62$		&$58.83\pm0.27$ 		&$63.21\pm0.07$			&$63.06\pm0.73$				&$67.02\pm0.43$\\\hline
+VCONV		&Adam		&CIFAR-$10$	&$64.86\pm1.18$		&$64.68\pm0.84$		&$\mathbf{69.45\pm0.76}$	&$\mathbf{71.4\pm0.47}$			&$\mathbf{72.43\pm0.54}$\\\hline
+GCONV	&SGD		&CIFAR-$10$	&$67.36\pm0.56$		&$66.86\pm0.44$		&$74.57\pm0.43$			&$78.52\pm0.39$				&$78.90\pm0.37$\\\hline
+GCONV	&Adam		&CIFAR-$10$	&$66.42\pm0.44$		&$66.81\pm0.75$		&$\mathbf{77.12\pm0.19}$	&$\mathbf{79.28\pm0.13}$		&$\mathbf{80.32\pm0.13}$\\\hline
+\end{tabular}
+\caption{Shows the training and generalisation performance of various NPFs.}
+\label{tb:npfs}
+\end{table}
+
 
 \textbf{Observations:}\\
 $\bullet$ Standard ReLU which learns the NPFs does better than fixed NPFs.
