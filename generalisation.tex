@@ -3,7 +3,7 @@ The deep gated network framework enables us to experiment with the following dif
 
 $\bullet$ Fixed Random Neural Path Feature (FRNPF): Here, we use $\chi^g=\chi_r$, and $ G_{x,t}(l)= \gamma_{r}\left(q^g_{x,t}(l)\right)\quad$. Also, the weights of the gating network are initialised at random, however, there are made non-trainable, i.e., $\Tg_0=\Tg_t,\forall t\geq 0$. There are two possible initialisations namely i) \emph{independent initialisation} (II), i.e., $\Tg_0$ and $\Theta_0$ are statistically independent as per \Cref{assmp:main}, and ii) \emph{dependent initialisation} (DI), i.e., $\Tg_0=\Theta_0$, a case which mimics the NPFs and NPVs of a standard DNN with ReLU activations. After initialisation, $\Theta_t$ is trained with $\hat{y}^v_t$ as the output node.
 
-$\bullet$  Fixed Learned Neural Path Feature (FLNPF): Here, we use $\chi^g=\chi_r$, and $ G_{x,t}(l)= \gamma_{r}\left(q^g_{x,t}(l)\right)\quad$. First we train a standard DNN with ReLU activations parameterised by $\bar{\Theta}_t\inrdnet$(whose architecture is identical to the value/ gating network) for $T_{init}$ epochs. We copy the weights onto the gating network, i.e., $\Tg_0=\bar{\Theta}_{T_{init}}$, which are made non-trainable. Then, the weights $\Theta_0$ are initialised at random, thereby satisfying \Cref{assmp:main}. After initialisation, $\Theta_t$ is trained with $\hat{y}^v_t$ as the output node.
+$\bullet$  Fixed Learned Neural Path Feature (FLNPF): Here, we use $\chi^g=\chi_r$, and $ G_{x,t}(l)= \gamma_{r}\left(q^g_{x,t}(l)\right)\quad$. First we train a standard DNN with ReLU activations parameterised by $\bar{\Theta}_t\inrdnet$(whose architecture is identical to the value/ gating network) for $T_{L}$ epochs. We copy the weights onto the gating network, i.e., $\Tg_0=\bar{\Theta}_{T_{L}}$, which are made non-trainable. Then, the weights $\Theta_0$ are initialised at random, thereby satisfying \Cref{assmp:main}. After initialisation, $\Theta_t$ is trained with $\hat{y}^v_t$ as the output node.
 
 $\bullet$ Decoupled NPF learning (DNPFL): Here, we use $\chi^g=\chi_r$, and $ G_{x,t}(l)= \gamma_{sr}\left(q^g_{x,t}(l)\right)\quad$. We initialise $\Tg_0$ and $\Theta_0$ as per \Cref{assmp:main}, and train both $\Tg_t$ and $\Theta_t$ with $\hat{y}^v_t(x_s)$ as the output node. The use of soft-ReLU makes it straightforward for the feature gradients to flow via the gating network.
 
@@ -55,20 +55,40 @@ Arch-$5$	& CIFAR-$10$ 		& $67.02\pm0.43$ &		&$58.92\pm0.62$&$58.83\pm0.27$ 		&$6
 \label{tb:npfs}
 \end{table}
 \end{comment}
+The key observations are:
 
+$1.$ \textbf{FRNPFs}  do generalise, they are outperformed by DNPFL, FLNPF, and standard ReLU all of which involve NPF learning. While the DNPFL, and FLNPF are new in the paper, the fact that fixed random NTFs generalise poorly than DNNs with  ReLU activations has been reported in \cite{arora2019exact}. In best case scenarios, the pure NTK based method performs poorly than standard ReLU by approximately $5.5\%$ (see Table~$1$ in \cite{arora2019exact}) in CIFAR-10, and the random NTFs from a finite DNN performs poorly than the infinite width limit NTK by approximately $5\%$ (see last row of Table~$2$ in \cite{arora2019exact}). We also note that initialisations II and DI did not show much difference in performance.
 
-\textbf{Observations:}\\
-$\bullet$ Standard ReLU which learns the NPFs does better than fixed NPFs.
+$2.$ \textbf{NPF learning improves generalisation:} Models with NPF learning namely  DNPFL, FLNPF, and standard DNN with ReLU, perform better than FRNPFs. It is very interesting to note that FLNPF perform almost as well as the standard DNNs with ReLU activations. 
 
-$\bullet$ Fixed NPFs obtained from DNNs trained on dataset with true labels perform as well as the standard ReLU. This means, once the NPFs are learned, we can copy the gates onto the gating network, turn off the feature learning, reset the weights corresponding to the NPV and relearn the NPVs from scratch to obtain performance. And from \Cref{th:main}, we know that generalisation property is completely dictated by the NPF/NPK.
+$3.$ \textbf{Closing research gap II:} We further broke down the FLNPF experiment by copying the weights from a standard DNN with ReLU activation at various stages of training onto the gating network weights. Let $0<T_{L_0}<T_{L_1}<\ldots<T_{L_5}$ be epochs. By considering $\bar{\Theta}_{L_i},i=1,\ldots,5$ we can obtain $5$ different NPFs at various stage of training. We initialised $5$ different DGNs, i.e., $\Tg_0=\bar{\Theta}_{L_i},i=1,\ldots,5$ and the results of training with these $5$ NPFs are shown in the middle plot of \Cref{fig:dynamics}. 
 
 %$\bullet$ Fixed NPFs obtained from DNNs trained on dataset with random labels/pixel perform worse than fixed random NPFs. Thus, bad labelling leads to learning bad NPFs.
-
-\textbf{NPF learning during training:} We consider ``Binary''-MNIST data set with two classes namely digits $4$ and $7$, with the labels taking values in $\{-1,+1\}$ and squared loss. We trained a standard DNN with ReLU activation ($w=100$, $d=5$). Let $\widehat{H}_t=\frac{1}{trace(H_t)}H_t$ be the normalised NPK matrix. 
+$4.$ \textbf{NPF learning during training:} We consider ``Binary''-MNIST data set with two classes namely digits $4$ and $7$, with the labels taking values in $\{-1,+1\}$ and squared loss. We trained a standard DNN with ReLU activation ($w=100$, $d=5$). Let $\widehat{H}_t=\frac{1}{trace(H_t)}H_t$ be the normalised NPK matrix. 
+\begin{comment}
 \begin{wrapfigure}{h}{0.3\textwidth}
 \includegraphics[scale=0.25]{figs/path-gram.png}
 \caption{\label{fig:gen}$\nu_t=y^\top (\widehat{H}_t)^{-1} y$.}
 \end{wrapfigure}
-For a subset size, $n'=200$ ($100$ examples per class) we plot $\nu_t=y^\top (\widehat{H}_t)^{-1} y$, (where $y\in\{-1,1\}^{200}$ is the labeling function), and observe that $\nu_t$ reduces as training proceeds (see \Cref{fig:gen}). Note that, $\nu_t=\sum_{i=1}^{n'}(u_{i,t}^\top y)^2 (\hat{\rho}_{i,t})^{-1}$, where $u_{i,t}\in \R^{n'}$ are the orthonormal eigenvectors of $\widehat{H}_t$ and $\hat{\rho}_{i,t},i\in[n']$ are the corresponding eigenvalues. Since $\sum_{i=1}^{n'}\hat{\rho}_{i,t}=1$, the only way $\nu_t$ reduces is when more and more energy gets concentrated on $\hat{\rho}_{i,t}$s for which $(u_{i,t}^\top y)^2$s are also high.\WFclear%However, in $H_t=(x^\top x)\odot \lambda_t$, only $\lambda_t$ changes with time. Thus, $\lambda_t(s,s')$ which is a measure of overlap of sub-networks active for input examples $s,s'\in[n]$, changes in a manner to reduce $\nu_t$. We can thus infer that the \emph{right} active sub-networks are learned over the course of training.\\s
-\begin{comment}\textbf{ReLU artefact:}In the case of ReLU activations (i.e., hard gates obtained for $\beta=\infty$ in \Cref{tb:dgn}), the gating values belong to $\{0,1\}$, and it follows that the activity $A_t(\cdot,\cdot)\in\{0,1\}$ and hence $\partial_{\tg} A_t(\cdot,\cdot)=0$. Consequently, there is no flow of the feature gradient in the GD update. However, since the gating parameter $\Tg$ identical with $\Theta$, (i.e., $\Tg_t=\Theta_t,\forall t$), $A_t$ changes with time due to the flow of the value gradient and NPF also changes with time. As a result, understanding feature learning in DNNs with ReLU activations is difficult, and we leave it for future work. In the next section, we study feature learning in parameterised DGNs with soft gates instead.
 \end{comment}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.25]{figs/path-gram.png}
+\includegraphics[scale=0.25]{figs/path-gram.png}
+\includegraphics[scale=0.25]{figs/path-gram.png}
+%\includegraphics[scale=0.15]{figs/nnconv.png}
+\caption{Dynamics of Learning}
+\label{fig:dynamics}
+\end{figure}
+For a subset size, $n'=200$ ($100$ examples per class) we plot $\nu_t=y^\top (\widehat{H}_t)^{-1} y$, (where $y\in\{-1,1\}^{200}$ is the labeling function), and observe that $\nu_t$ reduces as training proceeds (see \Cref{fig:gen}). Note that, $\nu_t=\sum_{i=1}^{n'}(u_{i,t}^\top y)^2 (\hat{\rho}_{i,t})^{-1}$, where $u_{i,t}\in \R^{n'}$ are the orthonormal eigenvectors of $\widehat{H}_t$ and $\hat{\rho}_{i,t},i\in[n']$ are the corresponding eigenvalues. Since $\sum_{i=1}^{n'}\hat{\rho}_{i,t}=1$, the only way $\nu_t$ reduces is when more and more energy gets concentrated on $\hat{\rho}_{i,t}$s for which $(u_{i,t}^\top y)^2$s are also high.\WFclear%However, in $H_t=(x^\top x)\odot \lambda_t$, only $\lambda_t$ changes with time. Thus, $\lambda_t(s,s')$ which is a measure of overlap of sub-networks active for input examples $s,s'\in[n]$, changes in a manner to reduce $\nu_t$. We can thus infer that the \emph{right} active sub-networks are learned over the course of training.\\s
+
+\begin{comment}
+\begin{wrapfigure}{h}{0.3\textwidth}
+\includegraphics[scale=0.2]{figs/nnconv.png}
+\caption{\label{fig:conv}ConvNet with GAP.}
+\end{wrapfigure}
+\end{comment}
+
+$5.$ \textbf{Decoupled NPF learning (DNPFL)} also yields good generalisation performance. This paves an interesting future direction:  in this case the NTK is given by $K_{\Theta,\Tg}=K^v_{\Theta}+K^{\phi}_{\Tg}$, and the problem can be simplified by studying $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ separately. As a start, in the ``Binary''-MNIST experiment, we compared $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ using their trace and Frobenius norms, and we see that $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ are in the same scale, which is perhaps pointing to the fact that both $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ are equally important for obtaining good generalisation performance. 
+
+$6.$ \textbf{Role of GAP:} In \Cref{sec:cg} discussed how ConvNets with GAP or $\max$-pooling have translation invariance property, and in \Cref{sec:ker} we showed that the NPK has a component that is translation invariant. In our experiments, and also in those of \cite{arora2019}, adding the GAP layer gives a performance improvement of approximately $10\%$.
