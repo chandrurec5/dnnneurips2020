@@ -1,12 +1,12 @@
 \section{Fixed NPF regime}
+\begin{comment}
 \begin{wrapfigure}{h}{0.3\textwidth}
 \includegraphics[scale=0.25]{figs/regime.png}
 \caption{\label{fig:regime} Regimes.}
 \end{wrapfigure}
+\end{comment}
 In this paper we introduce a new regime called, the fixed NPF regime, we forcefully \emph{turn-off} feature learning, i.e., we let the feature gradient to be zero, and hence $K_{\Theta}=K^v_{\Theta}$. 
-A comparison of the GD dynamics across the three regimes is presented in \Cref{tb:dynamics} and \Cref{fig:regime}. In the standard regime, width is finite, and the NPFs are learnt. Practical DNNs with ReLU activations operate in the standard regime. In the `large-width' regime [\citenum{arora2019exact}], the NPFs and the NTFs do not deviate much from initialisation.
-
- Note that if we let $w\ra\infty$ in the fixed NPF regime, can have a regime which is both `large-width' as well as fixed NPF (see middle region in \Cref{fig:regime}). 
+A comparison of the GD dynamics across the three regimes is presented in \Cref{tb:dynamics}. In the standard regime, width is finite, and the NPFs are learnt. Practical DNNs with ReLU activations operate in the standard regime. In the `large-width' regime [\citenum{arora2019exact}], the NPFs and the NTFs do not deviate much from initialisation. Note that if we let $w\ra\infty$ in the fixed NPF regime, can have a regime which is both `large-width' as well as fixed NPF.
 \FloatBarrier
 \begin{table}[h]\centering
 \resizebox{\columnwidth}{!}{
@@ -22,8 +22,7 @@ $\dot{e}_t=-(K^v_t+K^{\phi}_t+K^{cross}_{t})e_t$ &$\dot{e}_t=-K^{(d)}e_t$ &$\dot
 \label{tb:dynamics}
 \end{table}
 
-\subsection{Deep Gated Network (DGN)}
-The fixed NPF regime is obtained by using the framework of deep gated network (DGN), wherein, we hold the gates and hence the NPFs in a separate gating network parameterised by $\Tg\inrdnet$, and the NPVs in a different network called value network parameterised by $\Theta\inrdnet$ (see \Cref{fig:dgn}). Note that, the gating network uses $\chi^g$ as the activation function, which can be a standard ReLU activation, i.e., $\chi^g=\chi_r$. The pre-activations $q^g_{x,t}(l)$ of layer $l\in[d-1]$ from the gating network are used to derive the gating values $G_{x,t}(l)$ of layer $l\in[d-1]$. The gating values can be obtained from either a ReLU gate $\gamma_r$ or a soft-ReLU gate $\gamma_{sp}$. The process of separating the NPFs and the NPVs decouples the value and the feature gradients. In a DGN, the value gradient $\psi^v_{\cdot,\Theta}$ flows through the value network and the feature gradient $\psi^{\phi}_{\cdot,\Tg}$flows through the gating network. By letting the parameters of the gating network non-trainable, i.e., $\Tg_0=\Tg_t,\forall t\geq 0$ we can force $\psi^{\phi}_{\cdot,\Tg}$ to be $0$, and operate in the fixed NPF regime.
+\textbf{Deep Gated Network (DGN):} The fixed NPF regime is obtained by using the framework of deep gated network (DGN), wherein, we hold the gates and hence the NPFs in a separate gating network parameterised by $\Tg\inrdnet$, and the NPVs in a different network called value network parameterised by $\Theta\inrdnet$ (see \Cref{fig:dgn}). Note that, the gating network uses $\chi^g$ as the activation function, which can be a standard ReLU activation, i.e., $\chi^g=\chi_r$. The pre-activations $q^g_{x,t}(l)$ of layer $l\in[d-1]$ from the gating network are used to derive the gating values $G_{x,t}(l)$ of layer $l\in[d-1]$. The gating values can be obtained from either a ReLU gate $\gamma_r$ or a soft-ReLU gate $\gamma_{sp}$. The process of separating the NPFs and the NPVs decouples the value and the feature gradients. In a DGN, the value gradient $\psi^v_{\cdot,\Theta}$ flows through the value network and the feature gradient $\psi^{\phi}_{\cdot,\Tg}$flows through the gating network. By letting the parameters of the gating network non-trainable, i.e., $\Tg_0=\Tg_t,\forall t\geq 0$ we can force $\psi^{\phi}_{\cdot,\Tg}$ to be $0$, and operate in the fixed NPF regime.
 \begin{figure}[h] 
 \begin{minipage}{0.70\columnwidth}
 \begin{comment}
@@ -58,7 +57,7 @@ Output & $\hat{y}^g_t(x)={\Tg_t(d)}^\top z^g_{x,t}(d-1)$ &$\hat{y}^v_t(x)={\Thet
 \label{fig:dgn}
 \end{figure}
 
-\subsection{Main Result}
+%\subsection{Main Result}
 \begin{assumption}[Independent Initialisation]\label{assmp:main}
 (i) $\Theta_0\inrdnet$ is statistically independent of NPFs, (ii) $\Theta_0$ are sampled i.i.d from a distribution such that for any $\theta_0\in\Theta_0$,  we have $\E{\theta_0}=0$, and  $\E{\theta^2_0}=\sigma^2$, and $\E{\theta^4_0}={\sigma'}^2$.
 \end{assumption}

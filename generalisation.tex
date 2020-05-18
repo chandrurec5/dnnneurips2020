@@ -8,11 +8,7 @@ $\bullet$  Fixed Learned Neural Path Feature (FLNPF): Here, we use $\chi^g=\chi_
 $\bullet$ Decoupled NPF learning (DNPFL): Here, we use $\chi^g=\chi_r$, and $ G_{x,t}(l)= \gamma_{sr}\left(q^g_{x,t}(l)\right)\quad$. We initialise $\Tg_0$ and $\Theta_0$ as per \Cref{assmp:main}, and train both $\Tg_t$ and $\Theta_t$ with $\hat{y}^v_t(x_s)$ as the output node. The use of soft-ReLU makes it straightforward for the feature gradients to flow via the gating network.
 
 
-\textbf{Datasets:} We used standard datasets namely MNIST, CIFAR-10, and CIFAR-100, with categorical cross entropy loss. 
-
-\textbf{Optimisers:} We used stochastic gradient descent (SGD) and \emph{Adam}. In the case of SGD, we tried constant step-sizes in the set $\{0.1,0.01,0.001\}$ and chose the best. In the case of Adam the we used a constant step size of $3e-4$. In both cases, we used batch size to be $32$.
-
-\textbf{Network Architectures:} We used a fully connected (FC) DNN with $(w=128,d=6)$ for MNIST.%\footnote{We also trained with other widths and depths namely $(w=128,d=10)$, $(w=256,d=6)$ and $(w=256,d=10)$. However, the results did not change drastically when we changed the width and depth. Hence, we are presenting the results corresponding to the case $(w=128,d=6)$.}. 
+\textbf{Experimental Setup:} We used standard datasets namely MNIST, CIFAR-10, and CIFAR-100, with categorical cross entropy loss. We used stochastic gradient descent (SGD) and \emph{Adam}. In the case of SGD, we tried constant step-sizes in the set $\{0.1,0.01,0.001\}$ and chose the best. In the case of Adam the we used a constant step size of $3e-4$. In both cases, we used batch size to be $32$. We used a fully connected (FC) DNN with $(w=128,d=6)$ for MNIST.%\footnote{We also trained with other widths and depths namely $(w=128,d=10)$, $(w=256,d=6)$ and $(w=256,d=10)$. However, the results did not change drastically when we changed the width and depth. Hence, we are presenting the results corresponding to the case $(w=128,d=6)$.}. 
 To train CIFAR-10, we used \emph{Vanilla-Convolutional} Network (VCONV) without pooling, residual connections, dropout or batch-normalisations, and is given by: input layer is $(32, 32, 3)$, followed by convolution layers with a stride of $(3, 3)$ and channels $64$, $64$, $128$, $128$ followed by a flattening to layer with $256$ hidden units, followed by a fully connected layer with $256$ units, and finally a  $10$ width soft-max layer to produce the final predictions. To train CIFAR-10, we also used a GCONV which is same as VCONV with a \emph{global-average-pooling} (GAP) layer.
 
  
@@ -73,7 +69,7 @@ $4.$ \textbf{NPF learning during training:} We consider ``Binary''-MNIST data se
 \end{comment}
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.25]{figs/path-gram.png}
+\includegraphics[scale=0.25]{figs/gap.png}
 \includegraphics[scale=0.25]{figs/path-gram.png}
 \includegraphics[scale=0.25]{figs/path-gram.png}
 %\includegraphics[scale=0.15]{figs/nnconv.png}
