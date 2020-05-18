@@ -1,9 +1,22 @@
 \section{Path-View: Capturing Feature Learning}\label{sec:pathgate}
-\textbf{Notation:} We consider fully connected deep networks with $d$ layers, and $w$ hidden units per layer, which accepts an input $x\in\R^{d_{in}}$, and produces an output $\hat{y}_{\Theta}\in \R$ where $\Theta\in\R^{d_{net}}$ ($d_{net}=w^2(d-2)+w(d_{in}+1)$). We denote by $\Theta(l,i,j)$ the weight connecting the $i^{th}$ hidden unit of layer $l-1$ to the $j^{th}$ hidden unit of layer $l$, and we use $G_{x,\Theta}(l,i)$ be the gating value ($0/1$) of the $i^{th}$ hidden unit in layer $l$ for an input $x\in \R^{d_{in}}$.
-\subsection{Paths and Gates}
-We have a total of $P=d_{in}w^{(d-1)}$ paths. Let us say that an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$. Let $\I_{l}\colon [P]\ra [w],l=0,\ldots,d-1$ provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). The activity of a path $p$ for an input $x\in \R^{d_{in}}$ by $A_{\Theta}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,\Theta}(l,\I_l(p))$.
+\textbf{Notation:} We consider fully connected deep networks with $d$ layers, and $w$ hidden units per layer, which accepts an input $x\in\R^{d_{in}}$, and produces an output $\hat{y}_{\Theta}(x)\in \R$ where $\Theta\in\R^{d_{net}}$ ($d_{net}=w^2(d-2)+w(d_{in}+1)$). We denote by $\Theta(l,j,i)$ the weight connecting the $j^{th}$ hidden unit of layer $l-1$ to the $i^{th}$ hidden unit of layer $l\in[d]$.
+\FloatBarrier
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|lll|}\hline
+Input Layer &$z_{x,\Theta}(0)$ &$=$ &$x$ \\\hline
+Pre-Activation & $q_{x,\Theta}(l,i)$& $=$ & ${\Theta(l,\cdot,i)}^\top z_{x,\Theta}(l-1), l\in[d-1],i\in[w]$\\\hline
+Gating Values &$G_{x,\Theta}(l,i)$& $=$ & $\gamma(q_{x,\Theta}(l,i)), l\in[d-1],i\in[w]$ \\\hline
+Hidden Layer &$z_{x,\Theta}(l,i)$ & $=$ & $\chi(q_{x,\Theta}(l,i))= q_{x,\Theta}(l,i)\cdot G_{x,\Theta}(l,i), l\in[d-1],i\in[w]$ \\\hline
+Final Output & $\hat{y}_{\Theta}(x)$ & $=$ & ${\Theta(d)}^\top z_{x,\Theta}(d-1)$\\\hline
+\end{tabular}
+\caption{Here $\Theta(1)\in\R^{w\times d_{in}}, \Theta(l)\in\R^{w\times w},\forall l\in\{2,\ldots,d-1\}, \Theta(d)\in\R^{w\times 1}$. }
+\label{tb:basic}
+\end{table}
+In what follows, we consider two kinds of gates namely, i) hard gates, taking values in $\{0,1\}$, and ii) soft gates, taking values in $(0,1)$. For a pre-activation input $q\in\R$, the  hard and soft gates are given by $\gamma_{r}(q)=\mathbbm{1}_{\{\q>0\}}$ and $\gamma_{sr}(q)=\frac{1}{1+\exp(-\beta q)}$, where $\beta>0$ is a positive constant. Using the hard and soft gates, we can specify the ReLU and `soft-ReLU' activations as $\chi_{r}(q)=q\cdot\gamma_r(q)$ and $\chi_{sr}(q)=q\cdot\gamma_{sr}$. Here, in $\gamma$ and $\chi$, the subscripts `$r$' and `$sr$' stand for `ReLU' and `soft-ReLU' respectively. As we shall see, replacing hard gates with soft gates enables us to differentiate the gating value.
 
-In what follows, we consider two kinds of gates namely, i) hard gates, taking values in $\{0,1\}$, and ii) soft gates, taking values in $(0,1)$. For a pre-activation input $q\in\R$, the  hard and soft gates are given by $\gamma_{r}(q)=\mathbbm{1}_{\{\q>0\}}$ and $\gamma_{sr}(q)=\frac{1}{1+\exp(-\beta q)}$, where $\beta>0$ is a positive constant. Using the hard and soft gates, we can specify the ReLU and `soft-ReLU' activations as $\chi_{r}(q)=q\cdot\gamma_r(q)$ and $\chi_{sr}(q)=q\cdot\gamma_{sr}$. Here, in $\gamma$ and $\chi$, the subscripts `$r$' and `$sr$' stand for `ReLU' and `soft-ReLU' respectively.
+\textbf{Paths:} A path starts from an input node, passes through exactly one weight (and one hidden node) in each layer and ends at the output node. We have a total of $P=d_{in}w^{(d-1)}$ paths. Let us say that an enumeration of the paths is given by $[P]=\{1,\ldots,P\}$. Let $\I_{l}\colon [P]\ra [w],l=0,\ldots,d-1$ provide the index of the hidden unit through which a path $p$ passes in layer $l$ (with the convention that $\I_d(p)=1,\forall p\in [P]$). The activity of a path $p$ for an input $x\in \R^{d_{in}}$ by $A_{\Theta}(x,p)\stackrel{def}{=}\Pi_{l=1}^{d-1} G_{x,\Theta}(l,\I_l(p))$.
+
 \subsection{Neural Path Feature, Neural Path Value and Neural Tangent Feature}
 The \emph{neural path feature} (NPF) of an input $x\in\R^{d_{in}}$ is given by 
 \begin{align}\label{eq:npfdef}
@@ -39,7 +52,8 @@ $3.$ Prior works used a \emph{softplus} activation given by $\chi_{sp}(q)=\frac{
 
 \cite{ben} showed that DNNs can fit even random labels, and random pixels of standard datasets such as MNIST. However, we note that, for DNNs with ReLU, with no bias parameters, a dataset with $n=2$ points namely $(x,1)$ and $(x/2,-1)$ for some $x\in \R^{d_{in}}$ cannot be memorised. The reason is that the gating values are the same for both $x$ and $x/2$ (for that matter any positive scaling of $x$), and hence $\phi_{x/2,\Theta}= \phi_{x,\Theta}/2$, and thus it not possible to fit arbitrary values for $\hat{y}_t(x/2)$ and $\hat{y}_t(x)$, since $\hat{y}_t(x/2)= \hat{y}_t(x)/2$. Cartoons $(a)$ and $(b)$ in \Cref{fig:cartoon} illustrate this scale invariance for inputs $x=(1,-1,2)\in\R^3$ and $x/2=(0.5,-0.5,1)\in\R^3$:  when compared to $(a)$, pre-activation values and output of $(b)$ are scaled down by a factor $2$, and the gating values of $(a)$ and $(b)$ are identical.
 \begin{figure}
-%\begin{minipage}{0.78\columnwidth}
+\centering
+%\begin{minipage}{0.8\columnwidth}
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{ccc}
 \includegraphics[scale=0.5]{figs/nn-subnet.png}
@@ -73,7 +87,9 @@ The \emph{neural path kernel} (NPK) matrix is given by $H_{\Theta}(s,s')=\ip{\ph
 Let $\tau_{\Theta}(s,s',l)\stackrel{def}=\sum_{i=1}^w G_{x_s,\Theta}(l,i)G_{x_{s'},\Theta}(l,i)$ be the number of activations that are ``on'' for both inputs $s,s'\in[n]$ in layer $l$. Then define $\Lambda_{\Theta}(s,s')\stackrel{def}=\Pi_{l=1}^{d-1}\tau_{\Theta}(s,s',l)$.
 Let $\Sigma \in \R^{n\times n}$ be the $n\times n $ input Gram matrix with  $\Sigma(s,s')=\ip{x_s,x_{s'}},s,s'\in[n]$. It follows that $H_{\Theta}= \Sigma\odot\Lambda_{\Theta}$, where $\odot$ stands for the Hadamard product. 
 \end{lemma}
-\textbf{Remark:} In \Cref{lm:npk} above, $\Lambda_{\Theta}\in\R^{n\times n}$ is the correlation matrix of the active sub-networks (consisting of the activations that are \emph{on}) of different input pairs $s,s'\in[n]$. $H_{\Theta}$ contains $\Lambda_{\Theta}$ whose entries are of the order $w^{(d-1)}$, and hence is not normalised with respect to the width of the network.  However, in the main result \Cref{th:main}, we will see that $\Lambda_{\Theta}$ will be scaled by a factor $\frac{1}{w^{d-1}}$. Further, in the case of a ConvNet  with GAP of depth $d=d_{conc}+d_{fc}$, $\Lambda_{\Theta}=\Lambda^{conv}_{\Theta}\odot\Lambda^{fc}_{\Theta}$, of which $\Lambda^{conv}_{\Theta}$ is translation invariant (see \Cref{sec:conv}). 
+\textbf{Normalisation of NPK:} In \Cref{lm:npk} above, $\Lambda_{\Theta}\in\R^{n\times n}$ is the correlation matrix of the active sub-networks (consisting of the activations that are \emph{on}) of different input pairs $s,s'\in[n]$. $H_{\Theta}$ contains $\Lambda_{\Theta}$ whose entries are of the order $w^{(d-1)}$, and hence is not normalised with respect to the width of the network.  However, in the main result \Cref{th:main}, we will see that $\Lambda_{\Theta}$ will be scaled by a factor $\frac{1}{w^{d-1}}$. 
+
+\textbf{NPK for ConvNets:} In the case of a ConvNet  with GAP of depth $d=d_{conc}+d_{fc}$ ($d_{conv}$ is the depth of the convolutional part, and $d_{fc}$ is the depth of the fully-connected part), $\Lambda_{\Theta}=\Lambda^{conv}_{\Theta}\odot\Lambda^{fc}_{\Theta}$, of which $\Lambda^{conv}_{\Theta}$ is translation invariant (see \Cref{sec:conv}). 
 
 The \emph{neural tangent kernel} matrix is given by $K_{\Theta}(s,s')=\ip{\psi_{x_s,\Theta},\psi_{x_{s'},\Theta}}, s, s'\in[n]$ and can be further decomposed as:
 \begin{align}\label{eq:kerneldecomp}
@@ -86,7 +102,9 @@ where $K^v_{\Theta}(s,s')=\ip{\psi^v_{x_s,\Theta},\psi^v_{x_{s'},\Theta}}$ is th
 $\bullet$ $K^v_{\Theta}$ is the kernel corresponding to learning NPVs. Let $\Phi_{\Theta}=\left(\phi_{x_s,\Theta},s\in[n]\right)\in\R^{P\times d_{net}}$ be the NPF matrix, and define a $P\times d_{net}$ matrix with entries $\nabla_{\Theta}v_{\Theta}(p,\theta)=\partial_{\theta}v_{\Theta}$. Then, $K^v_{\Theta}=\Phi^\top_{\Theta}(\nabla_{\Theta}v_{\Theta})(\nabla_{\Theta}v_{\Theta})^\top \Phi^\top_{\Theta}$. Thus, as the NPF matrix $\Phi_{\Theta_t}$ changes with time $K^v_{\Theta_t}$ changes with time.\\
 $\bullet$ $K^{\phi}_{\Theta}$ is the kernel corresponding to learning NPFs. Note that $K^{\phi}_{\Theta}=\sum_{\theta\in\Theta}\partial_{\theta}\Phi^\top_{\Theta}vv^\top\partial_{\theta}\Phi_{\Theta}$.
 \end{comment}
+\begin{comment}
 \subsection{Gradient Dynamics with Feature Learning}
+
  The GD dynamics with NPF learning can be given by:
 \FloatBarrier
 \begin{table}[h]
@@ -100,7 +118,9 @@ Error Dynamics& $\dot{e}_t$&$=$&$-K_{\Theta_t}e_t$, where $K_{\Theta_t}=K^v_{\Th
 \caption{Gradient Dynamics with NPF learning}
 \label{tb:graddyna} 
 \end{table}
+
 \textbf{Closing Research Gap I:} $K^v_{\Theta}(s,s')=\ip{\psi^v_{x_s,\Theta},\psi^v_{x_{s'},\Theta}}=\phi^\top_{x_s,\Theta}(\partial_{\theta}v_{\Theta})(\partial_{\theta}v_{\Theta})^\top\phi_{x_{s'},\Theta}$, because of which, $K^v_{\Theta_t}$ changes with time as the NPFs  $\phi_{x_s,\Theta_t},s\in[n]$ change with time.  Thus, using the `path-view' and the analytical relaxation due the soft-ReLU we have included the NPF learning in the gradient dynamics via the $K^{\phi}_{\Theta}$ term. We show in \Cref{sec:fixednpf,sec:generalisation} that NPF learning is critical for generalisation. We achieve this by first considering a fixed NPF regime in \Cref{sec:fixednpf}, wherein, we force $\psi^{\phi}_{\cdot,\Theta}=0$, and hence $K^{\phi}_{\Theta}=K^{cross}_{\Theta}=0$ and analyse $K_{\Theta}=K^v_{\Theta}$ for randomised initialisation. We then show via experiments in \Cref{sec:generalisation} that in standard DNNs with ReLU activations, NPFs are learnt, and such learning results in better generalisation performance than the fixed NPF case.
+\end{comment}
 \begin{comment}
 The relationship between the $H_{\Theta}$ and $K^v_{\Theta}$ is given by the following lemma.
 \begin{lemma}

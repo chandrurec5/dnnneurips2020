@@ -1,4 +1,5 @@
-\section{Large-Width Regime: Comparison with Prior Result}\label{sec:exact}
+%\section{Large-Width Regime: Comparison with Prior Result}\label{sec:exact}
+\begin{comment}
 In the `large-width' regime, as $w\ra\infty$, in \eqref{eq:graddyna} we have $\dot{\Theta}_t, \dot{\phi}_t, \dot{v}_t\ra 0$, $K_{\Theta}$ in \eqref{eq:graddyna} converges to $K^{(d)}$ in \eqref{eq:ntkold} with $\chi=\chi_{sr}$ and the error dynamics is given by
 \begin{align}
 \dot{e}_t=-K^{(d)} e_t,
@@ -9,12 +10,14 @@ In the `large-width' regime, as $w\ra\infty$, in \eqref{eq:graddyna} we have $\d
 &\tilde{K}^{(l+1)}=\tilde{K}^{(l)}\odot \hat{\Sigma}^{(l+1)}+\Sigma^{(l+1)}, K^{(d)}=\left(\tilde{K}^{(d)}+\Sigma^{(d)}\right)/2
 \end{align}
 where $s,s'\in[n]$ are two input examples in the dataset, $\Sigma$ is the data Gram matrix, $\partial{\chi}$ stands for the derivative of the activation function with respect to the pre-activation input, $N(0,M)$ stands for the mean-zero Gaussian distribution with co-variance matrix $M$. 
-
+\end{comment}
+\begin{comment}
 \textbf{Soft-ReLU and $\mathbf{K^{(d)}}$:}In prior works, in the expression for the limit NTK $K^{(d)}$ in \eqref{eq:ntkold}, $\chi$ was either $\chi_r$ (the standard ReLU) or $\chi_{sp}$ (known as the soft-plus), wherein, $\partial{\chi}_r$ is a Heaviside step function and $\partial{\chi}_{sp}$ is a logit function. Both these functions capture only the \emph{on/off} behaviour of the gates, and hence $K^{(d)}$ captures only the flow of value gradient. On the contrary, in the case of soft-ReLU, $\partial{\chi}_{sr}$ contains both the \emph{on/off} information via the $\partial{\chi}_{sp}$ term as well as the information on the dynamics of sensitive gates via the $\partial{\gamma}_{sr}$ term. Plugging the soft-ReLU instead of softplus/ReLU in \eqref{eq:ntkold} will indeed bring in the additional terms:
 $\hat{\Sigma}^{(l+1)}(s,s')=\hat{\Sigma}^{(l+1)}_v(s,s')+ \hat{\Sigma}^{(l+1)}_{\phi}(s,s') + \hat{\Sigma}^{(l+1)}_{cross}(s,s')$, {where}, 
 $\hat{\Sigma}^{(l+1)}_v(s,s')=2\cdot\mathbb{E}_{(q,q')\sim N(0,M_{ss'}^{(l)})}\left[\partial{\chi}_{sp}(q)\partial{\chi}_{sp}(q')\right],\hat{\Sigma}^{(l+1)}_{\phi}(s,s')=2\cdot\mathbb{E}_{(q,q')\sim N(0,M_{ss'}^{(l)})}\left[\partial{\gamma}_{sr}(q)\partial{\gamma}_{sr}(q')\right]$.
 
  Note that $\hat{\Sigma}^{(l+1)}_v, \hat{\Sigma}^{(l+1)}_{\phi}, \hat{\Sigma}^{(l+1)}_{cross}$ are much like the $K^v, K^{\phi}, K^{cross}$ terms. A critical difference is that the `$\hat{\Sigma}$' terms are involved in a recursive definition, which is a consequence of the layer-after-layer way of expressing the DNN, whereas $K^v, K^{\phi}, K^{cross}$ are \emph{non-recursive/flattened} expressions obtained due to the `path-view'. By unfurling the recursion, it is possible to relate `$\hat{\Sigma}$'terms to $K^v, K^{\phi}, K^{cross}$. However, in the `large-width' regime, $\dot{\theta},\dot{\phi},\dot{v},\dot{K}\ra 0$ and only the fixed $K^{(d)}$ matters. Thus the distinctions between $K^{v}_{\Theta}, K^{\phi}_{\Theta}$ does not make much difference in the analysis.
+ \end{comment}
 \begin{comment}
 \subsection{Explicit Gate Dynamics: soft-ReLU vs softplus}
 \FloatBarrier
