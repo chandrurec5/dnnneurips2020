@@ -1,55 +1,16 @@
-\section{Conclusion }
-\begin{comment}
-In this paper, we looked at the gradient descent (GD) procedure to minimise the squared loss in deep neural networks. Prior literature \cite{dudnn} makes trajectory analysis (wherein the dynamics of the error terms are studied) to show that GD achieves zero training error. In this paper, we introduced to important conceptual novelties namely deep gated networks (DGNs) and path-view, to obtain additional insights about GD in the context of trajectory analysis. In particular, our theory threw light on i) the depth phenomena and ii) gate adaptation, i.e., the role played by the dynamics of the gates in generalisation performance.
+\section{Conclusion and Future Work}
+Optimisation and generalisation of DNNs has been an important question in machine learning. Prior works have considered the \emph{neural tangent features} (NTF) and an associated \emph{neural tangent kernel} (NTK), which are quantities based on the first-order gradient information.  In this paper, we looked at fully connected DNNs with ReLU activations, and for such networks, we defined a novel feature namely the \emph{neural path feature} (NPF) and an associated \emph{neural path kernel} , which are \emph{zeroth-order} quantities. The NPFs are based on the information in the gates of a DNN, and hence the NPFs change as the network is trained. We theoretically showed that NPK can be used to understand the optimisation and generalisation for models trained with fixed NPFs. We showed in the experiments that in standard DNNs with ReLU activations, NPFs are learnt during training, and such NPF learning is key for generalisation performance. We also showed via experiments that deep gated networks, where NPFs are learned in a decoupled manner also generalise well. 
 
-The path-view lead following gains: (i) an explicit expression of information propagation in DGNs where in the input signal and the wires, i.e., the deep network itself are separated. This is unlike the conventional layer by layer approach, wherein, the input is lost in the hidden layers, (ii) explicitly identifying the role of sub-networks in training and generalisation of deep networks, so much so that, we can go so far as to say that the actual \emph{hidden features are in the paths and the sub-networks and not just the final layer output}, (iii) explicit identification of twin gradient flow, wherein, one component of the gradient flow to train the paths keeping the sub-network constant and the other component of the gradient takes care of learning the gating values.
+A possible future direction is to understand the role of depth and width in NPF learning, and the role of NPF in generalisation. The deep gated network might be useful in this effort, since the NPFs learning is decoupled and is perhaps amenable to analysis in comparison the standard DNNs.
 
-We looked at various DGNs with adaptable gates and we observed  in experiments that the adaptable/learned gates generalise better than non-adapting/non-learned gates.  Based on our theory and experiments, we conclude that \emph{understanding generalisation would involve a study of gate adaptation}.
-\end{comment}
-\begin{comment}
-In this paper, we introduced to important conceptual novelties namely deep gated networks (DGNs) and path-view, to obtain additional insights about gradient descent in deep learning. The path-view lead to the following gains: (i) an explicit expression of information propagation in DGNs (ii) explicitly identifying the role of sub-networks in training and generalisation of deep networks, (iii) explicit identification of twin gradient flow, wherein, one component of the gradient flow to train the path strengths keeping the sub-network constant and the other component of the gradient takes care of learning the gating values. Using the path-view and the DGNs, we showed  i) the depth helps is equivalent to whitening of data and increasing depth beyond degrades the spectrum of the Gram matrix at initialisation, and ii) gate adaptation, i.e., the role played by the dynamics of the gates is important for generalisation performance.
+Gradient is a first-order information, and learning with GD is essentially a process of integration, and naturally its outcome is a zeroth-order information. It turns out the NPFs capture this zeroth-order information, and plays a critical role in DNNs. We conclude by saying: 
 
-We looked at various DGNs with adaptable gates and we observed  in experiments that the adaptable/learned gates generalise better than non-adapting/non-learned gates.  Based on our theory and experiments, we conclude that \emph{understanding generalisation would involve a study of gate adaptation}.
-\end{comment}
-
-In this paper, we introduced two important conceptual novelties namely deep gated networks (DGNs) and ``path-view", to obtain additional insights about gradient descent in deep learning. Using these two novel concepts, we achieved the following:
-
- (i) resolution to the depth phenomena for DGNs under decoupling assumption. In particular, our results showed that increasing depth is equivalent to whitening of data and increasing depth beyond a point degrades the spectrum of the Gram matrix at initialisation.
- 
- (ii) each input example has a corresponding active sub-network, which are learned when the gates adapt.
- 
- (iii) a preliminary theory to analyse gate adaptation. Our analysis points out to the presence of two complementary networks for each input example, one being the active sub-network which holds the memory for that input example and the other being the sensitivity sub-network of gates that are adapting.
- 
-(iv) we looked at various DGNs with adaptable gates and we observed  in experiments that the adaptable/learned gates generalise better than non-adapting/non-learned gates.  
-
-Based on our theory and experiments, we conclude that :
-
-(a) \emph{Hidden features are in the active sub-networks,} which are in turn decided by the gates.
-
-(b) \emph{Understanding generalisation would involve a study of gate adaptation.}
-
-
+\emph{Understanding deep learning requires understanding the dynamics of the neural path features.}
 
 \begin{comment}
-Let $\gamma>0$ be a threshold value, and let $G_{x_s,\Tg_t}(l,i)$ denote the gating value node $i$ in layer $l$. We say that the gate to be \emph{transitioning} for input $s\in[n]$, and weight $\tg(m),m\in[d_{net}]$ if
- \begin{align}
- \left|\frac{\partial G_{x_s,\Tg_t}(l,i)}{\partial \tg(m)}\right|>\gamma,
- \end{align}
- and define a gate to be \emph{flipped} otherwise. Note that,
-\begin{align}\label{eq:sensitivepath}
-\begin{split}
-&\partial_{m}A_{\Tg_t}(x_s,p)=\partial_{m}\Pi_{l=1}^{d-1} G_{x_s,\Tg_t}(l,p(l))\\
-&=\sum_{l=1}^{d-1} \partial_{m} G_{x_s,\Tg_t}(l,p(l)) \left(\Pi_{l'\neq l} G_{x_s,\Tg_t}(l',p(l'))\right)
-\end{split}
-\end{align}
+In this paper, we considered the problem of optimisation and generalisation in DNNs with ReLU activations. Throughout the paper, we exploited the special property of the ReLU activation, in that, i output of a ReLU activation be expressed as a product of its pre-activation input and its gating value which is $1/0$ based on whether or not the pre-activation is positive or negative. To analyse such networks, we  introduced the `path-view': a path starts from the input passes through one weight and one hidden nodes per layer and finally ends in the output, and the output of a network is seen as a cumulative combination of the contributions from various paths. The computation in each path was further divided into those happening in the weights, and those happening in the gates. This enabled us to express the output of such DNNs as an inner product of neural path feature (for a path, its feature is the product of gates it encounters from input to output)  and neural path value (for a path, its value is the product of weights it encounters from input to output). The neural path feature (NPF) of a given input is completely dictated by the gating pattern, i.e., the \emph{on/off} status of the gates in the network for that input. Due to the \emph{on/off} nature of the gates, their change to infinitesimal change in the network parameters is $0$, i.e., the gradient of the NPFs with respect to the network weights is $0$. However, in practice the NPFs change during training. By considering a soft-ReLU activation, which served as a `differentiable' substitute for the ReLU activation, we could capture the feature gradient, i.e., the gradient of the NPFs with respect to the network weights. This enabled us to write down the gradient descent dynamics that incorporated NPF learning. We presented the following interesting results:
 
-\textbf{Remark:}
+$1.$ In the fixed NPF regime, wherein, the NPFs are held constant through training, the optimisation and generalisation depends on the associated neural path kernel.
 
-i) As $\beta\uparrow\infty$, the soft-ReLU gate resembles the ReLU gate. Thus for a given input example $s$, the gates whose pre-activation inputs have a large absolute value will be close to either $0$ or $1$, and one can always find a high enough $\beta$ such that their sensitivity to $\tg(m)$ is less than $\gamma$.
-
-ii) For an input examples $s,s'\in[n]$, if a path $p$ is active (even for one of the inputs), i.e., $A(x_s,p)\approx 1$, then none of the gates in the path will be sensitive, and hence the magnitude contribution of such as path to the summation in $\delta$ is close to $0$.
-
-iii) For an input examples $s,s'\in[n]$, consider a non-active path, such that all gates close to $1$ except for one of the gates (i.e., the right hand side of \eqref{eq:sensitivepath} is non-zero), which is transitioning. Such paths will make a significant contribution to $\delta$ term. We call the set of such paths the sensitive sub-network.
-
-Based on the above discussion one can say  that a DGN with adaptable gates (which includes standard DNN with ReLU gates), at initialisation, has two kinds of sub-networks for every input example i) the active sub-network comprised of path for which $A(x_s,p)=1$\footnote{or $A(x_s,p)$  is above a given threshold value in the case of soft gates} and ii) the sensitive sub-network which is formed by the set of paths that are sensitive for a given input.
+$2.$ 
 \end{comment}

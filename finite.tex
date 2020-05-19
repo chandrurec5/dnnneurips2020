@@ -20,13 +20,13 @@ In what follows, we consider two kinds of gates namely, i) hard gates, taking va
 \subsection{Neural Path Feature, Neural Path Value and Neural Tangent Feature}
 The \emph{neural path feature} (NPF) of an input $x\in\R^{d_{in}}$ is given by 
 \begin{align}\label{eq:npfdef}
-\phi_{x,\Theta}\stackrel{def}=(x_s(\I_0(p))A_{\Theta}(x_s,p) ,p\in[P])\in\R^P,
+\phi_{x,\Theta}\stackrel{def}=\left(x_s(\I_0(p))A_{\Theta}(x_s,p) ,p\in[P]\right)\in\R^P,
 \end{align}
 where, for a path $p$, $\I_0(p)$ is the input node at which the path starts, and $A_{\Theta}(x_s,p)$ is its activity. \\
 %By arranging the NPF of the $n$ input examples in a matrix $\Phi_t=(\phi_{x_s,\G_t},s\in[n])\in\R^{P\times n}$, we can express 
 The \emph{neural path value} (NPV) if given by  
 \begin{align}\label{eq:npvdef}
-v_{\Theta}\stackrel{def}=(\Pi_{l=1}^d \Theta(l,\I_{l-1}(p),\I_l(p)),p\in[P])\in\R^P
+v_{\Theta}\stackrel{def}=\left(\Pi_{l=1}^d \Theta(l,\I_{l-1}(p),\I_l(p)),p\in[P]\right)\in\R^P
 \end{align}
 The zeroth and first-order terms of a DNN can be written as:
 \begin{align}
@@ -35,30 +35,18 @@ The zeroth and first-order terms of a DNN can be written as:
 \end{align}
 The \emph{neural tangent feature} (NTF) of an input $x\in\R^{d_{in}}$ is given by $\psi_{x,\Theta}=\left(\partial_{\theta}\hat{y}_{\Theta}(x),\theta\in\Theta\right)\in\R^{d_{net}}$. From \eqref{eq:first} we have $\psi_{x,\Theta}=\psi^v_{x,\Theta}+\psi^{\phi}_{x,\Theta}$, where $\psi^v_{x,\Theta}=\left(\ip{\phi_{x,\Theta}, \partial_{\theta} v_{\Theta}},\theta\in\Theta\right)\in\R^{d_{net}}$ and  $\psi^{\phi}_{x,\Theta}=\left(\ip{\partial_{\theta}\phi_{x,\Theta}, v_{\Theta}},\theta\in\Theta\right)\in\R^{d_{net}}$. 
 
-\textbf{Two learning problems and two gradients:} \eqref{eq:zero} and \eqref{eq:first} reveal that there are two learning problems namely i) learning the NPVs for a fixed NPF and ii) learning the NPFs. Corresponding to the two learning problems are the two gradients namely i) the value gradient $\psi^v_{x,\Theta}$ which learns the NPVs, and ii) the feature gradient $\psi^{\phi}_{x,\Theta}$ responsible for learning the NPFs. 
+The \emph{zeroth-order} and \emph{first-order} expressions in \eqref{eq:zero} and \eqref{eq:first} provide us with several simple, intuitive and powerful insights about DNNs, which we discuss in the paragraphs below.
 
-\textbf{Feature Learning:}  The $\psi^{\phi}_{x,\Theta}$ term is new in our analysis,  in relation to which, the following critical points need to be noted:
-
-$1.$ The gating values are modelled explicitly via the $G_{x,\Theta}$ terms. This enabled us to identify and define the NPFs in the first place. Further, each activation is written as a product of its pre-activation input and a gating $\gamma$.
-
-$2.$ $\ip{\partial\phi_{x,\Theta},v_{\Theta}}=\sum_{p\in [P]}x(\I_0(p)) \partial A_{\Theta}(x,p)v_{\Theta}(p)$, and in the case of standard ReLU activations, the gating values $\gamma_r\in\{0,1\}$ and hence $\partial A_{\Theta}(x,p)=0$. However, the gating values and hence the path activities $A_{\Theta_t}(\cdot,\cdot)$ changes during training. This artefact arising due to the non-differentiability of ReLU is fixed by the \emph{soft-ReLU} activation which is differentiable. This soft-ReLU `trick' enables us to capture the terms related to neural path feature learning in our analysis. Thus a network with soft-ReLU gates $\gamma_{sr}$ is supposed to be viewed as an \emph{analytically relaxed} version of the network with standard ReLU activation.
-
-$3.$ Prior works used a \emph{softplus} activation given by $\chi_{sp}(q)=\frac{1}{\beta}\log(1+\exp(\beta q)),\beta>0$ as a differentiable substitute for the ReLU activation. While the soft-ReLU and softplus activations are similar in both of them being differentiable, a critical difference lies in the derivatives. In the case of softplus, we have $\partial_{q}\chi_{sp}(q)=\frac{1}{1+\exp(-\beta q)}$, which is significant only for those gates which are \emph{on}, whereas, in the case of soft-ReLU, we have $\partial{\chi}_{sr}(q)=\partial{\chi}_{sp}(q)+\partial{\gamma}_{sr}(q)$, which is significant for those gates which are \emph{on} due to the $\partial{\chi}_{sp}(q)$ terms, and is also significant for those gates which are near $0$ due to the fact that $\partial_q{\gamma}_{sr}(q)=\frac{\beta q}{(1+\exp(\beta q))(1+\exp(-\beta q))}$. 
-
-%The difference between hard and soft gates can be seen cartoons $(a)/(b)$ and $(c)$ in \Cref{fig:cartoon}, where negative/positive values lead to $0/1$ in the case of hard gating, and close to $0/1$ in the case of soft-gating.
-\subsection{`Path-View': Conceptual Gains}\label{sec:cg}
-
-\textbf{Active Sub-Networks and representational power:} For each input example, a set of gates are \emph{on} in each layer, and this gives rise to the sub-network of active paths for that input. This active sub-network can be said to hold the memory for a given input (see cartoon $(b)$ in \Cref{fig:cartoon}). The NPFs capture this notion of active sub-network formally.
-
-\cite{ben} showed that DNNs can fit even random labels, and random pixels of standard datasets such as MNIST. However, we note that, for DNNs with ReLU, with no bias parameters, a dataset with $n=2$ points namely $(x,1)$ and $(x/2,-1)$ for some $x\in \R^{d_{in}}$ cannot be memorised. The reason is that the gating values are the same for both $x$ and $x/2$ (for that matter any positive scaling of $x$), and hence $\phi_{x/2,\Theta}= \phi_{x,\Theta}/2$, and thus it not possible to fit arbitrary values for $\hat{y}_t(x/2)$ and $\hat{y}_t(x)$, since $\hat{y}_t(x/2)= \hat{y}_t(x)/2$. Cartoons $(a)$ and $(b)$ in \Cref{fig:cartoon} illustrate this scale invariance for inputs $x=(1,-1,2)\in\R^3$ and $x/2=(0.5,-0.5,1)\in\R^3$:  when compared to $(a)$, pre-activation values and output of $(b)$ are scaled down by a factor $2$, and the gating values of $(a)$ and $(b)$ are identical.
-\begin{figure}
+\textbf{Two learning problems and two gradients:} \eqref{eq:zero} and \eqref{eq:first} reveal that there are two learning problems namely i) learning the NPVs for a fixed NPF and ii) learning the NPFs. Corresponding to the two learning problems are the two gradients namely i) the value gradient $\psi^v_{x,\Theta}$ which learns the NPVs, and ii) the feature gradient $\psi^{\phi}_{x,\Theta}$ responsible for learning the NPFs. This feature gradient term is new in our analysis.
+\FloatBarrier
+\begin{figure}[h]
 \centering
 %\begin{minipage}{0.8\columnwidth}
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{ccc}
 \includegraphics[scale=0.5]{figs/nn-subnet.png}
 \includegraphics[scale=0.5]{figs/nnsoft.png}
-\includegraphics[scale=0.5]{figs/nnconv.png}
+\includegraphics[scale=0.5]{figs/nnconv-size2.png}
 %\includegraphics[scale=0.5]{figs/gradflow.png}
 %\includegraphics[scale=0.5]{figs/nntwin-blck.png}
 %\includegraphics[scale=0.5]{figs/nn.png}
@@ -74,13 +62,37 @@ $3.$ Prior works used a \emph{softplus} activation given by $\chi_{sp}(q)=\frac{
 \caption{Cartoon illustration of usefulness of path-view and DGN framework.}
 \label{fig:cartoon}
 \end{figure}
+
+\textbf{Active Sub-Networks and representational power:} For each input example, a set of gates are \emph{on} in each layer, and this gives rise to the sub-network of active paths for that input. This active sub-network can be said to hold the memory for a given input (see cartoon $(b)$ in \Cref{fig:cartoon}). The NPFs capture this notion of active sub-network formally.
+
+\cite{ben} showed that DNNs can fit even random labels, and random pixels of standard datasets such as MNIST. However, we note that, for DNNs with ReLU, with no bias parameters, a dataset with $n=2$ points namely $(x,1)$ and $(x/2,-1)$ for some $x\in \R^{d_{in}}$ cannot be memorised. The reason is that the gating values are the same for both $x$ and $x/2$ (for that matter any positive scaling of $x$), and hence $\phi_{x/2,\Theta}= \phi_{x,\Theta}/2$, and thus it not possible to fit arbitrary values for $\hat{y}_t(x/2)$ and $\hat{y}_t(x)$, since $\hat{y}_t(x/2)= \hat{y}_t(x)/2$. Cartoons $(a)$ and $(b)$ in \Cref{fig:cartoon} illustrate this scale invariance for inputs $x=(1,-1,2)\in\R^3$ and $x/2=(0.5,-0.5,1)\in\R^3$:  when compared to $(a)$, pre-activation values and output of $(b)$ are scaled down by a factor $2$, and the gating values of $(a)$ and $(b)$ are identical.
+
+\textbf{NPF, Convolutional Networks with Pooling, Translation Invariance :} A single channel of a toy convolutional network (ConvNet) with ReLU activations is shown in the cartoons $(d)$ and $(e)$ in \Cref{fig:cartoon}. This channel of the ConvNet has $3$ circular convolutional layers, followed by a \emph{global-average-pooling} (GAP) layer. For the purpose of illustration, we consider convolutional window of size $2$, and stride $1$. For sake of simplicity, let  $\Theta(l,k),l=1,2,3,k=1,2$ denote the weights of the network and $x(l,i),l=1,2,3,i=1,2,3$ the hidden layer outputs and weights in the network. In the case of circular convolutions, we have for $l=1,2,3$,  $x(l,1)=\chi_r\left(\Theta(l,1)x(l-1,1)+\Theta(l,1)x(l-1,2) \right)$, $x(l,2)=\chi_r\left(\Theta(l,1)x(l-1,2)+\Theta(l,1)x(l-1,3) \right)$, $x(l,3)=\chi_r\left(\Theta(l,1)x(l-1,3)+\Theta(l,1)x(l-1,1) \right)$, with convention that $x(0,i)=x(i),i=1,2,3$. It is easy to check the translation invariance property: each of the red and the green lines have the same path values, i.e., $\Pi_{l=1}^3\Theta(l,1)$ (for red), $\Pi_{l=1}^3\Theta(l,2)$ (for green) due to weight sharing in the convolutional layers, this leads to a circular symmetry in the path values, due to which, a translation in the input will cause all the internal variable to translate, and invariance of the channel output $x_{out}$ results from the invariance of the averaging operation. 
+
+In the case of ConvNet with $w$ circular convolutional channels of depth `$d_{conv}$' using kernel size `$\hat{w}<d_{in}$' and unit stride, followed by a GAP layer, followed by `$d_{fc}$' fully connected layers of width $w$ terminating in a single output node, due to weight sharing, there will be $P=d_{in}\hat{w}^{d_{conv}}w^d$ paths, however only $P'=\hat{w}^{d_{conv}}w^d$ unique path values. Let $b_{1},\ldots,b_{P'}$ be the set of paths that have the same NPV, the NPF is given by 
+$x\in\R^{d_{in}}$ is given by 
+\begin{align}\label{eq:npfconvdef}
+\phi_{x,\Theta}\stackrel{def}=\left(\sum_{p\in b_{p'}}x_s(\I_0(p))A_{\Theta}(x_s,p) , p'\in[P']\right)\in\R^{P'},
+\end{align}
+
+
+
+%The difference between hard and soft gates can be seen cartoons $(a)/(b)$ and $(c)$ in \Cref{fig:cartoon}, where negative/positive values lead to $0/1$ in the case of hard gating, and close to $0/1$ in the case of soft-gating.
+%\subsection{`Path-View': Conceptual Gains}\label{sec:cg}
+
 %\begin{comment}
-\textbf{Translation Invariance in ConvNet with pooling:} Consider a convolution network (ConvNet) using $d_{conv}$ layers of circular convolutions (see \Cref{sec:conv}) with filter size $k'<d_{in}$ and unit stride, and let $x^{d_{conv}}(i)$ be the output of the $i^{th}$ channel after either $\max$-/global-average-pooling (GAP). Looking at the third and fourth (from left) illustrations in \Cref{fig:cartoon}, it is easy to check the translation invariance property: each of the red, blue, green lines have the same path values due to weight sharing in the convolutional layers, this leads to a circular symmetry in the path values, due to which, a translation in the input will cause all the internal variable to translate, and final invariance results from the invariance of the $\max$/average operation.
 %\end{comment}
 %\footnote{Here, instead of zero-padding in the corners, we follow the convention that index $d_{in}+k$ will be interpreted as $k$, for $k>0$, and $-k$ will be interpreted as $d_{in}-k$.}
+\textbf{Feature learning:} In relation to the $\psi^{\phi}_{x,\Theta}$, the following critical points are to be noted.
+
+$1.$ The gating values are modelled explicitly via the $G_{x,\Theta}$ terms. This enabled us to identify and define the NPF, and also capture its gradient with respect to the network parameters.
+
+$2.$ $\ip{\partial\phi_{x,\Theta},v_{\Theta}}=\sum_{p\in [P]}x(\I_0(p)) \partial A_{\Theta}(x,p)v_{\Theta}(p)$, and in the case of standard ReLU activations, the gating values $G_{x,\Theta}(\cdot,\cdot)\in\{0,1\}$ and hence $\partial A_{\Theta}(x,p)=0$. However, the gating values and hence the path activities $A_{\Theta_t}(\cdot,\cdot)$ changes during training. The non-differentiability of ReLU causes an \emph{analytical artefact}, i.e., it causes  $\psi^{\phi}_{x,\Theta}=0$, while in reality the NPFs are changing and $\psi^{\phi}_{x,\Theta}\neq 0$. This artefact is fixed by the \emph{soft-ReLU} activation which is differentiable. This soft-ReLU `trick' enables us to capture the terms related to neural path feature learning in our analysis. Thus a network with soft-ReLU activations is supposed to be viewed as an \emph{analytically relaxed} version of the network with standard ReLU activation.
+
+$3.$ Prior works used a \emph{softplus} activation given by $\chi_{sp}(q)=\frac{1}{\beta}\log(1+\exp(\beta q)),\beta>0$ as a differentiable substitute for the ReLU activation. While the soft-ReLU and softplus activations are similar in both of them being differentiable, a critical difference lies in their derivatives. In the case of softplus, we have $\partial_{q}\chi_{sp}(q)=\frac{1}{1+\exp(-\beta q)}$, which is significant only for those gates which are \emph{on}, whereas, in the case of soft-ReLU, we have $\partial{\chi}_{sr}(q)=\partial_q{\chi}_{sp}(q)+\partial_q{\gamma}_{sr}(q)$, which is significant for those gates which are \emph{on} due to the $\partial_q{\chi}_{sp}(q)$ terms, and is also significant for those gates which are near $0$ due to the fact that $\partial_q{\gamma}_{sr}(q)=\frac{\beta q}{(1+\exp(\beta q))(1+\exp(-\beta q))}$. The $\partial_q{\gamma}_{sr}(q)$ component is responsible for the feature gradient $\psi^{\phi}_{x,\Theta}$.
 
 
-\textbf{Feature Gradient and Sensitive Sub-Network:} In a DNN with soft-ReLU, $\partial A_{\Theta}(x,p)=\sum_{l=1}^d \partial G_{x,\Theta}(l)\Pi_{l'\neq l}G_{x,\Theta}(l')$ is significant for those paths $p$ for which one of the $d-1$ gating values is close to $0.5$ (say such a gate is in layer $l$, and for such a gate $\partial G_{x,\Theta}$ is significant) and rest of the $d-2$ gates are close to $1$, so that $\Pi_{l'\neq l}G_{x,\Theta}(l')$ is significant. The set of paths for which $\partial A_{\Theta}(x,p)$ is significant, form the sensitive sub-network for that input. The sensitive paths are shown in cartoon $(c)$ of \Cref{fig:cartoon}. In the case of, standard ReLU, sensitive paths are those which contain one of the gates with pre-activation close to $0$, and rest of the $d-2$ gates are $1$.
+\textbf{Feature Learning and Sensitive Sub-Network:} In a DNN with soft-ReLU, $\partial A_{\Theta}(x,p)=\sum_{l=1}^d \partial G_{x,\Theta}(l)\Pi_{l'\neq l}G_{x,\Theta}(l')$ is significant for those paths $p$ for which one of the $d-1$ gating values is close to $0.5$ (say such a gate is in layer $l$, and for such a gate $\partial G_{x,\Theta}$ is significant) and rest of the $d-2$ gates are close to $1$, so that $\Pi_{l'\neq l}G_{x,\Theta}(l')$ is significant. The set of paths for which $\partial A_{\Theta}(x,p)$ is significant, form the sensitive sub-network for that input. The sensitive paths are shown in cartoon $(c)$ of \Cref{fig:cartoon}. In the case of, standard ReLU, sensitive paths are those which contain one of the gates with pre-activation close to $0$, and rest of the $d-2$ gates are $1$.
 \subsection{Kernels: Neural Path Kernel and Neural Tangent Kernel}\label{sec:ker}
 The \emph{neural path kernel} (NPK) matrix is given by $H_{\Theta}(s,s')=\ip{\phi_{x,\Theta},\phi_{x_{s'},\Theta}}, s, s'\in[n]$. The NPK matrix has a special \emph{Hadamard} structure as given below.
 \begin{lemma}\label{lm:npk}

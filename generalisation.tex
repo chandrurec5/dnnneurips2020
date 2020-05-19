@@ -8,13 +8,11 @@ $\bullet$  Fixed Learned Neural Path Feature (FLNPF): Here, we use $\chi^g=\chi_
 $\bullet$ Decoupled NPF learning (DNPFL): Here, we use $\chi^g=\chi_r$, and $ G_{x,t}(l)= \gamma_{sr}\left(q^g_{x,t}(l)\right)\quad$. We initialise $\Tg_0$ and $\Theta_0$ as per \Cref{assmp:main}, and train both $\Tg_t$ and $\Theta_t$ with $\hat{y}^v_t(x_s)$ as the output node. The use of soft-ReLU makes it straightforward for the feature gradients to flow via the gating network.
 
 
-\textbf{Experimental Setup:} We used standard datasets namely MNIST, CIFAR-10, and CIFAR-100, with categorical cross entropy loss. We used stochastic gradient descent (SGD) and \emph{Adam}. In the case of SGD, we tried constant step-sizes in the set $\{0.1,0.01,0.001\}$ and chose the best. In the case of Adam the we used a constant step size of $3e-4$. In both cases, we used batch size to be $32$. We used a fully connected (FC) DNN with $(w=128,d=6)$ for MNIST.%\footnote{We also trained with other widths and depths namely $(w=128,d=10)$, $(w=256,d=6)$ and $(w=256,d=10)$. However, the results did not change drastically when we changed the width and depth. Hence, we are presenting the results corresponding to the case $(w=128,d=6)$.}. 
+\textbf{Experimental Setup:} We used standard datasets namely MNIST, CIFAR-10, and CIFAR-100, with categorical cross entropy loss. We used stochastic gradient descent (SGD) and \emph{Adam}. In the case of SGD, we tried constant step-sizes in the set $\{0.1,0.01,0.001\}$ and chose the best. In the case of Adam the we used a constant step size of $3e^{-4}$. In both cases, we used batch size to be $32$. We used a fully connected (FC) DNN with $(w=128,d=6)$ for MNIST.%\footnote{We also trained with other widths and depths namely $(w=128,d=10)$, $(w=256,d=6)$ and $(w=256,d=10)$. However, the results did not change drastically when we changed the width and depth. Hence, we are presenting the results corresponding to the case $(w=128,d=6)$.}. 
 To train CIFAR-10, we used \emph{Vanilla-Convolutional} Network (VCONV) without pooling, residual connections, dropout or batch-normalisations, and is given by: input layer is $(32, 32, 3)$, followed by convolution layers with a stride of $(3, 3)$ and channels $64$, $64$, $128$, $128$ followed by a flattening to layer with $256$ hidden units, followed by a fully connected layer with $256$ units, and finally a  $10$ width soft-max layer to produce the final predictions. To train CIFAR-10, we also used a GCONV which is same as VCONV with a \emph{global-average-pooling} (GAP) layer.
 
- 
- 
- The result of the numerical experiments are in \Cref{tb:npfs}. 
- \begin{table}[h]
+ We now discuss the results in \Cref{tb:npfs}, and the results of two more experiments.
+ \begin{table}[!t]
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
 Arch			&Optimiser	&Dataset		&FRNPF (II) 			&FRNPF (DI)			&DNPFL					&FLNPF						&ReLU\\\hline
@@ -51,27 +49,30 @@ Arch-$5$	& CIFAR-$10$ 		& $67.02\pm0.43$ &		&$58.92\pm0.62$&$58.83\pm0.27$ 		&$6
 \label{tb:npfs}
 \end{table}
 \end{comment}
-The key observations are:
 
 $1.$ \textbf{FRNPFs}  do generalise, they are outperformed by DNPFL, FLNPF, and standard ReLU all of which involve NPF learning. While the DNPFL, and FLNPF are new in the paper, the fact that fixed random NTFs generalise poorly than DNNs with  ReLU activations has been reported in \cite{arora2019exact}. In best case scenarios, the pure NTK based method performs poorly than standard ReLU by approximately $5.5\%$ (see Table~$1$ in \cite{arora2019exact}) in CIFAR-10, and the random NTFs from a finite DNN performs poorly than the infinite width limit NTK by approximately $5\%$ (see last row of Table~$2$ in \cite{arora2019exact}). We also note that initialisations II and DI did not show much difference in performance.
 
 $2.$ \textbf{NPF learning improves generalisation:} Models with NPF learning namely  DNPFL, FLNPF, and standard DNN with ReLU, perform better than FRNPFs. It is very interesting to note that FLNPF perform almost as well as the standard DNNs with ReLU activations. 
 
-$3.$ \textbf{Closing research gap II:} We further broke down the FLNPF experiment by copying the weights from a standard DNN with ReLU activation at various stages of training onto the gating network weights. Let $0<T_{L_0}<T_{L_1}<\ldots<T_{L_5}$ be epochs. By considering $\bar{\Theta}_{L_i},i=1,\ldots,5$ we can obtain $5$ different NPFs at various stage of training. We initialised $5$ different DGNs, i.e., $\Tg_0=\bar{\Theta}_{L_i},i=1,\ldots,5$ and the results of training with these $5$ NPFs are shown in the middle plot of \Cref{fig:dynamics}. 
+$3.$ \textbf{Role of GAP:} In \Cref{sec:cg} discussed how ConvNets with GAP or $\max$-pooling have translation invariance property, and in \Cref{sec:ker} we showed that the NPK has a component that is translation invariant. In our experiments, and also in those of \cite{arora2019}, adding the GAP layer gives a performance improvement of approximately $10\%$.
+
+
+$4.$ \textbf{Addressing the research gaps:} The gap in the generalisation performance of fixed NPFs and that of DNN with ReLU is continuous. The gap gradually closes as we move from FRNPFs to FLNPFs. We trained a DNN with ReLU (parameterised by $\bar{\Theta}$) for $60$ epochs, and we obtained $6$ different NPFs from these weights at various \emph{stages}, i.e., stage $1$: $\bar{\Theta}_{10}$, stage $2$: $\bar{\Theta}_{20}$, stage $3$: $\bar{\Theta}_{30}$, stage $4$: $\bar{\Theta}_{40}$, stage $5$: $\bar{\Theta}_{50}$, stage $6$: $\bar{\Theta}_{60}$. We trained with these $6$ different fixed NPFs by setting $\Tg_t=\Tg_0=\bar{\Theta}_{10\times i}, i\in[6]$ and training the $\Theta_t$ in the DGN. The results are shown in the leftmost plot in \Cref{fig:dynamics}, where, the performance of FLNPF through stage $0$ (i.e., random/no learning) to stage $6$ (full learning) is shown. The performance of  convolutional NTK (CNTK) \cite{arora2019exact} ($77.43\%$) is given by the orange dotted line. The result of \Cref{th:main} and the performance of FLNPF through stages together indicate that the gap in the performance of the CNTK and CNN (with ReLU) is due to the presence and absence of NPF learning and perhaps not because of finite vs infinite width as suggested by \cite{arora2019exact}. Note that the best performance of CNN with GAP in \cite{arora2019exact} is $83.30\%$, and our model gives only $80.3\%$, a difference we attribute to the difference in the two models.
+
 
 %$\bullet$ Fixed NPFs obtained from DNNs trained on dataset with random labels/pixel perform worse than fixed random NPFs. Thus, bad labelling leads to learning bad NPFs.
-$4.$ \textbf{NPF learning during training:} We consider ``Binary''-MNIST data set with two classes namely digits $4$ and $7$, with the labels taking values in $\{-1,+1\}$ and squared loss. We trained a standard DNN with ReLU activation ($w=100$, $d=5$). Let $\widehat{H}_t=\frac{1}{trace(H_t)}H_t$ be the normalised NPK matrix. 
+$5.$ \textbf{NPF learning during training:} We consider ``Binary''-MNIST data set with two classes namely digits $4$ and $7$, with the labels taking values in $\{-1,+1\}$ and squared loss. We trained a standard DNN with ReLU activation ($w=100$, $d=5$). Let $\widehat{H}_t=\frac{1}{trace(H_t)}H_t$ be the normalised NPK matrix. 
 \begin{comment}
 \begin{wrapfigure}{h}{0.3\textwidth}
 \includegraphics[scale=0.25]{figs/path-gram.png}
 \caption{\label{fig:gen}$\nu_t=y^\top (\widehat{H}_t)^{-1} y$.}
 \end{wrapfigure}
 \end{comment}
-\begin{figure}[h]
+\begin{figure}[!t]
 \centering
 \includegraphics[scale=0.25]{figs/gap.png}
 \includegraphics[scale=0.25]{figs/path-gram.png}
-\includegraphics[scale=0.25]{figs/path-gram.png}
+\includegraphics[scale=0.25]{figs/kvkphi.png}
 %\includegraphics[scale=0.15]{figs/nnconv.png}
 \caption{Dynamics of Learning}
 \label{fig:dynamics}
@@ -85,6 +86,5 @@ For a subset size, $n'=200$ ($100$ examples per class) we plot $\nu_t=y^\top (\w
 \end{wrapfigure}
 \end{comment}
 
-$5.$ \textbf{Decoupled NPF learning (DNPFL)} also yields good generalisation performance. This paves an interesting future direction:  in this case the NTK is given by $K_{\Theta,\Tg}=K^v_{\Theta}+K^{\phi}_{\Tg}$, and the problem can be simplified by studying $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ separately. As a start, in the ``Binary''-MNIST experiment, we compared $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ using their trace and Frobenius norms, and we see that $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ are in the same scale, which is perhaps pointing to the fact that both $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ are equally important for obtaining good generalisation performance. 
+$6.$ \textbf{Decoupled NPF learning (DNPFL)} also yields good generalisation performance. This paves an interesting future direction:  in this case the NTK is given by $K_{\Theta,\Tg}=K^v_{\Theta}+K^{\phi}_{\Tg}$, and the problem can be simplified by studying $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ separately. As a start, in the case of MNIST, we compared $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ using their trace and Frobenius norms, and we see that $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ are in the same scale, which is perhaps pointing to the fact that both $K^v_{\Theta}$ and $K^{\phi}_{\Tg}$ are equally important for obtaining good generalisation performance. 
 
-$6.$ \textbf{Role of GAP:} In \Cref{sec:cg} discussed how ConvNets with GAP or $\max$-pooling have translation invariance property, and in \Cref{sec:ker} we showed that the NPK has a component that is translation invariant. In our experiments, and also in those of \cite{arora2019}, adding the GAP layer gives a performance improvement of approximately $10\%$.

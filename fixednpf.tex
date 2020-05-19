@@ -1,4 +1,4 @@
-\section{Fixed NPF regime}
+\section{Gradient Descent with and without feature learning}
 \begin{comment}
 \begin{wrapfigure}{h}{0.3\textwidth}
 \includegraphics[scale=0.25]{figs/regime.png}
@@ -7,11 +7,17 @@
 \end{comment}
 Based on the kernel expression in \eqref{eq:kerneldecomp} we write down the GD dynamics in three different regimes namely (see \Cref{tb:dynamics}) i) standard, ii) `large-width', and iii) fixed NPF. 
 
-$\bullet$ Practical DNNs with ReLU activations and finite width operate in the standard regime. By replacing the ReLU by soft-ReLU we can write down the GD dynamics that incorporates NPF learning as shown in the leftmost column of \Cref{tb:dynamics}. In the standard regime, $K^v_{\Theta}(s,s')=\ip{\psi^v_{x_s,\Theta},\psi^v_{x_{s'},\Theta}}=\phi^\top_{x_s,\Theta}(\partial_{\theta}v_{\Theta})(\partial_{\theta}v_{\Theta})^\top\phi_{x_{s'},\Theta}$, because of which, $K^v_{\Theta_t}$ changes with time as the NPFs  $\phi_{x_s,\Theta_t},s\in[n]$ change with time. 
+$\bullet$ Practical DNNs with ReLU activations and finite width operate in the standard regime. By replacing the ReLU by soft-ReLU we can write down the GD dynamics that incorporates NPF learning as shown in the leftmost column of \Cref{tb:dynamics}. %In the standard regime, $K^v_{\Theta}(s,s')=\ip{\psi^v_{x_s,\Theta},\psi^v_{x_{s'},\Theta}}=\phi^\top_{x_s,\Theta}(\partial_{\theta}v_{\Theta})(\partial_{\theta}v_{\Theta})^\top\phi_{x_{s'},\Theta}$, because of which, $K^v_{\Theta_t}$ changes with time as the NPFs  $\phi_{x_s,\Theta_t},s\in[n]$ change with time. 
 
-$\bullet$ In the `large-width' regime [\citenum{arora2019exact}], the NPFs and the NTFs do not deviate much from initialisation (see middle column in \Cref{tb:dynamics}), and GD dynamics is dictated by a deterministic matrix $K^{(d)}$ (an expression for $K^{(d)}$ is presented in \Cref{sec:prior}). 
+$\bullet$ In the `large-width' regime [\citenum{arora2019exact,dudnn,ntk}], the NPFs and the NTFs do not deviate much from initialisation (see middle column in \Cref{tb:dynamics}), and GD dynamics is dictated by a deterministic matrix $K^{(d)}$ which is calculated using the recursion below:
+\begin{align}\label{eq:ntkold}
+&\tilde{K}^{(1)}(s,s')=\Sigma^{(1)}(s,s')=\Sigma(s,s'), M^{(l)}_{ss'}=\left[\begin{matrix}\Sigma^{(l)}(s,s) & \Sigma^{(l)}(s,s')\\ \Sigma^{(l)}(s',s) & \Sigma^{(l)}(s',s')\end{matrix}\right]\in \R^2,\\
+&\Sigma^{(l+1)}(s,s')= 2\cdot\mathbb{E}_{(q,q')\sim N(0,M_{ss'}^{(l)})} \left[\chi(q)\chi(q')\right], \hat{\Sigma}^{(l+1)}(s,s')= 2\cdot\mathbb{E}_{(q,q')\sim N(0,M_{ss'}^{(l)})}\left[\partial\chi(q)\partial{\chi}(q')\right],\nn\\
+&\tilde{K}^{(l+1)}=\tilde{K}^{(l)}\odot \hat{\Sigma}^{(l+1)}+\Sigma^{(l+1)}, K^{(d)}=\left(\tilde{K}^{(d)}+\Sigma^{(d)}\right)/2
+\end{align}
+where $s,s'\in[n]$ are two input examples in the dataset, $\Sigma$ is the data Gram matrix, $\partial{\chi}$ stands for the derivative of the activation function with respect to the pre-activation input, $N(0,M)$ stands for the mean-zero Gaussian distribution with co-variance matrix $M$. 
 
-$\bullet$ In this paper we consider a fixed NPF regime, wherein, we force $\psi^{\phi}_{\cdot,\Theta}=0$. The dynamics in this regime is given in the rightmost column in \Cref{tb:dynamics}.
+$\bullet$ In this paper we consider a fixed NPF regime, wherein, we force $\partial_{\theta}\phi=0$, and hence the feature gradient $\psi^{\phi}_{\cdot,\Theta}=0$. The dynamics in this regime is given in the rightmost column in \Cref{tb:dynamics}.
 \FloatBarrier
 \begin{table}[h]\centering
 \resizebox{\columnwidth}{!}{
@@ -26,8 +32,9 @@ $\dot{e}_t=-(K^v_t+K^{\phi}_t+K^{cross}_{t})e_t$ &$\dot{e}_t=-K^{(d)}e_t$ &$\dot
 \caption{Dynamics in various regimes. Here $p\in[P], s\in[n]$.}
 \label{tb:dynamics}
 \end{table}
+\textbf{Addressing the research gaps:} We have managed to capture NPF learning in the GD dynamics, an aspect which was missing in the prior works in the `large-width' regime. In what follows, we first present theoretical results for the fixed NPF regime in \Cref{sec:fixednpf}. We then show via experiments that NPFs are learnt in standard DNNs with ReLU activations and NPF learning improves the generalisation performance (when compared to the fixed NPF case).
 
-
+\section{Learning with fixed neural path features}\label{sec:fixednpf}
 \textbf{Deep Gated Network (DGN):} The fixed NPF regime is obtained by using the framework of deep gated network (DGN), wherein, we hold the gates and hence the NPFs in a separate gating network parameterised by $\Tg\inrdnet$, and the NPVs in a different network called value network parameterised by $\Theta\inrdnet$ (see \Cref{fig:dgn}). Note that, the gating network uses $\chi^g$ as the activation function, which can be a standard ReLU activation, i.e., $\chi^g=\chi_r$. The pre-activations $q^g_{x,t}(l)$ of layer $l\in[d-1]$ from the gating network are used to derive the gating values $G_{x,t}(l)$ of layer $l\in[d-1]$. The gating values can be obtained from either a ReLU gate $\gamma_r$ or a soft-ReLU gate $\gamma_{sp}$. The process of separating the NPFs and the NPVs decouples the value and the feature gradients. In a DGN, the value gradient $\psi^v_{\cdot,\Theta}$ flows through the value network and the feature gradient $\psi^{\phi}_{\cdot,\Tg}$flows through the gating network. By letting the parameters of the gating network non-trainable, i.e., $\Tg_0=\Tg_t,\forall t\geq 0$ we can force $\psi^{\phi}_{\cdot,\Tg}$ to be $0$, and operate in the fixed NPF regime.
 \begin{figure}[h] 
 \begin{minipage}{0.70\columnwidth}
